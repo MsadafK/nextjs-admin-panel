@@ -12,7 +12,7 @@ function ThemeWrapper({ children }) {
   const { currentTheme, customColors } = useTheme();
   
   useEffect(() => {
-    if (currentTheme === 'custom') {
+    if (typeof window !== 'undefined' && currentTheme === 'custom') {
       document.documentElement.style.setProperty('--color-primary-500', customColors.primary);
     }
   }, [currentTheme, customColors]);
@@ -30,16 +30,22 @@ function LayoutContent({ children }) {
   const { currentTheme, isDark } = useTheme();
 
   useEffect(() => {
-    const savedPosition = localStorage.getItem('sidebarPosition');
-    if (savedPosition) {
-      setPosition(savedPosition);
+    // ✅ Add typeof window check
+    if (typeof window !== 'undefined') {
+      const savedPosition = localStorage.getItem('sidebarPosition');
+      if (savedPosition) {
+        setPosition(savedPosition);
+      }
+      
+      const savedSidebarDark = localStorage.getItem('sidebarDarkMode') === 'true';
+      setSidebarDarkMode(savedSidebarDark);
     }
-    
-    const savedSidebarDark = localStorage.getItem('sidebarDarkMode') === 'true';
-    setSidebarDarkMode(savedSidebarDark);
   }, []);
 
   useEffect(() => {
+    // ✅ Add typeof window check
+    if (typeof window === 'undefined') return;
+
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
       if (window.innerWidth > 768) {
@@ -55,12 +61,16 @@ function LayoutContent({ children }) {
   const toggleSidebarDarkMode = () => {
     const newValue = !sidebarDarkMode;
     setSidebarDarkMode(newValue);
-    localStorage.setItem('sidebarDarkMode', newValue.toString());
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sidebarDarkMode', newValue.toString());
+    }
   };
 
   const handlePositionChange = (newPosition) => {
     setPosition(newPosition);
-    localStorage.setItem('sidebarPosition', newPosition);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sidebarPosition', newPosition);
+    }
   };
 
   const toggleMobileMenu = () => {
