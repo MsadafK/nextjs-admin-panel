@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
+import { Inter } from 'next/font/google';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { FontsProvider } from './contexts/FontsContext';
@@ -8,9 +9,16 @@ import Navbar from './components/Navbar';
 import SettingsButton from './components/Setting/SettingsButton';
 import './globals.css';
 
+/* ── Inter font (Next.js optimised, no FOUT) ── */
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
 function ThemeWrapper({ children }) {
   const { currentTheme, customColors } = useTheme();
-  
+
   useEffect(() => {
     if (typeof window !== 'undefined' && currentTheme === 'custom') {
       document.documentElement.style.setProperty('--color-primary-500', customColors.primary);
@@ -26,31 +34,24 @@ function LayoutContent({ children }) {
   const [sidebarDarkMode, setSidebarDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const positionMenuButtonRef = useRef(null);
   const { currentTheme, isDark } = useTheme();
 
   useEffect(() => {
-    // ✅ Add typeof window check
     if (typeof window !== 'undefined') {
       const savedPosition = localStorage.getItem('sidebarPosition');
-      if (savedPosition) {
-        setPosition(savedPosition);
-      }
-      
+      if (savedPosition) setPosition(savedPosition);
+
       const savedSidebarDark = localStorage.getItem('sidebarDarkMode') === 'true';
       setSidebarDarkMode(savedSidebarDark);
     }
   }, []);
 
   useEffect(() => {
-    // ✅ Add typeof window check
     if (typeof window === 'undefined') return;
 
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
-      if (window.innerWidth > 768) {
-        setIsMobileMenuOpen(false);
-      }
+      if (window.innerWidth > 768) setIsMobileMenuOpen(false);
     };
 
     checkMobile();
@@ -73,46 +74,43 @@ function LayoutContent({ children }) {
     }
   };
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const finalSidebarDark = isDark || sidebarDarkMode;
 
   return (
-    <div className={`flex min-h-screen ${position === 'top' || position === 'bottom' ? 'flex-col' : ''}`}>
-      {/* Hamburger Menu Button - Mobile Only */}
+    <div
+      className={`flex min-h-screen bg-background text-foreground ${
+        position === 'top' || position === 'bottom' ? 'flex-col' : ''
+      }`}
+    >
+      {/* ── Mobile hamburger ── */}
       {isMobile && !isMobileMenuOpen && (
         <button
           onClick={toggleMobileMenu}
-          className="fixed top-4 left-4 z-[60] rounded-lg bg-white dark:bg-gray-800 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          className="fixed top-4 left-4 z-[60] p-2 rounded-md bg-card border border-border shadow-card hover:bg-accent transition-colors"
           aria-label="Toggle menu"
         >
           <svg
-            className="w-6 h-6 text-gray-900 dark:text-white"
+            className="w-5 h-5 text-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
       )}
 
-      {/* Overlay for mobile menu */}
+      {/* ── Mobile overlay ── */}
       {isMobile && isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
           onClick={toggleMobileMenu}
         />
       )}
 
-      {/* Sidebar - Hidden on mobile by default, shown when menu is open */}
+      {/* ── Sidebar (top) ── */}
       {position === 'top' && (
         <div className={`fixed top-0 left-0 right-0 z-50 ${isMobile && !isMobileMenuOpen ? 'hidden' : ''}`}>
           <Sidebar
@@ -124,7 +122,8 @@ function LayoutContent({ children }) {
           />
         </div>
       )}
-      
+
+      {/* ── Sidebar (left / right) ── */}
       {position !== 'top' && position !== 'bottom' && (
         <div className={`${isMobile ? 'fixed z-50' : ''} ${isMobile && !isMobileMenuOpen ? 'hidden' : ''}`}>
           <Sidebar
@@ -136,21 +135,23 @@ function LayoutContent({ children }) {
           />
         </div>
       )}
-      
-      <div 
+
+      {/* ── Main content ── */}
+      <div
         className={`flex-1 flex flex-col transition-all duration-300 ${
-          !isMobile && position === 'left' ? (isCollapsed ? 'ml-16' : 'ml-64') :
-          !isMobile && position === 'right' ? (isCollapsed ? 'mr-16' : 'mr-64') :
-          !isMobile && position === 'top' ? 'mt-16' :
+          !isMobile && position === 'left'   ? (isCollapsed ? 'ml-16' : 'ml-64') :
+          !isMobile && position === 'right'  ? (isCollapsed ? 'mr-16' : 'mr-64') :
+          !isMobile && position === 'top'    ? 'mt-16' :
           !isMobile && position === 'bottom' ? 'mb-16' : ''
         }`}
       >
         <Navbar sidebarDarkMode={finalSidebarDark} />
-        <main className="flex-1 bg-gray-50 dark:bg-gray-900">
+        <main className="flex-1 bg-muted/30 dark:bg-background">
           {children}
         </main>
       </div>
 
+      {/* ── Sidebar (bottom) ── */}
       {position === 'bottom' && (
         <div className={`${isMobile && !isMobileMenuOpen ? 'hidden' : ''}`}>
           <Sidebar
@@ -175,15 +176,16 @@ function LayoutContent({ children }) {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white" suppressHydrationWarning>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body
+        className="min-h-screen font-sans antialiased bg-background text-foreground"
+        suppressHydrationWarning
+      >
         <ThemeProvider>
           <LanguageProvider>
             <FontsProvider>
               <ThemeWrapper>
-                <LayoutContent>
-                  {children}
-                </LayoutContent>
+                <LayoutContent>{children}</LayoutContent>
               </ThemeWrapper>
             </FontsProvider>
           </LanguageProvider>

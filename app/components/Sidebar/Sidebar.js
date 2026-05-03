@@ -19,12 +19,13 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
   const positionMenuButtonRef = useRef(null);
   const [userName, setUserName] = useState('John Doe');
   const [userEmail, setUserEmail] = useState('john@example.com');
-  const { getThemeColors } = useTheme() || {};
   const { t } = useLanguage();
-  const colors = getThemeColors ? getThemeColors() : {
-    primary: 'bg-blue-600',
-    primaryBg: 'bg-blue-50',
-    primaryText: 'text-blue-600'
+
+  // Black & white active state tokens
+  const colors = {
+    primary:     isDarkMode ? 'bg-zinc-50'    : 'bg-zinc-900',
+    primaryBg:   isDarkMode ? 'bg-zinc-800'   : 'bg-zinc-100',
+    primaryText: isDarkMode ? 'text-zinc-50'  : 'text-zinc-900',
   };
 
   useEffect(() => {
@@ -550,8 +551,12 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
   }, []);
 
   const getContainerClasses = () => {
-    let classes = `transition-all duration-300 shadow-sm flex ${isDarkMode ? 'bg-gray-900 text-gray-300' : 'bg-white text-gray-700'} border-gray-200 dark:border-gray-700`;
-    
+    let classes = `transition-all duration-300 flex ${
+      isDarkMode
+        ? 'bg-zinc-900 text-zinc-300 border-zinc-800'
+        : 'bg-white text-zinc-600 border-zinc-200'
+    }`;
+
     if (position === 'top') {
       classes += ' h-16 flex-row border-b w-full z-50';
     } else if (position === 'bottom') {
@@ -561,7 +566,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
     } else {
       classes += ` fixed left-0 top-0 bottom-0 ${isCollapsed ? 'w-16' : 'w-64'} flex-col border-r z-40`;
     }
-    
+
     return classes;
   };
 
@@ -637,12 +642,12 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
   //     >
   //       <div className={`px-3 py-2 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
   //         <div className="flex items-center space-x-2">
-  //           <hoveredItem.icon size={16} className={colors.primaryText} />
+  //           <hoveredItem.icon size={16} className={isDarkMode ? "text-zinc-300" : "text-zinc-600"} />
   //           <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
   //             {t ? t(hoveredItem.label) : hoveredItem.label}
   //           </span>
   //           {hoveredItem.badge && (
-  //             <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+  //             <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
   //               {hoveredItem.badge}
   //             </span>
   //           )}
@@ -668,7 +673,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
   //                     {t ? t(subItem.label) : subItem.label}
   //                   </span>
   //                   {subItem.badge && (
-  //                     <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">
+  //                     <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
   //                       {subItem.badge}
   //                     </span>
   //                   )}
@@ -713,7 +718,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
   //                             {t ? t(childItem.label) : childItem.label}
   //                           </span>
   //                           {childItem.badge && (
-  //                             <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">
+  //                             <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
   //                               {childItem.badge}
   //                             </span>
   //                           )}
@@ -739,19 +744,19 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
     return (
       <div
         ref={hoverMenuRef}
-        className={`fixed z-[60] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border rounded-lg shadow-xl min-w-[250px] py-2`}
+        className={`fixed z-[60] ${isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'} border rounded-lg shadow-dropdown min-w-[250px] py-2`}
         style={menuPosition}
         onMouseEnter={handleHoverMenuMouseEnter}
         onMouseLeave={handleHoverMenuMouseLeave}
       >
-        <div className={`px-3 py-2 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+        <div className={`px-3 py-2 border-b ${isDarkMode ? 'border-zinc-800' : 'border-zinc-200'}`}>
           <div className="flex items-center space-x-2">
-            <hoveredItem.icon size={16} className={colors.primaryText} />
-            <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            <hoveredItem.icon size={16} className={isDarkMode ? "text-zinc-300" : "text-zinc-600"} />
+            <span className={`font-medium text-sm ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`}>
               {t ? t(hoveredItem.label) : hoveredItem.label}
             </span>
             {hoveredItem.badge && (
-              <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+              <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
                 {hoveredItem.badge}
               </span>
             )}
@@ -768,24 +773,24 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                     onClick={() => setActiveItem(subItem.label)}
                     className={`w-full flex items-center px-3 py-2 text-sm ${
                       isDarkMode 
-                        ? 'text-gray-300 hover:bg-gray-700 hover:text-white' 
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100' 
+                        : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
                     } transition-colors`}
                   >
-                    <SubIcon size={16} className={`mr-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                    <SubIcon size={16} className={`mr-3 ${isDarkMode ? 'text-zinc-500' : 'text-zinc-400'}`} />
                     <span className="flex-1 text-left">
                       {t ? t(subItem.label) : subItem.label}
                     </span>
                     {subItem.badge && (
-                      <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">
+                      <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
                         {subItem.badge}
                       </span>
                     )}
                     {subItem.childItems && (
                       position === 'right' || position === 'bottom' ? (
-                        <ChevronLeft size={14} className={`ml-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                        <ChevronLeft size={14} className={`ml-2 ${isDarkMode ? 'text-zinc-500' : 'text-zinc-400'}`} />
                       ) : (
-                        <ChevronRight size={14} className={`ml-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                        <ChevronRight size={14} className={`ml-2 ${isDarkMode ? 'text-zinc-500' : 'text-zinc-400'}`} />
                       )
                     )}
                   </button>
@@ -799,9 +804,9 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                       position === 'bottom' 
                         ? 'bottom-0' 
                         : 'top-0'
-                    } ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border rounded-lg shadow-xl min-w-[200px] py-2 opacity-0 invisible group-hover/submenu:opacity-100 group-hover/submenu:visible transition-all duration-200 z-[70]`}>
-                      <div className={`px-3 py-2 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} mb-1`}>
-                        <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wide`}>
+                    } ${isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'} border rounded-lg shadow-dropdown min-w-[200px] py-2 opacity-0 invisible group-hover/submenu:opacity-100 group-hover/submenu:visible transition-all duration-200 z-[70]`}>
+                      <div className={`px-3 py-2 border-b ${isDarkMode ? 'border-zinc-800' : 'border-zinc-200'} mb-1`}>
+                        <span className={`text-xs font-medium ${isDarkMode ? 'text-zinc-500' : 'text-zinc-500'} uppercase tracking-wide`}>
                           {t ? t(subItem.label) : subItem.label}
                         </span>
                       </div>
@@ -813,16 +818,16 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                             onClick={() => setActiveItem(childItem.label)}
                             className={`w-full flex items-center px-3 py-2 text-sm ${
                               isDarkMode 
-                                ? 'text-gray-300 hover:bg-gray-700 hover:text-white' 
-                                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                ? 'text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100' 
+                                : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
                             } transition-colors`}
                           >
-                            <ChildIcon size={14} className={`mr-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+                            <ChildIcon size={14} className={`mr-3 ${isDarkMode ? 'text-zinc-500' : 'text-zinc-400'}`} />
                             <span className="text-left">
                               {t ? t(childItem.label) : childItem.label}
                             </span>
                             {childItem.badge && (
-                              <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">
+                              <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
                                 {childItem.badge}
                               </span>
                             )}
@@ -850,33 +855,33 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
         className={`${getContainerClasses()} ${(position === 'top' || position === 'bottom') && Object.keys(expandedMenus).some(key => expandedMenus[key]) ? 'overflow-y-auto' : ''}`}
         
       >
-        <div className={`p-3.5 ${position === 'bottom' || position === 'top' ? 'border-r' : 'border-b'} ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-between ${position === 'bottom' || position === 'top' ? 'flex-shrink-0' : ''} ${position === 'right' ? 'flex-row-reverse' : ''}`}>
+        <div className={`p-3.5 ${position === 'bottom' || position === 'top' ? 'border-r' : 'border-b'} ${isDarkMode ? 'border-zinc-800' : 'border-zinc-200'} flex items-center justify-between ${position === 'bottom' || position === 'top' ? 'flex-shrink-0' : ''} ${position === 'right' ? 'flex-row-reverse' : ''}`}>
           {!isCollapsed && (
             <div className="flex items-center space-x-2">
-              <div className={`w-8 h-8 ${colors.primary} rounded-lg flex items-center justify-center`}>
-                <Shield className="w-5 h-5 text-white" />
+              <div className={`w-8 h-8 bg-zinc-900 dark:bg-zinc-100 rounded-lg flex items-center justify-center`}>
+                <Shield className="w-5 h-5 text-white dark:text-zinc-900" />
               </div>
-              <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{translateText('app_name')}</h1>
+              <h1 className={`text-xl font-semibold tracking-tight ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`}>{translateText('app_name')}</h1>
             </div>
           )}
           {window.innerWidth > 768 && (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <div className="relative">
               <button
                 ref={positionMenuButtonRef}
                 onClick={() => setShowPositionMenu(!showPositionMenu)}
                 disabled={window.innerWidth < 1279}
-                className={`p-2 rounded-lg ${window.innerWidth < 1280 ? 'opacity-50 cursor-not-allowed' : (isDarkMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-600')} transition-colors`}
+                className={`p-2 rounded-md ${window.innerWidth < 1280 ? 'opacity-40 cursor-not-allowed' : (isDarkMode ? 'hover:bg-zinc-800 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-500')} transition-colors`}
                 title="Change sidebar position"
               >
                 <Settings size={ICON_SIZE} />
               </button>
               </div>
-              
+
               <button
                 onClick={onToggle}
                 disabled={window.innerWidth < 1279}
-                className={`p-2 rounded-lg ${window.innerWidth < 1280 ? 'opacity-50 cursor-not-allowed' : (isDarkMode ? 'hover:bg-gray-800 text-gray-400' : 'hover:bg-gray-100 text-gray-600')} transition-colors`}
+                className={`p-2 rounded-md ${window.innerWidth < 1280 ? 'opacity-40 cursor-not-allowed' : (isDarkMode ? 'hover:bg-zinc-800 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-500')} transition-colors`}
               >
                 <ToggleIcon size={ICON_SIZE} />
               </button>
@@ -903,19 +908,19 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                      onMouseLeave={handleMouseLeave}
                      className={`${position === 'bottom' || position === 'top' ? 'flex-shrink-0 h-10' : 'w-full'} flex items-center ${isCollapsed && (position === 'left' || position === 'right') ? 'justify-center py-3 px-0 h-12' : (isCollapsed ? 'justify-center px-3' : 'px-3')} rounded-lg transition-colors group ${
                        isActive 
-                         ? `${colors.primaryBg} ${colors.primaryText} ${activeBorder} ${colors.primary.replace('bg-', 'border-')}` 
+                         ? `${isDarkMode ? 'bg-zinc-800 text-zinc-50' : 'bg-zinc-900 text-zinc-50'} ${activeBorder}` 
                          : isInPath
-                         ? `${colors.primaryBg} ${colors.primaryText.replace('600', '500')} ${activeBorder} ${colors.primary.replace('bg-', 'border-').replace('600', '300')}`
-                         : `${isDarkMode ? 'text-white hover:bg-gray-800 hover:text-white' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`
+                         ? `${isDarkMode ? 'bg-zinc-800/60 text-zinc-300' : 'bg-zinc-100 text-zinc-700'} ${activeBorder}`
+                         : `${isDarkMode ? 'text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'}`
                      }`}
                    >
                      <Icon 
                        size={ICON_SIZE} 
                        strokeWidth={2}
                        className={`flex-shrink-0 ${isCollapsed ? 'mx-auto' : 'mr-3'} ${
-                         isActive ? colors.primaryText.replace('text-', '') 
-                         : isInPath ? colors.primaryText.replace('text-', '').replace('600', '500')
-                         : `${isDarkMode ? 'text-white group-hover:text-white' : 'text-gray-400 group-hover:text-gray-600'}`
+                         isActive ? isDarkMode ? 'text-zinc-50' : 'text-zinc-900' 
+                         : isInPath ? isDarkMode ? 'text-zinc-50' : 'text-zinc-900'.replace('600', '500')
+                         : `${isDarkMode ? 'text-zinc-400 group-hover:text-zinc-100' : 'text-zinc-400 group-hover:text-zinc-700'}`
                        }`} 
                        style={{ width: '20px', height: '20px', minWidth: '20px', minHeight: '20px' }}
                      />
@@ -924,7 +929,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                          <span className="font-medium capitalize">{translatedLabel}</span>
                          <div className="flex items-center space-x-2">
                            {item.badge && (
-                             <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                             <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
                                {item.badge}
                              </span>
                            )}
@@ -940,9 +945,9 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                    </button>
                    
                   {item.subItems && !isCollapsed && isExpanded && (position === 'left' || position === 'right') && (
-                    <div className={`relative ${position === 'top' || position === 'bottom' ? 'ml-0 mt-2 bg-gray-50 dark:bg-gray-800 rounded-lg p-2 z-[55]' : 'ml-6 mt-1'}`}>
+                    <div className={`relative ${position === 'top' || position === 'bottom' ? 'ml-0 mt-2 bg-zinc-50 dark:bg-zinc-800 rounded-lg p-2 z-[55]' : 'ml-6 mt-1'}`}>
                       {(position === 'left' || position === 'right') && (
-                        <div className={`absolute left-4 top-0 bottom-0 w-px ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}></div>
+                        <div className={`absolute left-4 top-0 bottom-0 w-px ${isDarkMode ? 'bg-zinc-700' : 'bg-zinc-200'}`}></div>
                       )}
                       
                       <ul className={`${position === 'top' || position === 'bottom' ? 'grid grid-cols-1 gap-1' : 'space-y-1'}`}>
@@ -959,15 +964,15 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                               {(position === 'left' || position === 'right') && (
                                 <div className={`absolute left-4 top-3 w-2 h-2 rounded-full transform -translate-x-1/2 z-10 ${
                                   isSubActive 
-                                    ? colors.primary
+                                    ? (isDarkMode ? "bg-zinc-200" : "bg-zinc-900")
                                     : isSubInPath
-                                    ? colors.primary.replace('600', '400')
-                                    : `${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'}`
-                                } ${isSubActive || isSubInPath ? 'ring-2 ring-white dark:ring-gray-900' : ''}`}></div>
+                                    ? (isDarkMode ? "bg-zinc-500" : "bg-zinc-500")
+                                    : `${isDarkMode ? 'bg-zinc-600' : 'bg-zinc-300'}`
+                                } ${isSubActive || isSubInPath ? 'ring-2 ring-white dark:ring-zinc-900' : ''}`}></div>
                               )}
                               
                               {(position === 'left' || position === 'right') && isLastSubItem && (
-                                <div className={`absolute left-4 top-5 bottom-0 w-px ${isDarkMode ? 'bg-gray-900' : 'bg-white'} z-5`}></div>
+                                <div className={`absolute left-4 top-5 bottom-0 w-px ${isDarkMode ? 'bg-zinc-900' : 'bg-white'} z-5`}></div>
                               )}
                               
                               <button
@@ -982,22 +987,22 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                                 }}
                                 className={`w-full flex items-center ${position === 'top' || position === 'bottom' ? 'px-3' : 'pl-8 pr-3'} py-2 rounded-lg text-sm transition-colors group ${
                                   isSubActive 
-                                    ? `${colors.primaryBg} ${colors.primaryText} ${activeBorder} ${colors.primary.replace('bg-', 'border-')}` 
+                                    ? `${isDarkMode ? 'bg-zinc-800 text-zinc-50' : 'bg-zinc-900 text-zinc-50'} ${activeBorder}` 
                                     : isSubInPath
-                                    ? `${colors.primaryBg} ${colors.primaryText.replace('600', '500')} ${activeBorder} ${colors.primary.replace('bg-', 'border-').replace('600', '300')}`
-                                    : `${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'}`
+                                    ? `${isDarkMode ? 'bg-zinc-800/60 text-zinc-300' : 'bg-zinc-100 text-zinc-700'} ${activeBorder}`
+                                    : `${isDarkMode ? 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100' : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700'}`
                                 }`}
                               >
                                 <SubIcon size={16} className={`mr-3 ${
-                                  isSubActive ? colors.primaryText.replace('text-', '') 
-                                  : isSubInPath ? colors.primaryText.replace('text-', '').replace('600', '500')
-                                  : 'text-gray-400 group-hover:text-gray-500'
+                                  isSubActive ? isDarkMode ? 'text-zinc-50' : 'text-zinc-900' 
+                                  : isSubInPath ? isDarkMode ? 'text-zinc-50' : 'text-zinc-900'.replace('600', '500')
+                                  : 'text-zinc-400 group-hover:text-zinc-500'
                                 }`} />
                                 <div className="flex items-center justify-between w-full">
                                   <span className="capitalize">{subTranslatedLabel}</span>
                                   <div className="flex items-center space-x-2">
                                     {subItem.badge && (
-                                      <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                                      <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
                                         {subItem.badge}
                                       </span>
                                     )}
@@ -1012,9 +1017,9 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                               </button>
                               
                               {subItem.childItems && isSubExpanded && (
-                                <div className={`relative ${position === 'top' || position === 'bottom' ? 'ml-0 mt-1 bg-gray-100 dark:bg-gray-700 rounded p-1 z-[60]' : 'ml-6 mt-1'}`}>
+                                <div className={`relative ${position === 'top' || position === 'bottom' ? 'ml-0 mt-1 bg-zinc-100 dark:bg-zinc-800 rounded p-1 z-[60]' : 'ml-6 mt-1'}`}>
                                   {(position === 'left' || position === 'right') && (
-                                    <div className={`absolute left-4 top-0 bottom-0 w-px ${isDarkMode ? 'bg-gray-600' : 'bg-gray-300'}`}></div>
+                                    <div className={`absolute left-4 top-0 bottom-0 w-px ${isDarkMode ? 'bg-zinc-700' : 'bg-zinc-300'}`}></div>
                                   )}
                                   
                                   <ul className={`${position === 'top' || position === 'bottom' ? 'grid grid-cols-1 gap-0.5' : 'space-y-1'}`}>
@@ -1029,30 +1034,30 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                                           {(position === 'left' || position === 'right') && (
                                             <div className={`absolute left-4 top-3 w-1.5 h-1.5 rounded-full transform -translate-x-1/2 z-10 ${
                                               isChildActive 
-                                                ? colors.primary
-                                                : `${isDarkMode ? 'bg-gray-500' : 'bg-gray-400'}`
-                                            } ${isChildActive ? 'ring-2 ring-white dark:ring-gray-900 scale-125' : ''}`}></div>
+                                                ? (isDarkMode ? "bg-zinc-200" : "bg-zinc-900")
+                                                : `${isDarkMode ? 'bg-zinc-500' : 'bg-zinc-400'}`
+                                            } ${isChildActive ? 'ring-2 ring-white dark:ring-zinc-900 scale-125' : ''}`}></div>
                                           )}
                                           
                                           {(position === 'left' || position === 'right') && isLastChildItem && (
-                                            <div className={`absolute left-4 top-4 bottom-0 w-px ${isDarkMode ? 'bg-gray-900' : 'bg-white'} z-5`}></div>
+                                            <div className={`absolute left-4 top-4 bottom-0 w-px ${isDarkMode ? 'bg-zinc-900' : 'bg-white'} z-5`}></div>
                                           )}
                                           
                                           <button
                                             onClick={() => setActiveItem(childItem.label)}
                                             className={`w-full flex items-center ${position === 'top' || position === 'bottom' ? 'px-3' : 'pl-8 pr-3'} py-2 rounded-lg text-sm transition-colors group ${
                                               isChildActive 
-                                                ? `${colors.primaryBg} ${colors.primaryText} transform scale-[1.02] ${activeBorder} ${colors.primary.replace('bg-', 'border-')}` 
-                                                : `${isDarkMode ? 'text-gray-400 hover:bg-gray-700 hover:text-white' : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'}`
+                                                ? `${isDarkMode ? 'bg-zinc-800 text-zinc-50' : 'bg-zinc-900 text-zinc-50'} ${activeBorder}` 
+                                                : `${isDarkMode ? 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100' : 'text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600'}`
                                             }`}
                                           >
                                             <ChildIcon size={14} className={`mr-3 transition-all duration-200 ${
-                                              isChildActive ? colors.primaryText.replace('text-', '') + ' scale-110' : 'text-gray-400 group-hover:text-gray-500'
+                                              isChildActive ? isDarkMode ? 'text-zinc-50' : 'text-zinc-900' + ' scale-110' : 'text-zinc-400 group-hover:text-zinc-500'
                                             }`} />
                                             <div className="flex items-center justify-between w-full">
                                               <span className="capitalize">{childTranslatedLabel}</span>
                                               {childItem.badge && (
-                                                <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                                                <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
                                                   {childItem.badge}
                                                 </span>
                                               )}
@@ -1077,18 +1082,18 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
         </nav>
 
         {!isCollapsed && position !== 'bottom' && position !== 'top' && (
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className={`p-4 border-t ${isDarkMode ? 'border-zinc-800' : 'border-zinc-200'}`}>
             <div className="flex items-center space-x-3">
-              <div className={`w-10 h-10 ${colors.primary} rounded-full flex items-center justify-center`}>
-                <span className="text-white font-semibold">
+              <div className={`w-9 h-9 bg-zinc-900 dark:bg-zinc-100 rounded-full flex items-center justify-center flex-shrink-0`}>
+                <span className="text-white dark:text-zinc-900 text-sm font-semibold">
                   {userName ? userName.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium truncate ${isDarkMode ? 'text-gray-300' : 'text-gray-900'}`}>
+                <p className={`text-sm font-medium truncate ${isDarkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>
                   {userName || translateText('user')}
                 </p>
-                <p className={`text-xs truncate ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                <p className={`text-xs truncate ${isDarkMode ? 'text-zinc-500' : 'text-zinc-500'}`}>
                   {userEmail || translateText('email')}
                 </p>
               </div>
@@ -1102,7 +1107,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
       <style jsx>{`
         .custom-scrollbar {
           scrollbar-width: thin;
-          scrollbar-color: ${isDarkMode ? '#4B5563 #1F2937' : '#D1D5DB #F9FAFB'};
+          scrollbar-color: ${isDarkMode ? '#3f3f46 #18181b' : '#d4d4d8 #fafafa'};
         }
         
         .custom-scrollbar::-webkit-scrollbar {
@@ -1111,21 +1116,21 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
         }
         
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: ${isDarkMode ? '#1F2937' : '#F9FAFB'};
+          background: ${isDarkMode ? '#18181b' : '#fafafa'};
           border-radius: 1px;
         }
         
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: ${isDarkMode ? '#4B5563' : '#D1D5DB'};
+          background: ${isDarkMode ? '#3f3f46' : '#d4d4d8'};
           border-radius: 1px;
         }
         
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: ${isDarkMode ? '#6B7280' : '#9CA3AF'};
+          background: ${isDarkMode ? '#52525b' : '#a1a1aa'};
         }
         
         .custom-scrollbar::-webkit-scrollbar-corner {
-          background: ${isDarkMode ? '#1F2937' : '#F9FAFB'};
+          background: ${isDarkMode ? '#18181b' : '#fafafa'};
         }
         
         .custom-scrollbar.horizontal-thin::-webkit-scrollbar {
@@ -1133,12 +1138,12 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
         }
         
         .custom-scrollbar.horizontal-thin::-webkit-scrollbar-track {
-          background: ${isDarkMode ? '#1F2937' : '#F9FAFB'};
+          background: ${isDarkMode ? '#18181b' : '#fafafa'};
           border-radius: 1.5px;
         }
         
         .custom-scrollbar.horizontal-thin::-webkit-scrollbar-thumb {
-          background: ${isDarkMode ? '#4B5563' : '#D1D5DB'};
+          background: ${isDarkMode ? '#3f3f46' : '#d4d4d8'};
           border-radius: 1.5px;
         }
         

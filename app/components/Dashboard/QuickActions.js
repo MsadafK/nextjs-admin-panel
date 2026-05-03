@@ -1,70 +1,47 @@
 'use client';
 
-import { Plus, Users, FileText, Settings, Mail, Calendar } from 'lucide-react';
+import { Plus, Users, FileText, Mail, Calendar } from 'lucide-react';
 
 const actions = [
-  {
-    title: 'Add New User',
-    description: 'Create a new user account',
-    icon: Users,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
-    hoverColor: 'hover:bg-blue-50'
-  },
-  {
-    title: 'Generate Report',
-    description: 'Create analytics report',
-    icon: FileText,
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
-    hoverColor: 'hover:bg-green-50'
-  },
-  {
-    title: 'Send Message',
-    description: 'Broadcast to all users',
-    icon: Mail,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-100',
-    hoverColor: 'hover:bg-purple-50'
-  },
-  {
-    title: 'Schedule Event',
-    description: 'Add to calendar',
-    icon: Calendar,
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-100',
-    hoverColor: 'hover:bg-orange-50'
-  }
+  { title: 'Add New User',    description: 'Create a new user account', icon: Users    },
+  { title: 'Generate Report', description: 'Create analytics report',   icon: FileText },
+  { title: 'Send Message',    description: 'Broadcast to all users',    icon: Mail     },
+  { title: 'Schedule Event',  description: 'Add to calendar',           icon: Calendar },
 ];
 
 export default function QuickActions() {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
-          <Plus className="w-5 h-5 text-gray-400" />
-        </div>
+    <div className="bg-card border border-border rounded-lg shadow-card flex flex-col">
+      {/* Header */}
+      <div className="px-5 py-4 border-b border-border flex items-center justify-between flex-shrink-0">
+        <h3 className="text-sm font-semibold text-foreground">Quick Actions</h3>
+        <Plus className="w-4 h-4 text-muted-foreground" />
       </div>
-      <div className="p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      {/* Grid */}
+      <div className="p-4 sm:p-5 flex-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
           {actions.map((action, index) => {
             const Icon = action.icon;
-            
             return (
               <button
                 key={index}
-                className={`p-4 rounded-lg border border-gray-200 ${action.hoverColor} transition-colors text-left group`}
+                className="group p-4 rounded-lg text-left border border-border
+                  bg-background hover:bg-muted transition-colors duration-150"
               >
-                <div className="flex items-start space-x-3">
-                  <div className={`p-2 rounded-lg ${action.bgColor} group-hover:scale-110 transition-transform`}>
-                    <Icon className={`w-5 h-5 ${action.color}`} />
+                <div className="flex items-start gap-3">
+                  {/* Monochrome icon chip */}
+                  <div className="p-2 rounded-md bg-muted flex-shrink-0
+                    group-hover:bg-background transition-colors duration-150">
+                    <Icon className="w-4 h-4 text-muted-foreground" strokeWidth={1.75} />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium text-gray-900 group-hover:text-gray-700">
+
+                  {/* Text */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground">
                       {action.title}
-                    </h4>
-                    <p className="text-xs text-gray-500 mt-1">
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
                       {action.description}
                     </p>
                   </div>

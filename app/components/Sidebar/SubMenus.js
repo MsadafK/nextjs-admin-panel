@@ -1,8 +1,9 @@
-// SubMenu.jsx
-import React from "react";
-import { ChevronRight } from "lucide-react";
+import React from 'react';
+import { ChevronRight } from 'lucide-react';
 
 const SubMenu = ({ items, setActiveItem, t, isDark, isDarkMode, position }) => {
+  const dark = isDark || isDarkMode;
+
   return (
     <div className="py-1">
       {items.map((subItem) => {
@@ -12,23 +13,23 @@ const SubMenu = ({ items, setActiveItem, t, isDark, isDarkMode, position }) => {
           <div key={subItem.label} className="relative group/submenu">
             <button
               onClick={() => setActiveItem(subItem.label)}
-              className={`w-full flex items-center px-3 py-2 text-sm ${
-                isDark || isDarkMode
-                  ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              } transition-colors`}
+              className={`w-full flex items-center px-3 py-2 text-sm transition-colors ${
+                dark
+                  ? 'text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100'
+                  : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+              }`}
             >
-              <SubIcon size={16} className="mr-3 text-gray-400" />
-              <span className="flex-1 text-left">
+              <SubIcon size={15} className={`mr-3 ${dark ? 'text-zinc-500' : 'text-zinc-400'}`} />
+              <span className="flex-1 text-left capitalize">
                 {t ? t(subItem.label) : subItem.label}
               </span>
               {subItem.badge && (
-                <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">
+                <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
                   {subItem.badge}
                 </span>
               )}
               {subItem.childItems && (
-                <ChevronRight size={14} className="ml-2 text-gray-400" />
+                <ChevronRight size={13} className={`ml-2 ${dark ? 'text-zinc-500' : 'text-zinc-400'}`} />
               )}
             </button>
 
@@ -36,23 +37,19 @@ const SubMenu = ({ items, setActiveItem, t, isDark, isDarkMode, position }) => {
             {subItem.childItems && (
               <div
                 className={`absolute ${
-                  position === "right" ? "right-full mr-1" : "left-full ml-1"
-                } top-0 ${
-                  isDark || isDarkMode
-                    ? "bg-gray-800 border-gray-700"
-                    : "bg-white border-gray-200"
-                } border rounded-lg shadow-xl min-w-[200px] py-2 opacity-0 invisible group-hover/submenu:opacity-100 group-hover/submenu:visible transition-all duration-200 z-10`}
+                  position === 'right' ? 'right-full mr-1' : 'left-full ml-1'
+                } top-0 border rounded-lg shadow-dropdown min-w-[200px] py-1
+                  opacity-0 invisible group-hover/submenu:opacity-100 group-hover/submenu:visible
+                  transition-all duration-150 z-10 ${
+                  dark
+                    ? 'bg-zinc-900 border-zinc-800'
+                    : 'bg-white border-zinc-200'
+                }`}
               >
-                <div
-                  className={`px-3 py-2 border-b ${
-                    isDark || isDarkMode ? "border-gray-700" : "border-gray-200"
-                  } mb-1`}
-                >
-                  <span
-                    className={`text-xs font-medium ${
-                      isDark || isDarkMode ? "text-gray-400" : "text-gray-500"
-                    } uppercase tracking-wide`}
-                  >
+                <div className={`px-3 py-2 border-b mb-1 ${dark ? 'border-zinc-800' : 'border-zinc-200'}`}>
+                  <span className={`text-xs font-semibold uppercase tracking-wide ${
+                    dark ? 'text-zinc-500' : 'text-zinc-400'
+                  }`}>
                     {t ? t(subItem.label) : subItem.label}
                   </span>
                 </div>
@@ -63,18 +60,18 @@ const SubMenu = ({ items, setActiveItem, t, isDark, isDarkMode, position }) => {
                     <button
                       key={childItem.label}
                       onClick={() => setActiveItem(childItem.label)}
-                      className={`w-full flex items-center px-3 py-2 text-sm ${
-                        isDark || isDarkMode
-                          ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                      } transition-colors`}
+                      className={`w-full flex items-center px-3 py-2 text-sm transition-colors ${
+                        dark
+                          ? 'text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100'
+                          : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
+                      }`}
                     >
-                      <ChildIcon size={14} className="mr-3 text-gray-400" />
-                      <span className="text-left">
+                      <ChildIcon size={13} className={`mr-3 ${dark ? 'text-zinc-500' : 'text-zinc-400'}`} />
+                      <span className="text-left capitalize">
                         {t ? t(childItem.label) : childItem.label}
                       </span>
                       {childItem.badge && (
-                        <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">
+                        <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
                           {childItem.badge}
                         </span>
                       )}

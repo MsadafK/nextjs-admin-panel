@@ -3,25 +3,25 @@
 import DashboardStats from './components/Dashboard/DashboardStats';
 import RecentActivity from './components/Dashboard/RecentActivity';
 import QuickActions from './components/Dashboard/QuickActions';
-import { useTheme } from './contexts/ThemeContext';
 
 export default function Dashboard() {
-  const { isDark } = useTheme();
-
   return (
     <div className="p-6">
+      {/* Page header */}
       <div className="mb-8">
-        <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
           Dashboard
         </h1>
-        <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-          Welcome back! Here's what's happening with your business today.
+        <p className="text-sm text-muted-foreground mt-1">
+          Welcome back! Here&apos;s what&apos;s happening with your business today.
         </p>
       </div>
 
+      {/* Stats row */}
       <DashboardStats />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      {/* Bottom grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentActivity />
         <QuickActions />
       </div>
