@@ -918,9 +918,9 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                        size={ICON_SIZE} 
                        strokeWidth={2}
                        className={`flex-shrink-0 ${isCollapsed ? 'mx-auto' : 'mr-3'} ${
-                         isActive ? isDarkMode ? 'text-zinc-50' : 'text-zinc-900' 
-                         : isInPath ? isDarkMode ? 'text-zinc-50' : 'text-zinc-900'.replace('600', '500')
-                         : `${isDarkMode ? 'text-zinc-400 group-hover:text-zinc-100' : 'text-zinc-400 group-hover:text-zinc-700'}`
+                         isActive ? 'text-zinc-50'
+                         : isInPath ? (isDarkMode ? 'text-zinc-200' : 'text-zinc-700')
+                         : (isDarkMode ? 'text-zinc-400 group-hover:text-zinc-100' : 'text-zinc-400 group-hover:text-zinc-700')
                        }`} 
                        style={{ width: '20px', height: '20px', minWidth: '20px', minHeight: '20px' }}
                      />
@@ -994,8 +994,8 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                                 }`}
                               >
                                 <SubIcon size={16} className={`mr-3 ${
-                                  isSubActive ? isDarkMode ? 'text-zinc-50' : 'text-zinc-900' 
-                                  : isSubInPath ? isDarkMode ? 'text-zinc-50' : 'text-zinc-900'.replace('600', '500')
+                                  isSubActive ? 'text-zinc-50'
+                                  : isSubInPath ? (isDarkMode ? 'text-zinc-200' : 'text-zinc-700')
                                   : 'text-zinc-400 group-hover:text-zinc-500'
                                 }`} />
                                 <div className="flex items-center justify-between w-full">
@@ -1052,7 +1052,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                                             }`}
                                           >
                                             <ChildIcon size={14} className={`mr-3 transition-all duration-200 ${
-                                              isChildActive ? isDarkMode ? 'text-zinc-50' : 'text-zinc-900' + ' scale-110' : 'text-zinc-400 group-hover:text-zinc-500'
+                                              isChildActive ? 'text-zinc-50 scale-110' : 'text-zinc-400 group-hover:text-zinc-500'
                                             }`} />
                                             <div className="flex items-center justify-between w-full">
                                               <span className="capitalize">{childTranslatedLabel}</span>

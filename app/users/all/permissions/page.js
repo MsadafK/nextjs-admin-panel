@@ -1,521 +1,384 @@
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  Shield, 
-  Lock, 
-  Key,
-  Users,
-  Search,
-  Filter,
-  ChevronDown,
-  Edit,
-  Trash2,
-  Plus,
-  Check,
-  X,
-  AlertTriangle,
-  Crown,
-  User,
-  Settings,
-  FileText,
-  Mail,
-  Calendar,
-  BarChart3,
-  Database,
-  Eye,
-  EyeOff,
-  Save,
-  RotateCcw
+import { useState } from 'react';
+import {
+  Shield, Search, ChevronDown, Plus,
+  Edit, Eye, Crown, Users, Settings,
+  FileText, BarChart3, Database,
+  RotateCcw, Save, User
 } from 'lucide-react';
-import { useTheme } from '../../../contexts/ThemeContext';
+import { staff, roles as mockRoles } from '../../../data/mockData';
+
+/* ── Permission categories ── */
+const PERMISSION_CATEGORIES = [
+  {
+    name: 'Dashboard', icon: BarChart3,
+    permissions: [
+      { id: 'dash_view',   name: 'View Dashboard',  description: 'Access to main dashboard'   },
+      { id: 'dash_edit',   name: 'Edit Widgets',    description: 'Modify dashboard widgets'   },
+      { id: 'dash_export', name: 'Export Data',     description: 'Export dashboard data'      },
+    ],
+  },
+  {
+    name: 'Users Management', icon: Users,
+    permissions: [
+      { id: 'user_view',   name: 'View Users',    description: 'View user list and profiles' },
+      { id: 'user_create', name: 'Create Users',  description: 'Add new users to system'     },
+      { id: 'user_edit',   name: 'Edit Users',    description: 'Modify user information'     },
+      { id: 'user_delete', name: 'Delete Users',  description: 'Remove users from system'    },
+    ],
+  },
+  {
+    name: 'Products', icon: FileText,
+    permissions: [
+      { id: 'prod_view',   name: 'View Products',   description: 'Access product catalog'    },
+      { id: 'prod_create', name: 'Add Products',    description: 'Add new products'          },
+      { id: 'prod_edit',   name: 'Edit Products',   description: 'Modify product details'    },
+      { id: 'prod_delete', name: 'Delete Products', description: 'Remove products'           },
+    ],
+  },
+  {
+    name: 'Reports', icon: BarChart3,
+    permissions: [
+      { id: 'report_view',   name: 'View Reports',   description: 'Access all reports'       },
+      { id: 'report_create', name: 'Create Reports', description: 'Generate new reports'     },
+      { id: 'report_export', name: 'Export Reports', description: 'Download report data'     },
+    ],
+  },
+  {
+    name: 'Settings', icon: Settings,
+    permissions: [
+      { id: 'settings_view',     name: 'View Settings',     description: 'Access system settings'  },
+      { id: 'settings_edit',     name: 'Edit Settings',     description: 'Modify system settings'  },
+      { id: 'settings_security', name: 'Security Settings', description: 'Manage security options' },
+    ],
+  },
+  {
+    name: 'Database', icon: Database,
+    permissions: [
+      { id: 'db_view',    name: 'View Database',    description: 'Access database records'  },
+      { id: 'db_backup',  name: 'Backup Database',  description: 'Create database backups'  },
+      { id: 'db_restore', name: 'Restore Database', description: 'Restore from backups'     },
+    ],
+  },
+];
+
+const ALL_PERMISSIONS = PERMISSION_CATEGORIES.flatMap(c => c.permissions.map(p => p.id));
+
+/* ── Build users from mockData staff ── */
+const USERS = staff.map(s => ({
+  id:          s.id,
+  name:        s.name,
+  email:       s.email,
+  role:        s.role,
+  avatar:      s.avatar,
+  lastActive:  s.lastLogin,
+  permissions: s.permissions.includes('all') ? ALL_PERMISSIONS : s.permissions,
+}));
+
+/* ── Role badge tokens ── */
+const ROLE_STYLES = {
+  Admin:   'bg-zinc-900 text-zinc-50 border-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:border-zinc-200',
+  Manager: 'bg-zinc-200 text-zinc-700 border-zinc-300 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600',
+  Staff:   'bg-zinc-100 text-zinc-500 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
+};
+
+const ROLE_ICONS = { Admin: Crown, Manager: Shield, Staff: User };
+
+const inputCls = `w-full px-3 py-2 text-sm bg-background border border-border rounded-md
+  text-foreground placeholder:text-muted-foreground
+  focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors`;
 
 export default function UserPermissionsPage() {
-  const { isDark } = useTheme();
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all');
-  const [showAddModal, setShowAddModal] = useState(false);
-
-  // Permission categories
-  const permissionCategories = [
-    {
-      name: 'Dashboard',
-      icon: BarChart3,
-      permissions: [
-        { id: 'dash_view', name: 'View Dashboard', description: 'Access to main dashboard' },
-        { id: 'dash_edit', name: 'Edit Widgets', description: 'Modify dashboard widgets' },
-        { id: 'dash_export', name: 'Export Data', description: 'Export dashboard data' }
-      ]
-    },
-    {
-      name: 'Users Management',
-      icon: Users,
-      permissions: [
-        { id: 'user_view', name: 'View Users', description: 'View user list and profiles' },
-        { id: 'user_create', name: 'Create Users', description: 'Add new users to system' },
-        { id: 'user_edit', name: 'Edit Users', description: 'Modify user information' },
-        { id: 'user_delete', name: 'Delete Users', description: 'Remove users from system' }
-      ]
-    },
-    {
-      name: 'Content',
-      icon: FileText,
-      permissions: [
-        { id: 'content_view', name: 'View Content', description: 'Access all content' },
-        { id: 'content_create', name: 'Create Content', description: 'Add new content' },
-        { id: 'content_edit', name: 'Edit Content', description: 'Modify existing content' },
-        { id: 'content_publish', name: 'Publish Content', description: 'Publish content to live' },
-        { id: 'content_delete', name: 'Delete Content', description: 'Remove content' }
-      ]
-    },
-    {
-      name: 'Reports',
-      icon: BarChart3,
-      permissions: [
-        { id: 'report_view', name: 'View Reports', description: 'Access all reports' },
-        { id: 'report_create', name: 'Create Reports', description: 'Generate new reports' },
-        { id: 'report_export', name: 'Export Reports', description: 'Download report data' }
-      ]
-    },
-    {
-      name: 'Settings',
-      icon: Settings,
-      permissions: [
-        { id: 'settings_view', name: 'View Settings', description: 'Access system settings' },
-        { id: 'settings_edit', name: 'Edit Settings', description: 'Modify system settings' },
-        { id: 'settings_security', name: 'Security Settings', description: 'Manage security options' }
-      ]
-    },
-    {
-      name: 'Database',
-      icon: Database,
-      permissions: [
-        { id: 'db_view', name: 'View Database', description: 'Access database records' },
-        { id: 'db_backup', name: 'Backup Database', description: 'Create database backups' },
-        { id: 'db_restore', name: 'Restore Database', description: 'Restore from backups' }
-      ]
-    }
-  ];
-
-  // Mock users data with roles
-  const users = [
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john@example.com',
-      role: 'Admin',
-      avatar: 'JD',
-      permissions: ['dash_view', 'dash_edit', 'dash_export', 'user_view', 'user_create', 'user_edit', 'user_delete', 'content_view', 'content_create', 'content_edit', 'content_publish', 'content_delete', 'report_view', 'report_create', 'report_export', 'settings_view', 'settings_edit', 'settings_security', 'db_view', 'db_backup', 'db_restore'],
-      lastActive: '2 hours ago',
-      status: 'active'
-    },
-    {
-      id: 2,
-      name: 'Sarah Smith',
-      email: 'sarah@example.com',
-      role: 'Editor',
-      avatar: 'SS',
-      permissions: ['dash_view', 'content_view', 'content_create', 'content_edit', 'content_publish', 'report_view'],
-      lastActive: '5 minutes ago',
-      status: 'active'
-    },
-    {
-      id: 3,
-      name: 'Mike Johnson',
-      email: 'mike@example.com',
-      role: 'Viewer',
-      avatar: 'MJ',
-      permissions: ['dash_view', 'content_view', 'report_view'],
-      lastActive: '1 day ago',
-      status: 'inactive'
-    },
-    {
-      id: 4,
-      name: 'Emily Davis',
-      email: 'emily@example.com',
-      role: 'Manager',
-      avatar: 'ED',
-      permissions: ['dash_view', 'dash_edit', 'user_view', 'user_edit', 'content_view', 'content_create', 'content_edit', 'report_view', 'report_create', 'report_export'],
-      lastActive: '30 minutes ago',
-      status: 'active'
-    },
-    {
-      id: 5,
-      name: 'David Wilson',
-      email: 'david@example.com',
-      role: 'Editor',
-      avatar: 'DW',
-      permissions: ['dash_view', 'content_view', 'content_create', 'content_edit'],
-      lastActive: '3 hours ago',
-      status: 'active'
-    }
-  ];
-
-  // Role definitions
-  const roles = [
-    { 
-      name: 'Admin', 
-      color: 'bg-red-100 text-red-700 border-red-200',
-      icon: Crown,
-      count: users.filter(u => u.role === 'Admin').length
-    },
-    { 
-      name: 'Manager', 
-      color: 'bg-purple-100 text-purple-700 border-purple-200',
-      icon: Shield,
-      count: users.filter(u => u.role === 'Manager').length
-    },
-    { 
-      name: 'Editor', 
-      color: 'bg-blue-100 text-blue-700 border-blue-200',
-      icon: Edit,
-      count: users.filter(u => u.role === 'Editor').length
-    },
-    { 
-      name: 'Viewer', 
-      color: 'bg-gray-100 text-gray-700 border-gray-200',
-      icon: Eye,
-      count: users.filter(u => u.role === 'Viewer').length
-    }
-  ];
-
-  const [userPermissions, setUserPermissions] = useState(
-    users.reduce((acc, user) => {
-      acc[user.id] = user.permissions;
-      return acc;
-    }, {})
+  const [selectedUser, setSelectedUser]     = useState(null);
+  const [searchQuery, setSearchQuery]       = useState('');
+  const [roleFilter, setRoleFilter]         = useState('all');
+  const [userPerms, setUserPerms]           = useState(
+    USERS.reduce((acc, u) => { acc[u.id] = [...u.permissions]; return acc; }, {})
   );
 
-  const togglePermission = (userId, permissionId) => {
-    setUserPermissions(prev => ({
+  const togglePerm = (userId, permId) => {
+    setUserPerms(prev => ({
       ...prev,
-      [userId]: prev[userId].includes(permissionId)
-        ? prev[userId].filter(p => p !== permissionId)
-        : [...prev[userId], permissionId]
+      [userId]: prev[userId].includes(permId)
+        ? prev[userId].filter(p => p !== permId)
+        : [...prev[userId], permId],
     }));
   };
 
-  const hasPermission = (userId, permissionId) => {
-    return userPermissions[userId]?.includes(permissionId) || false;
+  const hasPerm = (userId, permId) => userPerms[userId]?.includes(permId) ?? false;
+
+  const getStats = (userId) => {
+    const total   = ALL_PERMISSIONS.length;
+    const granted = userPerms[userId]?.length ?? 0;
+    return { total, granted, pct: Math.round((granted / total) * 100) };
   };
 
-  const getPermissionStats = (userId) => {
-    const totalPermissions = permissionCategories.reduce((acc, cat) => acc + cat.permissions.length, 0);
-    const userPerms = userPermissions[userId]?.length || 0;
-    return {
-      total: totalPermissions,
-      granted: userPerms,
-      percentage: Math.round((userPerms / totalPermissions) * 100)
-    };
-  };
+  const roleCounts = ['Admin', 'Manager', 'Staff'].map(r => ({
+    role:  r,
+    count: USERS.filter(u => u.role === r).length,
+    icon:  ROLE_ICONS[r] ?? User,
+  }));
+
+  const filteredUsers = USERS.filter(u =>
+    (roleFilter === 'all' || u.role === roleFilter) &&
+    (u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     u.email.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   return (
-    <div className={`p-6 min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              User Permissions
-            </h1>
-            <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
-              Manage user access and permissions across the system
+    <div className="p-4 sm:p-6 space-y-5">
+
+      {/* ── Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
+            <span>Users</span>
+            <ChevronDown size={12} className="-rotate-90" />
+            <span>All Users</span>
+            <ChevronDown size={12} className="-rotate-90" />
+            <span className="text-foreground font-medium">Permissions</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
+            User Permissions
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Manage staff access and permissions across NexStore
+          </p>
+        </div>
+        <button className="self-start sm:self-auto flex items-center gap-2 px-3 py-2 text-sm
+          font-medium bg-foreground text-background rounded-md hover:opacity-80 transition-opacity">
+          <Plus size={14} />
+          Add Role
+        </button>
+      </div>
+
+      {/* ── Role overview cards ── */}
+      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+        {roleCounts.map(({ role, count, icon: Icon }) => (
+          <div key={role} className="bg-card border border-border rounded-lg p-4 sm:p-5 shadow-card">
+            <div className="flex items-center justify-between mb-3">
+              <div className="p-2 rounded-md bg-muted">
+                <Icon size={15} className="text-muted-foreground" strokeWidth={1.75} />
+              </div>
+              <span className="text-2xl font-semibold text-foreground">{count}</span>
+            </div>
+            <p className="text-sm font-medium text-foreground">{role}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {count} {count === 1 ? 'member' : 'members'}
             </p>
           </div>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            <Plus size={20} />
-            <span>Add Role</span>
-          </button>
-        </div>
-
-        {/* Breadcrumb */}
-        <div className={`flex items-center space-x-2 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-          <span>Users</span>
-          <ChevronDown size={16} className="rotate-[-90deg]" />
-          <span>All Users</span>
-          <ChevronDown size={16} className="rotate-[-90deg]" />
-          <span className="text-blue-600 font-medium">User Permissions</span>
-        </div>
+        ))}
       </div>
 
-      {/* Roles Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {roles.map((role, index) => {
-          const RoleIcon = role.icon;
-          return (
-            <div key={index} className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl p-6 shadow-sm border`}>
-              <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-lg border ${role.color}`}>
-                  <RoleIcon size={24} />
-                </div>
-                <span className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  {role.count}
-                </span>
-              </div>
-              <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{role.name}</h3>
-              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                {role.count} {role.count === 1 ? 'user' : 'users'}
-              </p>
-            </div>
-          );
-        })}
-      </div>
+      {/* ── Main panel ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Users List */}
-        <div className={`lg:col-span-1 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-sm border`}>
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>Users</h2>
-            
-            {/* Search */}
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+        {/* Users list */}
+        <div className="lg:col-span-1 bg-card border border-border rounded-lg shadow-card flex flex-col">
+          {/* List header */}
+          <div className="px-4 py-4 border-b border-border space-y-3">
+            <h2 className="text-sm font-semibold text-foreground">Staff Members</h2>
+            <div className="relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search users..."
+                placeholder="Search staff…"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200'
-                }`}
+                onChange={e => setSearchQuery(e.target.value)}
+                className={`${inputCls} pl-8`}
               />
             </div>
-
-            {/* Role Filter */}
             <select
               value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200'
-              }`}
+              onChange={e => setRoleFilter(e.target.value)}
+              className={inputCls}
             >
               <option value="all">All Roles</option>
               <option value="Admin">Admin</option>
               <option value="Manager">Manager</option>
-              <option value="Editor">Editor</option>
-              <option value="Viewer">Viewer</option>
+              <option value="Staff">Staff</option>
             </select>
           </div>
 
-          {/* Users List */}
-          <div className="divide-y divide-gray-200 dark:divide-gray-700 max-h-[600px] overflow-y-auto">
-            {users
-              .filter(user => roleFilter === 'all' || user.role === roleFilter)
-              .filter(user => 
-                user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.email.toLowerCase().includes(searchQuery.toLowerCase())
-              )
-              .map((user) => {
-                const stats = getPermissionStats(user.id);
-                const roleInfo = roles.find(r => r.name === user.role);
-                return (
-                  <button
-                    key={user.id}
-                    onClick={() => setSelectedUser(user)}
-                    className={`w-full p-4 text-left transition-colors ${
-                      selectedUser?.id === user.id 
-                        ? 'bg-blue-50 dark:bg-blue-900/20' 
-                        : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-white font-semibold text-sm">{user.avatar}</span>
+          {/* User rows */}
+          <div className="divide-y divide-border overflow-y-auto max-h-[520px] no-scrollbar">
+            {filteredUsers.map(user => {
+              const s       = getStats(user.id);
+              const isActive = selectedUser?.id === user.id;
+              return (
+                <button
+                  key={user.id}
+                  onClick={() => setSelectedUser(user)}
+                  className={`w-full p-4 text-left transition-colors ${
+                    isActive ? 'bg-muted' : 'hover:bg-muted/50'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-foreground flex items-center
+                      justify-center text-background text-xs font-semibold flex-shrink-0">
+                      {user.avatar}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1 mb-0.5">
+                        <p className="text-sm font-medium text-foreground truncate">{user.name}</p>
+                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs
+                          font-medium border flex-shrink-0 ${ROLE_STYLES[user.role] ?? ROLE_STYLES.Staff}`}>
+                          {user.role}
+                        </span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <h3 className={`font-semibold truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                            {user.name}
-                          </h3>
-                          <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${roleInfo?.color}`}>
-                            {user.role}
-                          </span>
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                      <div className="mt-2">
+                        <div className="flex items-center justify-between text-xs mb-1">
+                          <span className="text-muted-foreground">Permissions</span>
+                          <span className="font-medium text-foreground">{s.granted}/{s.total}</span>
                         </div>
-                        <p className={`text-sm truncate ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {user.email}
-                        </p>
-                        <div className="mt-2">
-                          <div className="flex items-center justify-between text-xs mb-1">
-                            <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>
-                              Permissions
-                            </span>
-                            <span className={`font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                              {stats.granted}/{stats.total}
-                            </span>
-                          </div>
-                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-                            <div 
-                              className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
-                              style={{ width: `${stats.percentage}%` }}
-                            />
-                          </div>
+                        <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-foreground rounded-full transition-all duration-300"
+                            style={{ width: `${s.pct}%` }}
+                          />
                         </div>
                       </div>
                     </div>
-                  </button>
-                );
-              })}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Permissions Panel */}
-        <div className={`lg:col-span-2 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-sm border`}>
+        {/* Permissions panel */}
+        <div className="lg:col-span-2 bg-card border border-border rounded-lg shadow-card flex flex-col">
           {selectedUser ? (
             <>
-              {/* Selected User Header */}
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold text-xl">{selectedUser.avatar}</span>
+              {/* Selected user header */}
+              <div className="px-5 py-4 border-b border-border">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-foreground flex items-center
+                      justify-center text-background text-sm font-semibold flex-shrink-0">
+                      {selectedUser.avatar}
                     </div>
                     <div>
-                      <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        {selectedUser.name}
-                      </h2>
-                      <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
-                        {selectedUser.email}
-                      </p>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${
-                          roles.find(r => r.name === selectedUser.role)?.color
-                        }`}>
+                      <h2 className="text-base font-semibold text-foreground">{selectedUser.name}</h2>
+                      <p className="text-xs text-muted-foreground">{selectedUser.email}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs
+                          font-medium border ${ROLE_STYLES[selectedUser.role] ?? ROLE_STYLES.Staff}`}>
                           {selectedUser.role}
                         </span>
-                        <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                          Last active: {selectedUser.lastActive}
+                        <span className="text-xs text-muted-foreground">
+                          Active {selectedUser.lastActive}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <button className={`p-2 rounded-lg transition-colors ${
-                      isDark ? 'hover:bg-gray-700 text-gray-400' : 'hover:bg-gray-100 text-gray-600'
-                    }`}>
-                      <RotateCcw size={20} />
+                  <div className="flex items-center gap-2">
+                    <button className="p-2 rounded-md text-muted-foreground hover:bg-muted
+                      hover:text-foreground transition-colors" title="Reset permissions">
+                      <RotateCcw size={14} />
                     </button>
-                    <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                      <Save size={20} />
-                      <span>Save Changes</span>
+                    <button className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium
+                      bg-foreground text-background rounded-md hover:opacity-80 transition-opacity">
+                      <Save size={14} />
+                      Save
                     </button>
                   </div>
                 </div>
 
-                {/* Permission Stats */}
-                <div className="grid grid-cols-3 gap-4">
-                  {(() => {
-                    const stats = getPermissionStats(selectedUser.id);
-                    return (
-                      <>
-                        <div className={`p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Total Permissions
-                          </p>
-                          <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                            {stats.total}
-                          </p>
+                {/* Stats row */}
+                {(() => {
+                  const s = getStats(selectedUser.id);
+                  return (
+                    <div className="grid grid-cols-3 gap-3 mt-4">
+                      {[
+                        { label: 'Total',       value: s.total   },
+                        { label: 'Granted',     value: s.granted },
+                        { label: 'Access Level',value: `${s.pct}%` },
+                      ].map(item => (
+                        <div key={item.label} className="bg-muted/50 rounded-lg p-3">
+                          <p className="text-xs text-muted-foreground">{item.label}</p>
+                          <p className="text-xl font-semibold text-foreground mt-0.5">{item.value}</p>
                         </div>
-                        <div className={`p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Granted
-                          </p>
-                          <p className="text-2xl font-bold text-green-600">
-                            {stats.granted}
-                          </p>
-                        </div>
-                        <div className={`p-4 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                            Access Level
-                          </p>
-                          <p className="text-2xl font-bold text-blue-600">
-                            {stats.percentage}%
-                          </p>
-                        </div>
-                      </>
-                    );
-                  })()}
-                </div>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
 
-              {/* Permissions List */}
-              <div className="p-6 max-h-[600px] overflow-y-auto">
-                <div className="space-y-6">
-                  {permissionCategories.map((category) => {
-                    const CategoryIcon = category.icon;
-                    const grantedInCategory = category.permissions.filter(p => 
-                      hasPermission(selectedUser.id, p.id)
-                    ).length;
-                    
-                    return (
-                      <div key={category.name} className={`border rounded-lg ${
-                        isDark ? 'border-gray-700' : 'border-gray-200'
-                      }`}>
-                        <div className={`p-4 border-b ${
-                          isDark ? 'border-gray-700 bg-gray-700/50' : 'border-gray-200 bg-gray-50'
-                        }`}>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                              <CategoryIcon className="text-blue-600" size={20} />
-                              <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                {category.name}
-                              </h3>
-                            </div>
-                            <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                              {grantedInCategory}/{category.permissions.length} granted
-                            </span>
-                          </div>
+              {/* Permissions list */}
+              <div className="p-5 overflow-y-auto max-h-[480px] no-scrollbar space-y-4">
+                {PERMISSION_CATEGORIES.map(category => {
+                  const CatIcon      = category.icon;
+                  const grantedCount = category.permissions.filter(p =>
+                    hasPerm(selectedUser.id, p.id)
+                  ).length;
+
+                  return (
+                    <div key={category.name} className="border border-border rounded-lg overflow-hidden">
+                      {/* Category header */}
+                      <div className="px-4 py-3 bg-muted/40 border-b border-border
+                        flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <CatIcon size={14} className="text-muted-foreground" />
+                          <span className="text-sm font-medium text-foreground">{category.name}</span>
                         </div>
-                        <div className="p-4 space-y-3">
-                          {category.permissions.map((permission) => {
-                            const isGranted = hasPermission(selectedUser.id, permission.id);
-                            return (
-                              <div key={permission.id} className="flex items-center justify-between">
-                                <div className="flex-1">
-                                  <h4 className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                    {permission.name}
-                                  </h4>
-                                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                                    {permission.description}
-                                  </p>
-                                </div>
-                                <button
-                                  onClick={() => togglePermission(selectedUser.id, permission.id)}
-                                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                                    isGranted ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-                                  }`}
-                                >
-                                  <span
-                                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                      isGranted ? 'translate-x-6' : 'translate-x-1'
-                                    }`}
-                                  />
-                                </button>
-                              </div>
-                            );
-                          })}
-                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {grantedCount}/{category.permissions.length} granted
+                        </span>
                       </div>
-                    );
-                  })}
-                </div>
+
+                      {/* Permission rows */}
+                      <div className="divide-y divide-border">
+                        {category.permissions.map(perm => {
+                          const isGranted = hasPerm(selectedUser.id, perm.id);
+                          return (
+                            <div key={perm.id}
+                              className="px-4 py-3 flex items-center justify-between gap-4">
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium text-foreground">{perm.name}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5">{perm.description}</p>
+                              </div>
+                              {/* Toggle */}
+                              <button
+                                onClick={() => togglePerm(selectedUser.id, perm.id)}
+                                className={`relative inline-flex h-5 w-9 flex-shrink-0 items-center
+                                  rounded-full transition-colors focus:outline-none ${
+                                  isGranted
+                                    ? 'bg-foreground'
+                                    : 'bg-zinc-300 dark:bg-zinc-700'
+                                }`}
+                              >
+                                <span className={`inline-block h-3.5 w-3.5 transform rounded-full
+                                  bg-white shadow transition-transform ${
+                                  isGranted ? 'translate-x-[18px]' : 'translate-x-[3px]'
+                                }`} />
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </>
           ) : (
-            <div className="flex items-center justify-center h-full p-12">
-              <div className="text-center">
-                <Shield className={`mx-auto mb-4 ${isDark ? 'text-gray-600' : 'text-gray-400'}`} size={64} />
-                <h3 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                  Select a User
-                </h3>
-                <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
-                  Choose a user from the list to view and manage their permissions
-                </p>
+            /* Empty state */
+            <div className="flex-1 flex flex-col items-center justify-center p-12 text-center">
+              <div className="p-4 rounded-full bg-muted mb-4">
+                <Shield size={28} className="text-muted-foreground" />
               </div>
+              <h3 className="text-sm font-semibold text-foreground mb-1">Select a Staff Member</h3>
+              <p className="text-xs text-muted-foreground max-w-xs">
+                Choose a staff member from the list to view and manage their permissions
+              </p>
             </div>
           )}
         </div>
       </div>
+
     </div>
   );
 }

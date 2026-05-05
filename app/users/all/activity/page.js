@@ -1,254 +1,146 @@
 'use client';
 
-import React, { useState } from 'react';
-import { 
-  Activity, 
-  TrendingUp, 
-  Clock, 
-  Calendar,
-  Filter,
-  Download,
-  Search,
-  User,
-  Mail,
-  FileText,
-  LogIn,
-  LogOut,
-  Edit,
-  Trash2,
-  Eye,
-  MessageSquare,
-  Settings,
-  ChevronDown,
-  BarChart3,
-  Users,
-  ArrowUp,
-  ArrowDown,
-  Minus
+import { useState } from 'react';
+import {
+  Activity, TrendingUp, Clock, Filter, Download, Search,
+  User, FileText, LogIn, LogOut, Edit, Trash2, Eye,
+  MessageSquare, Settings, ChevronDown, BarChart3, Users,
+  ArrowUp, ArrowDown, Minus, X
 } from 'lucide-react';
-import { useTheme } from '../../../contexts/ThemeContext';
+import { auditLogs, summaryStats } from '../../../data/mockData';
+
+/* ── Activity type → icon + label ── */
+const TYPE_META = {
+  login:    { icon: LogIn,        label: 'Login'    },
+  logout:   { icon: LogOut,       label: 'Logout'   },
+  edit:     { icon: Edit,         label: 'Edit'     },
+  create:   { icon: FileText,     label: 'Create'   },
+  delete:   { icon: Trash2,       label: 'Delete'   },
+  view:     { icon: Eye,          label: 'View'     },
+  message:  { icon: MessageSquare,label: 'Message'  },
+  settings: { icon: Settings,     label: 'Settings' },
+};
+
+/* ── Severity badge ── */
+const SEVERITY_STYLES = {
+  Info:     'bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
+  Warning:  'bg-zinc-200 text-zinc-700 border-zinc-300 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600',
+  Critical: 'bg-zinc-900 text-zinc-50  border-zinc-800 dark:bg-zinc-50  dark:text-zinc-900 dark:border-zinc-200',
+};
+
+/* ── Shared input class ── */
+const inputCls = `px-3 py-2 text-sm bg-background border border-border rounded-md
+  text-foreground placeholder:text-muted-foreground
+  focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors`;
+
+/* ── Extend auditLogs with richer activity data ── */
+const activities = [
+  { id: 1,  user: 'Sarah Johnson', email: 'sarah.j@gmail.com',    action: 'Logged In',        type: 'login',    time: '2 min ago',   details: 'IP: 192.168.1.1',                    severity: 'Info'    },
+  { id: 2,  user: 'Mike Chen',     email: 'mike.chen@outlook.com', action: 'Updated Profile',  type: 'edit',     time: '15 min ago',  details: 'Changed shipping address',           severity: 'Info'    },
+  { id: 3,  user: 'Emily Brown',   email: 'emily.b@yahoo.com',     action: 'Placed Order',     type: 'create',   time: '1 hour ago',  details: 'Order ORD-1008 — $1,799.99',        severity: 'Info'    },
+  { id: 4,  user: 'Tom Harris',    email: 'tom.h@icloud.com',      action: 'Sent Message',     type: 'message',  time: '2 hours ago', details: 'Support ticket #MSG004',             severity: 'Warning' },
+  { id: 5,  user: 'Lisa Anderson', email: 'lisa.a@gmail.com',      action: 'Account Suspended',type: 'delete',   time: '3 hours ago', details: 'Flagged for suspicious activity',    severity: 'Critical'},
+  { id: 6,  user: 'Amy Martinez',  email: 'amy.m@gmail.com',       action: 'Viewed Dashboard', type: 'view',     time: '4 hours ago', details: 'Browsed product catalog',            severity: 'Info'    },
+  { id: 7,  user: 'James Wilson',  email: 'james.w@outlook.com',   action: 'Changed Settings', type: 'settings', time: '5 hours ago', details: 'Updated notification preferences',   severity: 'Info'    },
+  { id: 8,  user: 'David Lee',     email: 'david.lee@gmail.com',   action: 'Logged Out',       type: 'logout',   time: '6 hours ago', details: 'Session ended after 24m',            severity: 'Info'    },
+];
+
+const stats = [
+  { label: 'Total Activities', value: '2,847', change: '+12.5%', trend: 'up',      icon: Activity },
+  { label: 'Active Users',     value: '234',   change: '+8.2%',  trend: 'up',      icon: Users    },
+  { label: 'Avg. Session',     value: '24m',   change: '-2.4%',  trend: 'down',    icon: Clock    },
+  { label: 'Actions Today',    value: '486',   change: '0%',     trend: 'neutral', icon: TrendingUp},
+];
+
+const breakdown = [
+  { type: 'Logins',   count: 156, pct: 32 },
+  { type: 'Views',    count: 203, pct: 42 },
+  { type: 'Edits',    count: 98,  pct: 20 },
+  { type: 'Messages', count: 29,  pct: 6  },
+];
 
 export default function UserActivityPage() {
-  const { isDark } = useTheme();
-  const [timeFilter, setTimeFilter] = useState('today');
+  const [timeFilter, setTimeFilter]     = useState('today');
   const [activityType, setActivityType] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery, setSearchQuery]   = useState('');
+  const [showFilters, setShowFilters]   = useState(false);
 
-  // Mock data for activities
-  const activities = [
-    {
-      id: 1,
-      user: 'John Doe',
-      email: 'john@example.com',
-      action: 'Logged In',
-      type: 'login',
-      timestamp: '2 minutes ago',
-      icon: LogIn,
-      color: 'text-green-500',
-      bg: 'bg-green-50',
-      details: 'IP: 192.168.1.1'
-    },
-    {
-      id: 2,
-      user: 'Sarah Smith',
-      email: 'sarah@example.com',
-      action: 'Updated Profile',
-      type: 'edit',
-      timestamp: '15 minutes ago',
-      icon: Edit,
-      color: 'text-blue-500',
-      bg: 'bg-blue-50',
-      details: 'Changed profile picture and bio'
-    },
-    {
-      id: 3,
-      user: 'Mike Johnson',
-      email: 'mike@example.com',
-      action: 'Created Document',
-      type: 'create',
-      timestamp: '1 hour ago',
-      icon: FileText,
-      color: 'text-purple-500',
-      bg: 'bg-purple-50',
-      details: 'Q4 Sales Report.pdf'
-    },
-    {
-      id: 4,
-      user: 'Emily Davis',
-      email: 'emily@example.com',
-      action: 'Sent Message',
-      type: 'message',
-      timestamp: '2 hours ago',
-      icon: MessageSquare,
-      color: 'text-indigo-500',
-      bg: 'bg-indigo-50',
-      details: 'To: Team Channel'
-    },
-    {
-      id: 5,
-      user: 'David Wilson',
-      email: 'david@example.com',
-      action: 'Deleted Item',
-      type: 'delete',
-      timestamp: '3 hours ago',
-      icon: Trash2,
-      color: 'text-red-500',
-      bg: 'bg-red-50',
-      details: 'Old project files'
-    },
-    {
-      id: 6,
-      user: 'Lisa Anderson',
-      email: 'lisa@example.com',
-      action: 'Viewed Dashboard',
-      type: 'view',
-      timestamp: '4 hours ago',
-      icon: Eye,
-      color: 'text-gray-500',
-      bg: 'bg-gray-50',
-      details: 'Analytics section'
-    },
-    {
-      id: 7,
-      user: 'Tom Brown',
-      email: 'tom@example.com',
-      action: 'Changed Settings',
-      type: 'settings',
-      timestamp: '5 hours ago',
-      icon: Settings,
-      color: 'text-orange-500',
-      bg: 'bg-orange-50',
-      details: 'Updated notification preferences'
-    },
-    {
-      id: 8,
-      user: 'Anna Martinez',
-      email: 'anna@example.com',
-      action: 'Logged Out',
-      type: 'logout',
-      timestamp: '6 hours ago',
-      icon: LogOut,
-      color: 'text-gray-400',
-      bg: 'bg-gray-50',
-      details: 'Session ended'
-    }
-  ];
-
-  // Stats data
-  const stats = [
-    {
-      label: 'Total Activities',
-      value: '2,847',
-      change: '+12.5%',
-      trend: 'up',
-      icon: Activity,
-      color: 'text-blue-600',
-      bg: 'bg-blue-50'
-    },
-    {
-      label: 'Active Users',
-      value: '234',
-      change: '+8.2%',
-      trend: 'up',
-      icon: Users,
-      color: 'text-green-600',
-      bg: 'bg-green-50'
-    },
-    {
-      label: 'Avg. Session Time',
-      value: '24m',
-      change: '-2.4%',
-      trend: 'down',
-      icon: Clock,
-      color: 'text-purple-600',
-      bg: 'bg-purple-50'
-    },
-    {
-      label: 'Actions Today',
-      value: '486',
-      change: '0%',
-      trend: 'neutral',
-      icon: TrendingUp,
-      color: 'text-orange-600',
-      bg: 'bg-orange-50'
-    }
-  ];
-
-  // Activity type breakdown
-  const activityBreakdown = [
-    { type: 'Logins', count: 156, percentage: 32, color: 'bg-green-500' },
-    { type: 'Edits', count: 98, percentage: 20, color: 'bg-blue-500' },
-    { type: 'Views', count: 203, percentage: 42, color: 'bg-gray-500' },
-    { type: 'Messages', count: 29, percentage: 6, color: 'bg-indigo-500' }
-  ];
+  const filtered = activities.filter(a => {
+    const q = searchQuery.toLowerCase();
+    const matchSearch = a.user.toLowerCase().includes(q) || a.action.toLowerCase().includes(q);
+    const matchType   = activityType === 'all' || a.type === activityType;
+    return matchSearch && matchType;
+  });
 
   return (
-    <div className={`p-6 min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>User Activity</h1>
-            <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>Monitor and analyze user actions in real-time</p>
-          </div>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            <Download size={20} />
-            <span>Export Report</span>
-          </button>
-        </div>
+    <div className="p-4 sm:p-6 space-y-5">
 
-        {/* Breadcrumb */}
-        <div className={`flex items-center space-x-2 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-          <span>Users</span>
-          <ChevronDown size={16} className="rotate-[-90deg]" />
-          <span>All Users</span>
-          <ChevronDown size={16} className="rotate-[-90deg]" />
-          <span className="text-blue-600 font-medium">User Activity</span>
+      {/* ── Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
+            <span>Users</span>
+            <ChevronDown size={12} className="-rotate-90" />
+            <span>All Users</span>
+            <ChevronDown size={12} className="-rotate-90" />
+            <span className="text-foreground font-medium">Activity</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
+            User Activity
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Monitor and analyze customer actions in real-time
+          </p>
         </div>
+        <button className="self-start sm:self-auto flex items-center gap-2 px-3 py-2 text-sm
+          font-medium bg-foreground text-background rounded-md hover:opacity-80 transition-opacity">
+          <Download size={14} />
+          Export
+        </button>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat, index) => (
-          <div key={index} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-start justify-between mb-4">
-              <div className={`p-3 rounded-lg ${stat.bg}`}>
-                <stat.icon className={stat.color} size={24} />
+      {/* ── Stat cards ── */}
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+        {stats.map((s) => {
+          const Icon      = s.icon;
+          const TrendIcon = s.trend === 'up' ? ArrowUp : s.trend === 'down' ? ArrowDown : Minus;
+          const trendCls  = s.trend === 'up' ? 'text-foreground' : s.trend === 'down' ? 'text-muted-foreground' : 'text-muted-foreground';
+          return (
+            <div key={s.label} className="bg-card border border-border rounded-lg p-4 sm:p-5 shadow-card">
+              <div className="flex items-center justify-between mb-3">
+                <div className="p-2 rounded-md bg-muted">
+                  <Icon size={15} className="text-muted-foreground" strokeWidth={1.75} />
+                </div>
+                <div className={`flex items-center gap-1 text-xs font-semibold ${trendCls}`}>
+                  <TrendIcon size={12} strokeWidth={2.5} />
+                  {s.change}
+                </div>
               </div>
-              <div className={`flex items-center space-x-1 text-sm font-medium ${
-                stat.trend === 'up' ? 'text-green-600' : 
-                stat.trend === 'down' ? 'text-red-600' : 'text-gray-600'
-              }`}>
-                {stat.trend === 'up' && <ArrowUp size={16} />}
-                {stat.trend === 'down' && <ArrowDown size={16} />}
-                {stat.trend === 'neutral' && <Minus size={16} />}
-                <span>{stat.change}</span>
-              </div>
+              <p className="text-2xl font-semibold text-foreground">{s.value}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-            <p className="text-gray-600 text-sm">{stat.label}</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Activity Breakdown Chart */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Activity Breakdown</h2>
-          <BarChart3 className="text-gray-400" size={20} />
+      {/* ── Activity breakdown ── */}
+      <div className="bg-card border border-border rounded-lg shadow-card p-5">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-sm font-semibold text-foreground">Activity Breakdown</h2>
+          <BarChart3 size={15} className="text-muted-foreground" />
         </div>
         <div className="space-y-4">
-          {activityBreakdown.map((item, index) => (
-            <div key={index}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">{item.type}</span>
-                <span className="text-sm text-gray-600">{item.count} ({item.percentage}%)</span>
+          {breakdown.map((item) => (
+            <div key={item.type}>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-sm font-medium text-foreground">{item.type}</span>
+                <span className="text-xs text-muted-foreground">{item.count} ({item.pct}%)</span>
               </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
-                <div 
-                  className={`${item.color} h-2 rounded-full transition-all duration-500`}
-                  style={{ width: `${item.percentage}%` }}
+              <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-foreground rounded-full transition-all duration-500"
+                  style={{ width: `${item.pct}%` }}
                 />
               </div>
             </div>
@@ -256,36 +148,40 @@ export default function UserActivityPage() {
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+      {/* ── Toolbar ── */}
+      <div className="bg-card border border-border rounded-lg shadow-card">
+        <div className="p-3 sm:p-4 flex flex-col sm:flex-row gap-2 sm:gap-3">
           {/* Search */}
-          <div className="relative flex-1 lg:max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <div className="flex-1 relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search users or activities..."
+              placeholder="Search users or activities…"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={e => setSearchQuery(e.target.value)}
+              className={`${inputCls} w-full pl-8`}
             />
           </div>
 
-          {/* Filter Buttons */}
-          <div className="flex items-center space-x-3">
+          <div className="flex gap-2">
+            {/* Filter toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md
+                border transition-colors ${showFilters
+                  ? 'bg-foreground text-background border-foreground'
+                  : 'bg-background text-muted-foreground border-border hover:bg-muted hover:text-foreground'
+                }`}
             >
-              <Filter size={20} />
-              <span>Filters</span>
+              <Filter size={14} />
+              <span className="hidden sm:inline">Filters</span>
             </button>
 
-            {/* Time Filter */}
+            {/* Time select */}
             <select
               value={timeFilter}
-              onChange={(e) => setTimeFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={e => setTimeFilter(e.target.value)}
+              className={`${inputCls} pr-8`}
             >
               <option value="today">Today</option>
               <option value="week">This Week</option>
@@ -293,112 +189,138 @@ export default function UserActivityPage() {
               <option value="year">This Year</option>
             </select>
 
-            {/* Activity Type Filter */}
+            {/* Type select */}
             <select
               value={activityType}
-              onChange={(e) => setActivityType(e.target.value)}
-              className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={e => setActivityType(e.target.value)}
+              className={`${inputCls} pr-8 hidden sm:block`}
             >
-              <option value="all">All Activities</option>
-              <option value="login">Logins</option>
-              <option value="edit">Edits</option>
-              <option value="create">Creates</option>
-              <option value="delete">Deletes</option>
-              <option value="view">Views</option>
+              <option value="all">All Types</option>
+              {Object.entries(TYPE_META).map(([k, v]) => (
+                <option key={k} value={k}>{v.label}</option>
+              ))}
             </select>
           </div>
         </div>
 
-        {/* Extended Filters */}
+        {/* Extended filters */}
         {showFilters && (
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="px-3 sm:px-4 pb-4 border-t border-border">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">User Role</label>
-                <select className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+                  Role
+                </label>
+                <select className={`${inputCls} w-full`}>
                   <option>All Roles</option>
                   <option>Admin</option>
-                  <option>User</option>
-                  <option>Guest</option>
+                  <option>Manager</option>
+                  <option>Customer</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
-                <input
-                  type="date"
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+                  Date Range
+                </label>
+                <input type="date" className={`${inputCls} w-full`} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">IP Address</label>
-                <input
-                  type="text"
-                  placeholder="Filter by IP"
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <label className="block text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5">
+                  IP Address
+                </label>
+                <input type="text" placeholder="Filter by IP…" className={`${inputCls} w-full`} />
               </div>
             </div>
+            <button
+              onClick={() => { setSearchQuery(''); setActivityType('all'); setTimeFilter('today'); }}
+              className="flex items-center gap-1.5 mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X size={12} /> Clear all
+            </button>
           </div>
         )}
       </div>
 
-      {/* Activity Timeline */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">Recent Activity Timeline</h2>
+      {/* ── Activity timeline ── */}
+      <div className="bg-card border border-border rounded-lg shadow-card overflow-hidden">
+        <div className="px-5 py-4 border-b border-border">
+          <h2 className="text-sm font-semibold text-foreground">Recent Activity Timeline</h2>
         </div>
-        
-        <div className="divide-y divide-gray-100">
-          {activities.map((activity) => {
-            const Icon = activity.icon;
+
+        <div className="divide-y divide-border">
+          {filtered.map((activity, index) => {
+            const meta = TYPE_META[activity.type] ?? TYPE_META.view;
+            const Icon = meta.icon;
+            const isLast = index === filtered.length - 1;
+
             return (
-              <div key={activity.id} className="p-6 hover:bg-gray-50 transition-colors">
-                <div className="flex items-start space-x-4">
-                  {/* Icon */}
-                  <div className={`${activity.bg} p-3 rounded-lg flex-shrink-0`}>
-                    <Icon className={activity.color} size={20} />
+              <div key={activity.id} className="px-5 py-4 hover:bg-muted/30 transition-colors">
+                <div className="flex items-start gap-4">
+                  {/* Icon + connector */}
+                  <div className="relative flex flex-col items-center flex-shrink-0">
+                    <div className="p-2 rounded-md bg-muted z-10">
+                      <Icon size={14} className="text-muted-foreground" strokeWidth={1.75} />
+                    </div>
+                    {!isLast && (
+                      <div className="w-px flex-1 bg-border mt-1 min-h-[20px]" />
+                    )}
                   </div>
 
                   {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h3 className="text-base font-semibold text-gray-900">{activity.action}</h3>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                              <User size={14} className="text-white" />
+                  <div className="flex-1 min-w-0 pb-1">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground">{activity.action}</p>
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-5 h-5 rounded-full bg-foreground flex items-center
+                              justify-center flex-shrink-0">
+                              <User size={10} className="text-background" />
                             </div>
-                            <span className="text-sm font-medium text-gray-700">{activity.user}</span>
+                            <span className="text-xs font-medium text-foreground">{activity.user}</span>
                           </div>
-                          <span className="text-gray-400">•</span>
-                          <span className="text-sm text-gray-500">{activity.email}</span>
+                          <span className="text-muted-foreground/40 text-xs hidden sm:inline">•</span>
+                          <span className="text-xs text-muted-foreground">{activity.email}</span>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2 text-sm text-gray-500">
-                        <Clock size={14} />
-                        <span>{activity.timestamp}</span>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs
+                          font-medium border ${SEVERITY_STYLES[activity.severity] ?? SEVERITY_STYLES.Info}`}>
+                          {activity.severity}
+                        </span>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">
+                          <Clock size={11} />
+                          {activity.time}
+                        </div>
                       </div>
                     </div>
-                    
+
                     {/* Details */}
-                    <div className="bg-gray-50 rounded-lg p-3 mt-3">
-                      <p className="text-sm text-gray-600">{activity.details}</p>
+                    <div className="mt-2 px-3 py-2 bg-muted/50 rounded-md">
+                      <p className="text-xs text-muted-foreground">{activity.details}</p>
                     </div>
                   </div>
                 </div>
               </div>
             );
           })}
+
+          {filtered.length === 0 && (
+            <div className="px-5 py-16 text-center text-sm text-muted-foreground">
+              No activities match your search or filters.
+            </div>
+          )}
         </div>
 
-        {/* Load More Button */}
-        <div className="p-6 border-t border-gray-200 text-center">
-          <button className="px-6 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium">
-            Load More Activities
+        {/* Footer */}
+        <div className="px-5 py-3 border-t border-border">
+          <button className="text-xs font-medium text-foreground hover:text-muted-foreground
+            transition-colors underline-offset-2 hover:underline">
+            Load more activities →
           </button>
         </div>
       </div>
+
     </div>
   );
 }
