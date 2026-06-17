@@ -70,18 +70,18 @@ export default function AddCategoryPage() {
           className="flex items-center justify-between"
         >
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground flex items-center gap-3">
               <FolderPlus size={32} />
               Add New Category
             </h1>
-            <p className="text-slate-600 mt-1">Create a new product category with custom settings</p>
+            <p className="text-muted-foreground mt-1">Create a new product category with custom settings</p>
           </div>
 
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-700 hover:border-slate-300 transition-all">
+            <button className="px-4 py-2 bg-card border border-border rounded-lg text-foreground hover:border-border transition-all">
               Cancel
             </button>
-            <button className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2">
+            <button className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-background rounded-lg hover:shadow-card transition-all flex items-center gap-2">
               <Check size={18} />
               Create Category
             </button>
@@ -97,17 +97,17 @@ export default function AddCategoryPage() {
             className="lg:col-span-2 space-y-6"
           >
             {/* Basic Information */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
               <div className="flex items-center gap-2 mb-6">
                 <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg">
-                  <FileText className="text-white" size={20} />
+                  <FileText className="text-background" size={20} />
                 </div>
-                <h2 className="text-xl font-bold text-slate-800">Basic Information</h2>
+                <h2 className="text-base font-semibold text-foreground">Basic Information</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className="block text-sm font-semibold text-foreground mb-2">
                     Category Name *
                   </label>
                   <input
@@ -115,57 +115,57 @@ export default function AddCategoryPage() {
                     value={categoryName}
                     onChange={(e) => handleNameChange(e.target.value)}
                     placeholder="e.g., Electronics, Fashion, Home Decor"
-                    className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring focus:border-transparent transition-all"
                   />
-                  <p className="text-xs text-slate-500 mt-1">This will be displayed to customers</p>
+                  <p className="text-xs text-muted-foreground mt-1">This will be displayed to customers</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className="block text-sm font-semibold text-foreground mb-2">
                     URL Slug *
                   </label>
                   <div className="relative">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                     <input
                       type="text"
                       value={slug}
                       onChange={(e) => setSlug(e.target.value)}
                       placeholder="e.g., electronics"
-                      className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring focus:border-transparent transition-all"
                     />
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     URL: yourstore.com/category/<span className="font-semibold text-purple-600">{slug || 'slug'}</span>
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className="block text-sm font-semibold text-foreground mb-2">
                     Description
                   </label>
                   <textarea
                     rows="4"
                     placeholder="Write a brief description about this category..."
-                    className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none transition-all"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring focus:border-transparent resize-none transition-all"
                   />
-                  <p className="text-xs text-slate-500 mt-1">Help customers understand what products are in this category</p>
+                  <p className="text-xs text-muted-foreground mt-1">Help customers understand what products are in this category</p>
                 </div>
               </div>
             </div>
 
             {/* Appearance */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
               <div className="flex items-center gap-2 mb-6">
                 <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg">
-                  <Palette className="text-white" size={20} />
+                  <Palette className="text-background" size={20} />
                 </div>
-                <h2 className="text-xl font-bold text-slate-800">Appearance</h2>
+                <h2 className="text-base font-semibold text-foreground">Appearance</h2>
               </div>
 
               <div className="space-y-6">
                 {/* Color Selection */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-3">
+                  <label className="block text-sm font-semibold text-foreground mb-3">
                     Category Color
                   </label>
                   <div className="grid grid-cols-5 gap-3">
@@ -174,12 +174,12 @@ export default function AddCategoryPage() {
                         key={color.name}
                         onClick={() => setSelectedColor(color.gradient)}
                         className={`relative h-12 rounded-lg bg-gradient-to-br ${color.gradient} transition-all hover:scale-105 ${
-                          selectedColor === color.gradient ? 'ring-4 ring-purple-500 ring-offset-2' : ''
+                          selectedColor === color.gradient ? 'ring-4 ring-ring ring-offset-2' : ''
                         }`}
                       >
                         {selectedColor === color.gradient && (
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <Check className="text-white" size={20} />
+                            <Check className="text-background" size={20} />
                           </div>
                         )}
                       </button>
@@ -189,7 +189,7 @@ export default function AddCategoryPage() {
 
                 {/* Icon Selection */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-3">
+                  <label className="block text-sm font-semibold text-foreground mb-3">
                     Category Icon
                   </label>
                   <div className="grid grid-cols-8 gap-3">
@@ -197,8 +197,8 @@ export default function AddCategoryPage() {
                       <button
                         key={icon}
                         onClick={() => setSelectedIcon(icon)}
-                        className={`h-12 rounded-lg bg-slate-50 hover:bg-slate-100 transition-all text-2xl flex items-center justify-center ${
-                          selectedIcon === icon ? 'ring-4 ring-purple-500 ring-offset-2 bg-slate-100' : ''
+                        className={`h-12 rounded-lg bg-muted hover:bg-muted transition-all text-2xl flex items-center justify-center ${
+                          selectedIcon === icon ? 'ring-4 ring-ring ring-offset-2 bg-muted' : ''
                         }`}
                       >
                         {icon}
@@ -209,15 +209,15 @@ export default function AddCategoryPage() {
 
                 {/* Cover Image Upload */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-3">
+                  <label className="block text-sm font-semibold text-foreground mb-3">
                     Cover Image (Optional)
                   </label>
-                  <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:border-purple-400 transition-all cursor-pointer bg-slate-50">
-                    <Upload className="mx-auto text-slate-400 mb-3" size={32} />
-                    <p className="text-sm font-medium text-slate-700 mb-1">
+                  <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-purple-400 transition-all cursor-pointer bg-muted">
+                    <Upload className="mx-auto text-muted-foreground mb-3" size={32} />
+                    <p className="text-sm font-medium text-foreground mb-1">
                       Click to upload or drag and drop
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       SVG, PNG, JPG or GIF (max. 2MB)
                     </p>
                   </div>
@@ -226,65 +226,65 @@ export default function AddCategoryPage() {
             </div>
 
             {/* Hierarchy */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
               <div className="flex items-center gap-2 mb-6">
                 <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg">
-                  <Layers className="text-white" size={20} />
+                  <Layers className="text-background" size={20} />
                 </div>
-                <h2 className="text-xl font-bold text-slate-800">Category Hierarchy</h2>
+                <h2 className="text-base font-semibold text-foreground">Category Hierarchy</h2>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   Parent Category
                 </label>
                 <select
                   value={parentCategory}
                   onChange={(e) => setParentCategory(e.target.value)}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring focus:border-transparent transition-all"
                 >
                   <option value="none">None (Top Level Category)</option>
                   {parentCategories.map((parent) => (
                     <option key={parent} value={parent}>{parent}</option>
                   ))}
                 </select>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Select a parent category to create a subcategory
                 </p>
               </div>
             </div>
 
             {/* SEO Settings */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
               <div className="flex items-center gap-2 mb-6">
                 <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg">
-                  <Tag className="text-white" size={20} />
+                  <Tag className="text-background" size={20} />
                 </div>
-                <h2 className="text-xl font-bold text-slate-800">SEO Settings</h2>
+                <h2 className="text-base font-semibold text-foreground">SEO Settings</h2>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className="block text-sm font-semibold text-foreground mb-2">
                     Meta Title
                   </label>
                   <input
                     type="text"
                     placeholder="Optimize for search engines"
-                    className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring focus:border-transparent transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  <label className="block text-sm font-semibold text-foreground mb-2">
                     Meta Description
                   </label>
                   <textarea
                     rows="3"
                     placeholder="Brief description for search results..."
-                    className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none transition-all"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring focus:border-transparent resize-none transition-all"
                   />
-                  <p className="text-xs text-slate-500 mt-1">Recommended: 150-160 characters</p>
+                  <p className="text-xs text-muted-foreground mt-1">Recommended: 150-160 characters</p>
                 </div>
               </div>
             </div>
@@ -298,10 +298,10 @@ export default function AddCategoryPage() {
             className="space-y-6"
           >
             {/* Live Preview */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="text-purple-600" size={20} />
-                <h3 className="font-bold text-slate-800">Live Preview</h3>
+                <h3 className="font-bold text-foreground">Live Preview</h3>
               </div>
 
               <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-4">
@@ -312,15 +312,15 @@ export default function AddCategoryPage() {
                   </div>
                 </div>
 
-                <h3 className="text-lg font-bold text-slate-800 mb-1">
+                <h3 className="text-lg font-bold text-foreground mb-1">
                   {categoryName || 'Category Name'}
                 </h3>
-                <p className="text-sm text-slate-500 mb-3">
+                <p className="text-sm text-muted-foreground mb-3">
                   /{slug || 'category-slug'}
                 </p>
 
                 <div className="flex gap-2 text-xs">
-                  <span className="px-2 py-1 bg-slate-200 rounded-full text-slate-700">
+                  <span className="px-2 py-1 bg-muted rounded-full text-foreground">
                     0 Products
                   </span>
                   {isFeatured && (
@@ -334,45 +334,45 @@ export default function AddCategoryPage() {
             </div>
 
             {/* Settings */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
-              <h3 className="font-bold text-slate-800 mb-4">Category Settings</h3>
+            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
+              <h3 className="font-bold text-foreground mb-4">Category Settings</h3>
 
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                   <div className="flex items-center gap-3">
-                    {isVisible ? <Eye size={18} className="text-green-600" /> : <EyeOff size={18} className="text-slate-400" />}
+                    {isVisible ? <Eye size={18} className="text-green-600" /> : <EyeOff size={18} className="text-muted-foreground" />}
                     <div>
-                      <p className="font-medium text-slate-800 text-sm">Visibility</p>
-                      <p className="text-xs text-slate-500">Show to customers</p>
+                      <p className="font-medium text-foreground text-sm">Visibility</p>
+                      <p className="text-xs text-muted-foreground">Show to customers</p>
                     </div>
                   </div>
                   <button
                     onClick={() => setIsVisible(!isVisible)}
                     className={`relative w-12 h-6 rounded-full transition-all ${
-                      isVisible ? 'bg-green-500' : 'bg-slate-300'
+                      isVisible ? 'bg-muted0' : 'bg-muted'
                     }`}
                   >
-                    <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-all ${
+                    <div className={`absolute w-5 h-5 bg-card rounded-full top-0.5 transition-all ${
                       isVisible ? 'left-6' : 'left-0.5'
                     }`} />
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                   <div className="flex items-center gap-3">
-                    <Star size={18} className={isFeatured ? 'text-yellow-500 fill-yellow-500' : 'text-slate-400'} />
+                    <Star size={18} className={isFeatured ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'} />
                     <div>
-                      <p className="font-medium text-slate-800 text-sm">Featured</p>
-                      <p className="text-xs text-slate-500">Highlight category</p>
+                      <p className="font-medium text-foreground text-sm">Featured</p>
+                      <p className="text-xs text-muted-foreground">Highlight category</p>
                     </div>
                   </div>
                   <button
                     onClick={() => setIsFeatured(!isFeatured)}
                     className={`relative w-12 h-6 rounded-full transition-all ${
-                      isFeatured ? 'bg-yellow-500' : 'bg-slate-300'
+                      isFeatured ? 'bg-muted0' : 'bg-muted'
                     }`}
                   >
-                    <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-all ${
+                    <div className={`absolute w-5 h-5 bg-card rounded-full top-0.5 transition-all ${
                       isFeatured ? 'left-6' : 'left-0.5'
                     }`} />
                   </button>
@@ -381,10 +381,10 @@ export default function AddCategoryPage() {
             </div>
 
             {/* Help Card */}
-            <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl p-6 text-white">
+            <div className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl p-6 text-background">
               <AlertCircle className="mb-3 opacity-90" size={24} />
               <h3 className="font-bold mb-2">Quick Tips</h3>
-              <ul className="text-sm space-y-2 text-purple-100">
+              <ul className="text-sm space-y-2 text-background/70">
                 <li>• Use clear, descriptive names</li>
                 <li>• Choose relevant icons & colors</li>
                 <li>• Optimize SEO for better reach</li>

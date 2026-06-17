@@ -88,7 +88,7 @@ export default function MonthlyReports() {
       case 'warning':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-muted text-foreground border-border';
     }
   };
 
@@ -110,29 +110,29 @@ export default function MonthlyReports() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Monthly Reports</h1>
-              <p className="text-gray-600">Comprehensive monthly business performance analysis</p>
+              <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Monthly Reports</h1>
+              <p className="text-muted-foreground">Comprehensive monthly business performance analysis</p>
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                 <Printer size={20} />
                 Print
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                 <Mail size={20} />
                 Email
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                 <Share2 size={20} />
                 Share
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors">
                 <Download size={20} />
                 Export PDF
               </button>
@@ -141,15 +141,15 @@ export default function MonthlyReports() {
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-4 mb-6">
+        <div className="bg-card border border-border rounded-lg shadow-card p-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Calendar size={20} className="text-gray-600" />
+                <Calendar size={20} className="text-muted-foreground" />
                 <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                 >
                   {months.map((month) => (
                     <option key={month.value} value={month.value}>
@@ -160,11 +160,11 @@ export default function MonthlyReports() {
               </div>
 
               <div className="flex items-center gap-2 border-l pl-4">
-                <FileText size={20} className="text-gray-600" />
+                <FileText size={20} className="text-muted-foreground" />
                 <select
                   value={reportType}
                   onChange={(e) => setReportType(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                 >
                   {reportTypes.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -176,10 +176,10 @@ export default function MonthlyReports() {
             </div>
 
             <div className="flex gap-2">
-              <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+              <button className="p-2 border border-border rounded-lg hover:bg-muted">
                 <ChevronLeft size={20} />
               </button>
-              <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+              <button className="p-2 border border-border rounded-lg hover:bg-muted">
                 <ChevronRight size={20} />
               </button>
             </div>
@@ -188,9 +188,9 @@ export default function MonthlyReports() {
 
         {/* Key Metrics with Goals */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+              <div className="p-3 bg-muted text-foreground rounded-lg">
                 <DollarSign size={24} />
               </div>
               <div className={`flex items-center gap-1 text-sm font-semibold ${
@@ -200,16 +200,16 @@ export default function MonthlyReports() {
                 {monthlyStats.revenue.growth}%
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Total Revenue</h3>
-            <p className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-sm text-muted-foreground mb-1">Total Revenue</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground mb-3">
               ${monthlyStats.revenue.current.toLocaleString()}
             </p>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500">Target: ${monthlyStats.revenue.target.toLocaleString()}</span>
+                <span className="text-muted-foreground">Target: ${monthlyStats.revenue.target.toLocaleString()}</span>
                 <span className="font-semibold">{calculateProgress(monthlyStats.revenue.current, monthlyStats.revenue.target).toFixed(1)}%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-blue-600 rounded-full transition-all duration-500"
                   style={{ width: `${calculateProgress(monthlyStats.revenue.current, monthlyStats.revenue.target)}%` }}
@@ -218,9 +218,9 @@ export default function MonthlyReports() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-green-100 text-green-600 rounded-lg">
+              <div className="p-3 bg-muted text-foreground rounded-lg">
                 <ShoppingCart size={24} />
               </div>
               <div className={`flex items-center gap-1 text-sm font-semibold ${
@@ -230,16 +230,16 @@ export default function MonthlyReports() {
                 {monthlyStats.orders.growth}%
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Total Orders</h3>
-            <p className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-sm text-muted-foreground mb-1">Total Orders</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground mb-3">
               {monthlyStats.orders.current.toLocaleString()}
             </p>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500">Target: {monthlyStats.orders.target.toLocaleString()}</span>
+                <span className="text-muted-foreground">Target: {monthlyStats.orders.target.toLocaleString()}</span>
                 <span className="font-semibold">{calculateProgress(monthlyStats.orders.current, monthlyStats.orders.target).toFixed(1)}%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-green-600 rounded-full transition-all duration-500"
                   style={{ width: `${calculateProgress(monthlyStats.orders.current, monthlyStats.orders.target)}%` }}
@@ -248,9 +248,9 @@ export default function MonthlyReports() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-purple-100 text-purple-600 rounded-lg">
+              <div className="p-3 bg-muted text-foreground rounded-lg">
                 <Users size={24} />
               </div>
               <div className={`flex items-center gap-1 text-sm font-semibold ${
@@ -260,16 +260,16 @@ export default function MonthlyReports() {
                 {monthlyStats.users.growth}%
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Active Users</h3>
-            <p className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-sm text-muted-foreground mb-1">Active Users</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground mb-3">
               {monthlyStats.users.current.toLocaleString()}
             </p>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500">Target: {monthlyStats.users.target.toLocaleString()}</span>
+                <span className="text-muted-foreground">Target: {monthlyStats.users.target.toLocaleString()}</span>
                 <span className="font-semibold">{calculateProgress(monthlyStats.users.current, monthlyStats.users.target).toFixed(1)}%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-purple-600 rounded-full transition-all duration-500"
                   style={{ width: `${calculateProgress(monthlyStats.users.current, monthlyStats.users.target)}%` }}
@@ -278,9 +278,9 @@ export default function MonthlyReports() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-orange-100 text-orange-600 rounded-lg">
+              <div className="p-3 bg-muted text-foreground rounded-lg">
                 <TrendingUp size={24} />
               </div>
               <div className={`flex items-center gap-1 text-sm font-semibold ${
@@ -290,16 +290,16 @@ export default function MonthlyReports() {
                 {monthlyStats.avgOrderValue.growth}%
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Avg Order Value</h3>
-            <p className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-sm text-muted-foreground mb-1">Avg Order Value</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground mb-3">
               ${monthlyStats.avgOrderValue.current}
             </p>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500">Target: ${monthlyStats.avgOrderValue.target}</span>
+                <span className="text-muted-foreground">Target: ${monthlyStats.avgOrderValue.target}</span>
                 <span className="font-semibold">{calculateProgress(monthlyStats.avgOrderValue.current, monthlyStats.avgOrderValue.target).toFixed(1)}%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-orange-600 rounded-full transition-all duration-500"
                   style={{ width: `${calculateProgress(monthlyStats.avgOrderValue.current, monthlyStats.avgOrderValue.target)}%` }}
@@ -310,47 +310,47 @@ export default function MonthlyReports() {
         </div>
 
         {/* Weekly Breakdown */}
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Weekly Breakdown</h2>
+        <div className="bg-card border border-border rounded-lg shadow-card p-6 mb-6">
+          <h2 className="text-xl font-semibold text-foreground mb-6">Weekly Breakdown</h2>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-muted border-b border-border">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Week</th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Revenue</th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Orders</th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Users</th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Avg Order</th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Performance</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-foreground uppercase">Week</th>
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-foreground uppercase">Revenue</th>
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-foreground uppercase">Orders</th>
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-foreground uppercase">Users</th>
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-foreground uppercase">Avg Order</th>
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-foreground uppercase">Performance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-border">
                 {weeklyBreakdown.map((week, index) => (
-                  <tr key={index} className="hover:bg-gray-50 transition-colors">
+                  <tr key={index} className="hover:bg-muted transition-colors">
                     <td className="px-6 py-4">
-                      <span className="font-medium text-gray-900">{week.week}</span>
+                      <span className="font-medium text-foreground">{week.week}</span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="font-semibold text-gray-900">${week.revenue.toLocaleString()}</span>
+                      <span className="font-semibold text-foreground">${week.revenue.toLocaleString()}</span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-gray-900">{week.orders.toLocaleString()}</span>
+                      <span className="text-foreground">{week.orders.toLocaleString()}</span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-gray-900">{week.users.toLocaleString()}</span>
+                      <span className="text-foreground">{week.users.toLocaleString()}</span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <span className="text-gray-900">${week.avgOrder}</span>
+                      <span className="text-foreground">${week.avgOrder}</span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <div className="h-2 w-24 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-2 w-24 bg-muted rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
                             style={{ width: `${(week.revenue / 130000) * 100}%` }}
                           ></div>
                         </div>
-                        <span className="text-xs text-gray-500 w-12 text-right">
+                        <span className="text-xs text-muted-foreground w-12 text-right">
                           {((week.revenue / 130000) * 100).toFixed(0)}%
                         </span>
                       </div>
@@ -364,13 +364,13 @@ export default function MonthlyReports() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Top Categories */}
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Top Categories</h2>
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Top Categories</h2>
             <div className="space-y-4">
               {topCategories.map((category, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                <div key={index} className="p-4 bg-muted rounded-lg">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-gray-900">{category.name}</h3>
+                    <h3 className="font-semibold text-foreground">{category.name}</h3>
                     <div className={`flex items-center gap-1 text-sm font-semibold ${
                       category.growth > 0 ? 'text-green-600' : 'text-red-600'
                     }`}>
@@ -378,11 +378,11 @@ export default function MonthlyReports() {
                       {Math.abs(category.growth)}%
                     </div>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
                     <span>${category.revenue.toLocaleString()} revenue</span>
                     <span>{category.orders} orders</span>
                   </div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
                       style={{ width: `${category.percentage}%` }}
@@ -394,16 +394,16 @@ export default function MonthlyReports() {
           </div>
 
           {/* Performance Metrics */}
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Performance Metrics</h2>
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Performance Metrics</h2>
             <div className="space-y-4">
               {performanceMetrics.map((metric, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-4 bg-muted rounded-lg">
                   <div className="flex items-center gap-3">
                     {getStatusIcon(metric.status)}
                     <div>
-                      <p className="text-sm text-gray-600">{metric.metric}</p>
-                      <p className="text-xl font-bold text-gray-900">{metric.value}</p>
+                      <p className="text-sm text-muted-foreground">{metric.metric}</p>
+                      <p className="text-base font-semibold text-foreground">{metric.value}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -419,20 +419,20 @@ export default function MonthlyReports() {
         </div>
 
         {/* Top Products */}
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Top Selling Products</h2>
+        <div className="bg-card border border-border rounded-lg shadow-card p-6">
+          <h2 className="text-xl font-semibold text-foreground mb-6">Top Selling Products</h2>
           <div className="space-y-3">
             {topProducts.map((product, index) => (
-              <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">#{index + 1}</span>
+              <div key={index} className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted transition-colors">
+                <div className="flex-shrink-0 w-10 h-10 bg-foreground rounded-lg flex items-center justify-center">
+                  <span className="text-background font-bold">#{index + 1}</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{product.name}</h3>
-                  <p className="text-sm text-gray-600">{product.sales} units sold</p>
+                  <h3 className="font-semibold text-foreground">{product.name}</h3>
+                  <p className="text-sm text-muted-foreground">{product.sales} units sold</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-gray-900">${product.revenue.toLocaleString()}</p>
+                  <p className="font-bold text-foreground">${product.revenue.toLocaleString()}</p>
                   <div className="flex items-center gap-1 text-sm font-semibold text-green-600">
                     <TrendingUp size={14} />
                     {product.growth}%

@@ -28,7 +28,7 @@ export default function MyKRAsPage() {
       trend: 'up',
       icon: Target, 
       color: 'from-blue-500 to-indigo-600', 
-      bgColor: 'bg-blue-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-blue-600' 
     },
     { 
@@ -37,7 +37,7 @@ export default function MyKRAsPage() {
       subtext: '1 completed',
       icon: Flag, 
       color: 'from-purple-500 to-pink-600', 
-      bgColor: 'bg-purple-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-purple-600' 
     },
     { 
@@ -46,7 +46,7 @@ export default function MyKRAsPage() {
       subtext: '62.5% of total',
       icon: TrendingUp, 
       color: 'from-emerald-500 to-teal-600', 
-      bgColor: 'bg-emerald-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-emerald-600' 
     },
     { 
@@ -55,7 +55,7 @@ export default function MyKRAsPage() {
       subtext: 'Out of 5.0',
       icon: Star, 
       color: 'from-yellow-500 to-orange-600', 
-      bgColor: 'bg-yellow-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-yellow-600' 
     },
   ];
@@ -318,7 +318,7 @@ export default function MyKRAsPage() {
     const badges = {
       'high': 'bg-red-100 text-red-700',
       'medium': 'bg-yellow-100 text-yellow-700',
-      'low': 'bg-slate-100 text-slate-700'
+      'low': 'bg-muted text-foreground'
     };
     return badges[priority] || badges.medium;
   };
@@ -329,29 +329,29 @@ export default function MyKRAsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 My KRAs
               </h1>
               <Target className="w-8 h-8 text-blue-600" />
             </div>
-            <p className="text-slate-600">Track your Key Result Areas and performance goals</p>
+            <p className="text-muted-foreground">Track your Key Result Areas and performance goals</p>
           </div>
           <div className="flex items-center gap-3">
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors bg-white cursor-pointer font-semibold"
+              className="px-4 py-3 border-2 border-border rounded-xl focus:border-blue-500 focus:outline-none transition-colors bg-card cursor-pointer font-semibold"
             >
               {periods.map(period => (
                 <option key={period.value} value={period.value}>{period.label}</option>
               ))}
             </select>
-            <button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-background px-6 py-3 rounded-xl hover:shadow-card transition-all duration-300">
               <Plus className="w-5 h-5" />
               <span>Add KRA</span>
             </button>
@@ -364,7 +364,7 @@ export default function MyKRAsPage() {
             const Icon = stat.icon;
             const TrendIcon = stat.trend === 'up' ? ArrowUpRight : ArrowDownRight;
             return (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card hover:shadow-dropdown transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`${stat.bgColor} w-12 h-12 rounded-xl flex items-center justify-center`}>
                     <Icon className={`w-6 h-6 ${stat.textColor}`} />
@@ -378,16 +378,16 @@ export default function MyKRAsPage() {
                     </span>
                   )}
                 </div>
-                <p className="text-slate-600 text-sm mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-slate-800 mb-1">{stat.value}</p>
-                {stat.subtext && <p className="text-xs text-slate-500">{stat.subtext}</p>}
+                <p className="text-muted-foreground text-sm mb-1">{stat.label}</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-1">{stat.value}</p>
+                {stat.subtext && <p className="text-xs text-muted-foreground">{stat.subtext}</p>}
               </div>
             );
           })}
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+        <div className="bg-card border border-border rounded-lg shadow-card">
           <div className="flex flex-wrap gap-2">
             {statusFilters.map((filter) => (
               <button
@@ -395,12 +395,12 @@ export default function MyKRAsPage() {
                 onClick={() => setSelectedStatus(filter.value)}
                 className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all ${
                   selectedStatus === filter.value
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-background shadow-card'
+                    : 'bg-muted text-foreground hover:bg-muted'
                 }`}
               >
                 {filter.label}
-                <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-white/20">
+                <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-card/20">
                   {filter.count}
                 </span>
               </button>
@@ -417,14 +417,14 @@ export default function MyKRAsPage() {
             return (
               <div 
                 key={kra.id}
-                className={`bg-white rounded-2xl shadow-lg border-2 overflow-hidden hover:shadow-xl transition-all duration-300 ${statusConfig.borderColor}`}
+                className={`bg-card rounded-lg shadow-card border-2 overflow-hidden hover:shadow-dropdown transition-all duration-300 ${statusConfig.borderColor}`}
               >
                 <div className="p-6">
                   {/* Header */}
                   <div className="flex items-start justify-between gap-4 mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-bold text-slate-800">{kra.title}</h3>
+                        <h3 className="text-base font-semibold text-foreground">{kra.title}</h3>
                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${getPriorityBadge(kra.priority)}`}>
                           {kra.priority.toUpperCase()}
                         </span>
@@ -433,8 +433,8 @@ export default function MyKRAsPage() {
                           {statusConfig.text}
                         </span>
                       </div>
-                      <p className="text-slate-600 mb-3">{kra.description}</p>
-                      <div className="flex items-center gap-4 text-sm text-slate-500">
+                      <p className="text-muted-foreground mb-3">{kra.description}</p>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Target className="w-4 h-4" />
                           {kra.category}
@@ -453,24 +453,24 @@ export default function MyKRAsPage() {
                     </div>
                     <div className="text-right">
                       <div className="flex items-center gap-2 mb-2">
-                        <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                          <Eye className="w-5 h-5 text-slate-600" />
+                        <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                          <Eye className="w-5 h-5 text-muted-foreground" />
                         </button>
-                        <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                          <Edit className="w-5 h-5 text-slate-600" />
+                        <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                          <Edit className="w-5 h-5 text-muted-foreground" />
                         </button>
                       </div>
-                      <p className="text-xs text-slate-500">Updated {kra.lastUpdated}</p>
+                      <p className="text-xs text-muted-foreground">Updated {kra.lastUpdated}</p>
                     </div>
                   </div>
 
                   {/* Progress Bar */}
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-semibold text-slate-700">Progress</span>
-                      <span className="text-2xl font-bold text-blue-600">{kra.progress}%</span>
+                      <span className="text-sm font-semibold text-foreground">Progress</span>
+                      <span className="text-lg font-semibold tracking-tight text-blue-600">{kra.progress}%</span>
                     </div>
-                    <div className="w-full bg-slate-200 rounded-full h-4 overflow-hidden">
+                    <div className="w-full bg-muted rounded-full h-4 overflow-hidden">
                       <div 
                         className={`h-full rounded-full transition-all duration-500 ${
                           kra.progress >= 90 ? 'bg-gradient-to-r from-emerald-500 to-teal-600' :
@@ -486,19 +486,19 @@ export default function MyKRAsPage() {
                   {/* Metrics Grid */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                     <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg p-3">
-                      <p className="text-xs text-slate-600 mb-1">Target</p>
-                      <p className="font-bold text-slate-800">{kra.target}</p>
+                      <p className="text-xs text-muted-foreground mb-1">Target</p>
+                      <p className="font-bold text-foreground">{kra.target}</p>
                     </div>
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-3">
-                      <p className="text-xs text-slate-600 mb-1">Current</p>
+                      <p className="text-xs text-muted-foreground mb-1">Current</p>
                       <p className="font-bold text-blue-600">{kra.current}</p>
                     </div>
                     <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg p-3">
-                      <p className="text-xs text-slate-600 mb-1">Growth</p>
+                      <p className="text-xs text-muted-foreground mb-1">Growth</p>
                       <p className="font-bold text-emerald-600">{kra.metrics.growthRate}</p>
                     </div>
                     <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-3">
-                      <p className="text-xs text-slate-600 mb-1">Feedback</p>
+                      <p className="text-xs text-muted-foreground mb-1">Feedback</p>
                       <p className="font-bold text-purple-600 flex items-center gap-1">
                         <MessageSquare className="w-4 h-4" />
                         {kra.feedback} comments
@@ -508,7 +508,7 @@ export default function MyKRAsPage() {
 
                   {/* Milestones */}
                   <div>
-                    <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                    <h4 className="font-bold text-foreground mb-3 flex items-center gap-2">
                       <Flag className="w-5 h-5 text-blue-600" />
                       Key Milestones
                     </h4>
@@ -516,20 +516,20 @@ export default function MyKRAsPage() {
                       {kra.milestones.map((milestone, idx) => (
                         <div key={idx} className="flex items-center gap-3">
                           <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            milestone.status === 'completed' ? 'bg-emerald-500' :
-                            milestone.status === 'in-progress' ? 'bg-blue-500' :
-                            'bg-slate-300'
+                            milestone.status === 'completed' ? 'bg-muted0' :
+                            milestone.status === 'in-progress' ? 'bg-muted0' :
+                            'bg-muted'
                           }`}>
-                            {milestone.status === 'completed' && <CheckCircle className="w-4 h-4 text-white" />}
-                            {milestone.status === 'in-progress' && <Clock className="w-4 h-4 text-white" />}
+                            {milestone.status === 'completed' && <CheckCircle className="w-4 h-4 text-background" />}
+                            {milestone.status === 'in-progress' && <Clock className="w-4 h-4 text-background" />}
                           </div>
                           <div className="flex-1">
                             <p className={`text-sm font-semibold ${
-                              milestone.status === 'completed' ? 'text-slate-600 line-through' : 'text-slate-800'
+                              milestone.status === 'completed' ? 'text-muted-foreground line-through' : 'text-foreground'
                             }`}>
                               {milestone.title}
                             </p>
-                            <p className="text-xs text-slate-500">{milestone.date}</p>
+                            <p className="text-xs text-muted-foreground">{milestone.date}</p>
                           </div>
                           {milestone.status === 'in-progress' && (
                             <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
@@ -543,7 +543,7 @@ export default function MyKRAsPage() {
                 </div>
 
                 {/* Bottom Progress Stripe */}
-                <div className="h-2 bg-slate-100">
+                <div className="h-2 bg-muted">
                   <div 
                     className={`h-full transition-all duration-500 ${
                       kra.progress >= 90 ? 'bg-gradient-to-r from-emerald-500 to-teal-600' :

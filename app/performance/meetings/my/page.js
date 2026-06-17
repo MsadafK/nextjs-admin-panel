@@ -205,7 +205,7 @@ export default function MyMeetingsPage() {
       'cancelled': 'bg-red-100 text-red-700',
       'completed': 'bg-blue-100 text-blue-700'
     };
-    return colors[status] || 'bg-slate-100 text-slate-700';
+    return colors[status] || 'bg-muted text-foreground';
   };
 
   const getPriorityColor = (priority) => {
@@ -214,7 +214,7 @@ export default function MyMeetingsPage() {
       'medium': 'bg-yellow-100 text-yellow-700',
       'low': 'bg-green-100 text-green-700'
     };
-    return colors[priority] || 'bg-slate-100 text-slate-700';
+    return colors[priority] || 'bg-muted text-foreground';
   };
 
   const getMeetingTypeIcon = (type) => {
@@ -223,7 +223,7 @@ export default function MyMeetingsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -231,23 +231,23 @@ export default function MyMeetingsPage() {
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-3">
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent flex items-center gap-3">
               <Calendar size={32} />
               My Meetings
             </h1>
-            <p className="text-slate-600 mt-1">Manage your schedule and meetings</p>
+            <p className="text-muted-foreground mt-1">Manage your schedule and meetings</p>
           </div>
 
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-all flex items-center gap-2 text-slate-700 hover:shadow-md">
+            <button className="px-4 py-2 bg-card rounded-lg border border-border hover:border-border transition-all flex items-center gap-2 text-foreground hover:shadow-card">
               <Filter size={18} />
               <span>Filter</span>
             </button>
-            <button className="px-4 py-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-all flex items-center gap-2 text-slate-700 hover:shadow-md">
+            <button className="px-4 py-2 bg-card rounded-lg border border-border hover:border-border transition-all flex items-center gap-2 text-foreground hover:shadow-card">
               <Download size={18} />
               <span>Export</span>
             </button>
-            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2">
+            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-background rounded-lg hover:shadow-card transition-all flex items-center gap-2">
               <Plus size={18} />
               <span>New Meeting</span>
             </button>
@@ -259,7 +259,7 @@ export default function MyMeetingsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-4 shadow-sm border border-border"
         >
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
@@ -269,8 +269,8 @@ export default function MyMeetingsPage() {
                   onClick={() => setSelectedView(view)}
                   className={`px-4 py-2 rounded-lg font-medium capitalize transition-all text-sm ${
                     selectedView === view
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-background shadow-card'
+                      : 'bg-muted text-muted-foreground hover:bg-muted'
                   }`}
                 >
                   {view}
@@ -278,11 +278,11 @@ export default function MyMeetingsPage() {
               ))}
             </div>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
               <input
                 type="text"
                 placeholder="Search meetings..."
-                className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring text-sm"
               />
             </div>
           </div>
@@ -296,19 +296,19 @@ export default function MyMeetingsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.05 }}
-              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all border border-slate-100 group"
+              className="bg-card rounded-xl p-6 shadow-sm hover:shadow-card transition-all border border-border group"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} group-hover:scale-110 transition-transform shadow-lg`}>
-                  <stat.icon className="text-white" size={24} />
+                <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} group-hover:scale-110 transition-transform shadow-card`}>
+                  <stat.icon className="text-background" size={24} />
                 </div>
-                <div className="text-xs font-semibold text-slate-500">
+                <div className="text-xs font-semibold text-muted-foreground">
                   {stat.change}
                 </div>
               </div>
-              <h3 className="text-3xl font-bold text-slate-800 mb-1">{stat.value}</h3>
-              <p className="text-slate-600 text-sm mb-1">{stat.title}</p>
-              <p className="text-xs text-slate-500">{stat.subtitle}</p>
+              <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-1">{stat.value}</h3>
+              <p className="text-muted-foreground text-sm mb-1">{stat.title}</p>
+              <p className="text-xs text-muted-foreground">{stat.subtitle}</p>
             </motion.div>
           ))}
         </div>
@@ -330,50 +330,50 @@ export default function MyMeetingsPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 + index * 0.05 }}
-                      className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all"
+                      className="bg-card rounded-xl p-6 shadow-sm border border-border hover:shadow-card transition-all"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h3 className="text-lg font-bold text-slate-800">{meeting.title}</h3>
+                            <h3 className="text-lg font-bold text-foreground">{meeting.title}</h3>
                             <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${getPriorityColor(meeting.priority)}`}>
                               {meeting.priority}
                             </span>
                           </div>
-                          <p className="text-sm text-slate-600 mb-3">{meeting.type}</p>
+                          <p className="text-sm text-muted-foreground mb-3">{meeting.type}</p>
                           
                           <div className="grid grid-cols-2 gap-3 mb-4">
-                            <div className="flex items-center gap-2 text-sm text-slate-600">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Calendar size={16} className="text-blue-600" />
                               <span>{new Date(meeting.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-slate-600">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Clock size={16} className="text-blue-600" />
                               <span>{meeting.time} ({meeting.duration})</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-slate-600">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <MeetingIcon size={16} className="text-blue-600" />
                               <span>{meeting.location}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-slate-600">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Users size={16} className="text-blue-600" />
                               <span>{meeting.attendees} attendees</span>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2 mb-3">
-                            <User size={14} className="text-slate-400" />
-                            <span className="text-sm text-slate-600">
+                            <User size={14} className="text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">
                               Organized by <span className="font-semibold">{meeting.organizer}</span>
                             </span>
                           </div>
 
                           {meeting.agenda && (
-                            <div className="mt-3 p-3 bg-slate-50 rounded-lg">
-                              <p className="text-xs font-semibold text-slate-700 mb-2">Agenda:</p>
+                            <div className="mt-3 p-3 bg-muted rounded-lg">
+                              <p className="text-xs font-semibold text-foreground mb-2">Agenda:</p>
                               <ul className="space-y-1">
                                 {meeting.agenda.map((item, i) => (
-                                  <li key={i} className="text-xs text-slate-600 flex items-start gap-2">
+                                  <li key={i} className="text-xs text-muted-foreground flex items-start gap-2">
                                     <span className="text-blue-600 mt-0.5">•</span>
                                     <span>{item}</span>
                                   </li>
@@ -388,25 +388,25 @@ export default function MyMeetingsPage() {
                             {meeting.status}
                           </span>
                           <div className="flex gap-1">
-                            <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-600">
+                            <button className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground">
                               <Edit2 size={16} />
                             </button>
-                            <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-600">
+                            <button className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground">
                               <Copy size={16} />
                             </button>
-                            <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-600">
+                            <button className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground">
                               <MoreVertical size={16} />
                             </button>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                        <button className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-all flex items-center gap-2">
+                      <div className="flex items-center justify-between pt-4 border-t border-border">
+                        <button className="px-4 py-2 bg-muted text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition-all flex items-center gap-2">
                           <Video size={16} />
                           Join Meeting
                         </button>
-                        <button className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-all">
+                        <button className="px-4 py-2 bg-muted text-foreground rounded-lg text-sm font-medium hover:bg-muted transition-all">
                           View Details
                         </button>
                       </div>
@@ -428,19 +428,19 @@ export default function MyMeetingsPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + index * 0.05 }}
-                    className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all"
+                    className="bg-card rounded-xl p-6 shadow-sm border border-border hover:shadow-card transition-all"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="text-lg font-bold text-slate-800">{meeting.title}</h3>
+                          <h3 className="text-lg font-bold text-foreground">{meeting.title}</h3>
                           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(meeting.status)}`}>
                             {meeting.status}
                           </span>
                         </div>
-                        <p className="text-sm text-slate-600 mb-3">{meeting.type}</p>
+                        <p className="text-sm text-muted-foreground mb-3">{meeting.type}</p>
                         
-                        <div className="flex items-center gap-4 text-sm text-slate-600 mb-3">
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                           <div className="flex items-center gap-2">
                             <Calendar size={16} />
                             <span>{new Date(meeting.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
@@ -456,7 +456,7 @@ export default function MyMeetingsPage() {
                         </div>
 
                         {meeting.notes && (
-                          <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                          <div className="p-3 bg-muted rounded-lg border border-green-200">
                             <div className="flex items-center gap-2 mb-1">
                               <FileText size={14} className="text-green-600" />
                               <span className="text-xs font-semibold text-green-800">Notes:</span>
@@ -466,7 +466,7 @@ export default function MyMeetingsPage() {
                         )}
                       </div>
 
-                      <button className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-all">
+                      <button className="px-4 py-2 bg-muted text-foreground rounded-lg text-sm font-medium hover:bg-muted transition-all">
                         View Summary
                       </button>
                     </div>
@@ -483,9 +483,9 @@ export default function MyMeetingsPage() {
             transition={{ delay: 0.3 }}
             className="space-y-6"
           >
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                <h3 className="font-bold text-foreground flex items-center gap-2">
                   <Clock size={18} className="text-blue-600" />
                   Today's Schedule
                 </h3>
@@ -500,22 +500,22 @@ export default function MyMeetingsPage() {
                     key={index}
                     className={`flex items-start gap-3 p-3 rounded-lg transition-all ${
                       slot.meeting
-                        ? 'bg-blue-50 border-l-4 border-blue-500'
-                        : 'bg-slate-50 opacity-50'
+                        ? 'bg-muted border-l-2 border-blue-500'
+                        : 'bg-muted opacity-50'
                     }`}
                   >
-                    <div className="text-xs font-semibold text-slate-600 w-20">
+                    <div className="text-xs font-semibold text-muted-foreground w-20">
                       {slot.time}
                     </div>
                     {slot.meeting ? (
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-slate-800 mb-1">
+                        <p className="text-sm font-semibold text-foreground mb-1">
                           {slot.meeting.title}
                         </p>
-                        <p className="text-xs text-slate-600">{slot.meeting.duration}</p>
+                        <p className="text-xs text-muted-foreground">{slot.meeting.duration}</p>
                       </div>
                     ) : (
-                      <p className="text-xs text-slate-400 italic">Free</p>
+                      <p className="text-xs text-muted-foreground italic">Free</p>
                     )}
                   </div>
                 ))}
@@ -523,33 +523,33 @@ export default function MyMeetingsPage() {
             </div>
 
             {/* Quick Stats */}
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl p-6 text-background shadow-card">
               <div className="flex items-center gap-2 mb-4">
                 <Zap size={20} />
                 <h3 className="font-bold">Meeting Insights</h3>
               </div>
 
               <div className="space-y-4">
-                <div className="bg-white/10 rounded-lg p-3">
+                <div className="bg-card/10 rounded-lg p-3">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-blue-100">This Week</span>
-                    <span className="text-2xl font-bold">12</span>
+                    <span className="text-sm text-background/70">This Week</span>
+                    <span className="text-lg font-semibold tracking-tight">12</span>
                   </div>
                   <p className="text-xs text-blue-200">Total meetings scheduled</p>
                 </div>
 
-                <div className="bg-white/10 rounded-lg p-3">
+                <div className="bg-card/10 rounded-lg p-3">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-blue-100">Avg Duration</span>
-                    <span className="text-2xl font-bold">47m</span>
+                    <span className="text-sm text-background/70">Avg Duration</span>
+                    <span className="text-lg font-semibold tracking-tight">47m</span>
                   </div>
                   <p className="text-xs text-blue-200">Per meeting</p>
                 </div>
 
-                <div className="bg-white/10 rounded-lg p-3">
+                <div className="bg-card/10 rounded-lg p-3">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-blue-100">Meeting Hours</span>
-                    <span className="text-2xl font-bold">9.4h</span>
+                    <span className="text-sm text-background/70">Meeting Hours</span>
+                    <span className="text-lg font-semibold tracking-tight">9.4h</span>
                   </div>
                   <p className="text-xs text-blue-200">Total this week</p>
                 </div>
@@ -557,18 +557,18 @@ export default function MyMeetingsPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
-              <h3 className="font-bold text-slate-800 mb-4">Quick Actions</h3>
+            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
+              <h3 className="font-bold text-foreground mb-4">Quick Actions</h3>
               <div className="space-y-2">
-                <button className="w-full px-4 py-3 bg-slate-50 hover:bg-slate-100 rounded-lg text-left text-sm font-medium text-slate-700 transition-all flex items-center gap-2">
+                <button className="w-full px-4 py-3 bg-muted hover:bg-muted rounded-lg text-left text-sm font-medium text-foreground transition-all flex items-center gap-2">
                   <CalendarCheck size={16} className="text-blue-600" />
                   Schedule New Meeting
                 </button>
-                <button className="w-full px-4 py-3 bg-slate-50 hover:bg-slate-100 rounded-lg text-left text-sm font-medium text-slate-700 transition-all flex items-center gap-2">
+                <button className="w-full px-4 py-3 bg-muted hover:bg-muted rounded-lg text-left text-sm font-medium text-foreground transition-all flex items-center gap-2">
                   <Bell size={16} className="text-blue-600" />
                   Set Reminders
                 </button>
-                <button className="w-full px-4 py-3 bg-slate-50 hover:bg-slate-100 rounded-lg text-left text-sm font-medium text-slate-700 transition-all flex items-center gap-2">
+                <button className="w-full px-4 py-3 bg-muted hover:bg-muted rounded-lg text-left text-sm font-medium text-foreground transition-all flex items-center gap-2">
                   <FileText size={16} className="text-blue-600" />
                   View Past Notes
                 </button>

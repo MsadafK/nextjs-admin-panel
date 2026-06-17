@@ -74,7 +74,7 @@ export default function InviteUsers() {
       case 'accepted': return 'bg-green-100 text-green-800 border-green-200';
       case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'expired': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      default: return 'bg-muted text-foreground border-border';
     }
   };
 
@@ -88,15 +88,15 @@ export default function InviteUsers() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Invite Users</h1>
-          <p className="text-gray-600">Send email invitations to new users to join your platform</p>
+          <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Invite Users</h1>
+          <p className="text-muted-foreground">Send email invitations to new users to join your platform</p>
         </div>
 
         {showSuccess && (
-          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+          <div className="mb-6 bg-muted border border-green-200 rounded-lg p-4 flex items-center gap-3">
             <CheckCircle className="text-green-600" size={24} />
             <div>
               <h3 className="font-semibold text-green-900">Invitations Sent Successfully!</h3>
@@ -108,11 +108,11 @@ export default function InviteUsers() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-5 border border-gray-200">
+          <div className="bg-card rounded-lg shadow p-5 border border-border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Total Sent</p>
-                <p className="text-2xl font-bold text-gray-900">248</p>
+                <p className="text-sm text-muted-foreground mb-1">Total Sent</p>
+                <p className="text-lg font-semibold tracking-tight text-foreground">248</p>
               </div>
               <div className="bg-blue-100 p-3 rounded-lg">
                 <Send className="text-blue-600" size={24} />
@@ -120,11 +120,11 @@ export default function InviteUsers() {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow p-5 border border-gray-200">
+          <div className="bg-card rounded-lg shadow p-5 border border-border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Accepted</p>
-                <p className="text-2xl font-bold text-green-600">186</p>
+                <p className="text-sm text-muted-foreground mb-1">Accepted</p>
+                <p className="text-lg font-semibold tracking-tight text-green-600">186</p>
               </div>
               <div className="bg-green-100 p-3 rounded-lg">
                 <CheckCircle className="text-green-600" size={24} />
@@ -132,11 +132,11 @@ export default function InviteUsers() {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow p-5 border border-gray-200">
+          <div className="bg-card rounded-lg shadow p-5 border border-border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Pending</p>
-                <p className="text-2xl font-bold text-yellow-600">47</p>
+                <p className="text-sm text-muted-foreground mb-1">Pending</p>
+                <p className="text-lg font-semibold tracking-tight text-yellow-600">47</p>
               </div>
               <div className="bg-yellow-100 p-3 rounded-lg">
                 <AlertCircle className="text-yellow-600" size={24} />
@@ -144,11 +144,11 @@ export default function InviteUsers() {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg shadow p-5 border border-gray-200">
+          <div className="bg-card rounded-lg shadow p-5 border border-border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Expired</p>
-                <p className="text-2xl font-bold text-red-600">15</p>
+                <p className="text-sm text-muted-foreground mb-1">Expired</p>
+                <p className="text-lg font-semibold tracking-tight text-red-600">15</p>
               </div>
               <div className="bg-red-100 p-3 rounded-lg">
                 <XCircle className="text-red-600" size={24} />
@@ -159,16 +159,16 @@ export default function InviteUsers() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Invitation Method</h2>
+            <div className="bg-card border border-border rounded-lg shadow-card">
+              <div className="p-6 border-b border-border">
+                <h2 className="text-lg font-semibold text-foreground mb-4">Invitation Method</h2>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setInviteMethod('single')}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
                       inviteMethod === 'single'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-blue-500 bg-muted text-blue-700'
+                        : 'border-border hover:border-border'
                     }`}
                   >
                     <Mail size={20} />
@@ -179,8 +179,8 @@ export default function InviteUsers() {
                     onClick={() => setInviteMethod('bulk')}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
                       inviteMethod === 'bulk'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-blue-500 bg-muted text-blue-700'
+                        : 'border-border hover:border-border'
                     }`}
                   >
                     <UserPlus size={20} />
@@ -191,8 +191,8 @@ export default function InviteUsers() {
                     onClick={() => setInviteMethod('csv')}
                     className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
                       inviteMethod === 'csv'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-blue-500 bg-muted text-blue-700'
+                        : 'border-border hover:border-border'
                     }`}
                   >
                     <Upload size={20} />
@@ -205,10 +205,10 @@ export default function InviteUsers() {
                 {inviteMethod === 'single' && (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-gray-900">Email Addresses</h3>
+                      <h3 className="font-semibold text-foreground">Email Addresses</h3>
                       <button
                         onClick={addEmailField}
-                        className="flex items-center gap-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 text-sm bg-foreground text-background rounded-lg hover:opacity-90 transition-colors"
                       >
                         <Plus size={16} />
                         Add More
@@ -223,13 +223,13 @@ export default function InviteUsers() {
                             placeholder="user@example.com"
                             value={item.email}
                             onChange={(e) => updateEmail(item.id, e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                           />
                         </div>
                         <select
                           value={item.role}
                           onChange={(e) => updateRole(item.id, e.target.value)}
-                          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                         >
                           {roles.map(role => (
                             <option key={role} value={role}>{role}</option>
@@ -238,7 +238,7 @@ export default function InviteUsers() {
                         {emailList.length > 1 && (
                           <button
                             onClick={() => removeEmailField(item.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-red-600 hover:bg-muted rounded-lg transition-colors"
                           >
                             <Trash2 size={20} />
                           </button>
@@ -251,7 +251,7 @@ export default function InviteUsers() {
                 {inviteMethod === 'bulk' && (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         Email Addresses (one per line or comma-separated)
                       </label>
                       <textarea
@@ -259,21 +259,21 @@ export default function InviteUsers() {
                         onChange={(e) => setBulkEmails(e.target.value)}
                         placeholder="user1@example.com&#10;user2@example.com&#10;user3@example.com"
                         rows={8}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                        className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring font-mono text-sm"
                       />
-                      <p className="text-sm text-gray-500 mt-2">
+                      <p className="text-sm text-muted-foreground mt-2">
                         {bulkEmails.split(/[\n,]/).filter(e => e.trim()).length} email(s) detected
                       </p>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-foreground mb-2">
                         Default Role for All Users
                       </label>
                       <select
                         value={selectedRole}
                         onChange={(e) => setSelectedRole(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                       >
                         {roles.map(role => (
                           <option key={role} value={role}>{role}</option>
@@ -285,18 +285,18 @@ export default function InviteUsers() {
 
                 {inviteMethod === 'csv' && (
                   <div className="space-y-4">
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer">
-                      <Upload className="mx-auto mb-4 text-gray-400" size={48} />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Upload CSV File</h3>
-                      <p className="text-sm text-gray-600 mb-4">
+                    <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer">
+                      <Upload className="mx-auto mb-4 text-muted-foreground" size={48} />
+                      <h3 className="text-lg font-semibold text-foreground mb-2">Upload CSV File</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
                         Drag and drop your CSV file here, or click to browse
                       </p>
-                      <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                      <button className="px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors">
                         Choose File
                       </button>
                     </div>
 
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="bg-muted border border-blue-200 rounded-lg p-4">
                       <h4 className="font-semibold text-blue-900 mb-2">CSV Format Requirements:</h4>
                       <ul className="text-sm text-blue-800 space-y-1">
                         <li>• Column 1: Email address (required)</li>
@@ -313,7 +313,7 @@ export default function InviteUsers() {
                 )}
 
                 <div className="mt-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Custom Invitation Message (Optional)
                   </label>
                   <textarea
@@ -321,7 +321,7 @@ export default function InviteUsers() {
                     onChange={(e) => setInviteMessage(e.target.value)}
                     placeholder="Add a personal message to your invitation..."
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                   />
                 </div>
 
@@ -329,7 +329,7 @@ export default function InviteUsers() {
                   <button
                     onClick={handleSendInvites}
                     disabled={sendingInvites}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {sendingInvites ? (
                       <>
@@ -344,7 +344,7 @@ export default function InviteUsers() {
                     )}
                   </button>
                   
-                  <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button className="px-6 py-3 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                     Cancel
                   </button>
                 </div>
@@ -353,9 +353,9 @@ export default function InviteUsers() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Quick Invite Link</h3>
-              <p className="text-sm text-gray-600 mb-4">
+            <div className="bg-card border border-border rounded-lg shadow-card p-6">
+              <h3 className="font-semibold text-foreground mb-4">Quick Invite Link</h3>
+              <p className="text-sm text-muted-foreground mb-4">
                 Share this link directly with users. Anyone with this link can sign up.
               </p>
               <div className="flex gap-2">
@@ -363,33 +363,33 @@ export default function InviteUsers() {
                   type="text"
                   value="yourapp.com/invite/abc123"
                   readOnly
-                  className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm"
+                  className="flex-1 px-3 py-2 bg-muted border border-border rounded-lg text-sm"
                 />
                 <button
                   onClick={copyInviteLink}
-                  className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="p-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors"
                   title="Copy Link"
                 >
                   <Copy size={20} />
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 Link expires in 7 days
               </p>
             </div>
 
-            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Recent Invitations</h3>
+            <div className="bg-card border border-border rounded-lg shadow-card p-6">
+              <h3 className="font-semibold text-foreground mb-4">Recent Invitations</h3>
               <div className="space-y-3">
                 {sentInvites.map(invite => (
-                  <div key={invite.id} className="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0">
+                  <div key={invite.id} className="flex items-start gap-3 pb-3 border-b border-border last:border-0">
                     <div className="mt-1">
                       {getStatusIcon(invite.status)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{invite.email}</p>
+                      <p className="text-sm font-medium text-foreground truncate">{invite.email}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-gray-500">{invite.sentAt}</span>
+                        <span className="text-xs text-muted-foreground">{invite.sentAt}</span>
                         <span className={`text-xs px-2 py-0.5 rounded-full border ${getStatusColor(invite.status)}`}>
                           {invite.status}
                         </span>
@@ -403,7 +403,7 @@ export default function InviteUsers() {
               </button>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div className="bg-muted border border-blue-200 rounded-lg p-6">
               <h3 className="font-semibold text-blue-900 mb-3">💡 Tips</h3>
               <ul className="text-sm text-blue-800 space-y-2">
                 <li>• Invites expire after 7 days</li>

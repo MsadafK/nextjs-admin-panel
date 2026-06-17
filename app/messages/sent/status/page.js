@@ -1,10 +1,11 @@
 'use client';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useState, useEffect } from 'react';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { useLanguage } from '../../../contexts/LanguageContext';
+
+
 import { Mail, CheckCircle, XCircle, Clock, Search, Filter, User, RefreshCw, Eye, Reply, Trash2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+
 
 const mockDeliveryStatus = [
   { id: 1, recipient: { name: 'Alice Johnson', avatar: 'AJ', email: 'alice@company.com' }, subject: 'Project Update - Q4 Goals', sentTime: '2 hours ago', status: 'delivered', statusIcon: CheckCircle, deliveryTime: 'Delivered at 10:30 AM' },
@@ -22,9 +23,8 @@ const statusColors = {
 };
 
 export default function DeliveryStatus() {
-  const { isDark } = useTheme();
-  const { t } = useLanguage();
-  const [messages, setMessages] = useState(mockDeliveryStatus);
+    const t = () => null;
+const [messages, setMessages] = useState(mockDeliveryStatus);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [deliveryCount, setDeliveryCount] = useState(0);
@@ -55,16 +55,16 @@ export default function DeliveryStatus() {
   );
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`min-h-screen bg-muted text-foreground`}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-6 border-b border-border dark:border-border">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className={`text-3xl font-bold flex items-center gap-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h1 className={`text-lg sm:text-xl font-semibold tracking-tight flex items-center gap-3 text-foreground`}>
               <Mail className="w-8 h-8" />
               {t('delivery_status') || 'Delivery Status'}
             </h1>
-            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`text-muted-foreground`}>
               Track the delivery of your sent messages. {deliveryCount} successfully delivered.
             </p>
           </div>
@@ -84,23 +84,23 @@ export default function DeliveryStatus() {
         <div className="flex flex-col lg:flex-row gap-4 mb-6">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground`} />
             <input
               type="text"
               placeholder={t('search_messages') || 'Search by recipient or subject...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'} focus:outline-none focus:ring-2 focus:ring-green-500`}
+              className={`w-full pl-10 pr-4 py-3 rounded-lg border bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500`}
             />
           </div>
 
           {/* Filter */}
           <div className="flex items-center gap-2">
-            <Filter className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+            <Filter className={`w-5 h-5 text-muted-foreground`} />
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className={`px-4 py-3 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-green-500`}
+              className={`px-4 py-3 rounded-lg border bg-card border-border text-foreground focus:outline-none focus:ring-2 focus:ring-green-500`}
             >
               <option value="all">All Status</option>
               <option value="delivered">Delivered</option>
@@ -126,18 +126,18 @@ export default function DeliveryStatus() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: index * 0.05 }}
                   whileHover={{ scale: 1.01 }}
-                  className={`p-4 rounded-xl shadow-md ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} transition-all duration-300 hover:shadow-lg`}
+                  className={`p-4 rounded-xl shadow-card bg-card border border-border transition-all duration-300 hover:shadow-card`}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="relative">
-                        <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center text-white font-semibold text-sm`}>
+                        <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center text-background font-semibold text-sm`}>
                           {message.recipient.avatar}
                         </div>
                       </div>
                       <div className="min-w-0 flex-1">
                         <h3 className="font-semibold text-sm truncate">{message.recipient.name}</h3>
-                        <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-xs truncate`}>{message.recipient.email}</p>
+                        <p className={`text-muted-foreground text-xs truncate`}>{message.recipient.email}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -145,15 +145,15 @@ export default function DeliveryStatus() {
                         <message.statusIcon className="w-3 h-3 mr-1" />
                         {message.status.charAt(0).toUpperCase() + message.status.slice(1)}
                       </div>
-                      <p className={`text-xs font-medium mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <p className={`text-xs font-medium mt-1 text-muted-foreground`}>
                         {message.sentTime}
                       </p>
                     </div>
                   </div>
-                  <div className="ml-13 border-l-4 border-green-200 dark:border-green-800 pl-4">
+                  <div className="ml-13 border-l-2 border-green-200 dark:border-green-800 pl-4">
                     <h4 className="font-medium text-sm mb-1 line-clamp-1">{message.subject}</h4>
                     {message.deliveryTime && (
-                      <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} text-sm mb-3`}>{message.deliveryTime}</p>
+                      <p className={`text-muted-foreground text-sm mb-3`}>{message.deliveryTime}</p>
                     )}
                     {message.reason && (
                       <div className="flex items-center gap-1 text-xs text-red-500 mb-3">
@@ -162,18 +162,18 @@ export default function DeliveryStatus() {
                       </div>
                     )}
                     <div className="flex items-center justify-end space-x-2">
-                      <button className="p-1 text-gray-500 hover:text-green-500 transition-colors">
+                      <button className="p-1 text-muted-foreground hover:text-green-500 transition-colors">
                         <Eye className="w-4 h-4" />
                       </button>
                       {message.status === 'failed' && (
-                        <button className="p-1 text-gray-500 hover:text-blue-500 transition-colors flex items-center">
+                        <button className="p-1 text-muted-foreground hover:text-blue-500 transition-colors flex items-center">
                           <RefreshCw className="w-4 h-4" />
                         </button>
                       )}
-                      <button className="p-1 text-gray-500 hover:text-green-500 transition-colors">
+                      <button className="p-1 text-muted-foreground hover:text-green-500 transition-colors">
                         <Reply className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-gray-500 hover:text-red-500 transition-colors">
+                      <button className="p-1 text-muted-foreground hover:text-red-500 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -185,11 +185,11 @@ export default function DeliveryStatus() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className={`p-12 text-center rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'} border border-dashed ${isDark ? 'border-gray-700' : 'border-gray-300'}`}
+              className={`p-12 text-center rounded-xl bg-card border border-dashed border-border`}
             >
-              <Mail className={`w-16 h-16 mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+              <Mail className={`w-16 h-16 mx-auto mb-4 text-muted-foreground`} />
               <h3 className="text-lg font-semibold mb-2">{t('no_status_found') || 'No delivery status available'}</h3>
-              <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Try searching or adjust your status filter.</p>
+              <p className={`text-muted-foreground`}>Try searching or adjust your status filter.</p>
             </motion.div>
           )}
         </AnimatePresence>

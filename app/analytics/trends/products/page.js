@@ -95,10 +95,10 @@ export default function ProductTrends() {
   ];
 
   const categories = [
-    { name: 'Electronics', products: 245, sales: 8920, revenue: 445000, growth: 22.5, color: 'bg-blue-500' },
-    { name: 'Accessories', products: 380, sales: 6740, revenue: 168500, growth: 15.8, color: 'bg-green-500' },
-    { name: 'Wearables', products: 156, sales: 4560, revenue: 342000, growth: 28.3, color: 'bg-purple-500' },
-    { name: 'Peripherals', products: 198, sales: 3890, revenue: 194500, growth: 12.7, color: 'bg-orange-500' },
+    { name: 'Electronics', products: 245, sales: 8920, revenue: 445000, growth: 22.5, color: 'bg-muted0' },
+    { name: 'Accessories', products: 380, sales: 6740, revenue: 168500, growth: 15.8, color: 'bg-muted0' },
+    { name: 'Wearables', products: 156, sales: 4560, revenue: 342000, growth: 28.3, color: 'bg-muted0' },
+    { name: 'Peripherals', products: 198, sales: 3890, revenue: 194500, growth: 12.7, color: 'bg-muted0' },
   ];
 
   const lowStockProducts = [
@@ -180,24 +180,24 @@ export default function ProductTrends() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Product Trends</h1>
-              <p className="text-gray-600">Track product performance and inventory insights</p>
+              <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Product Trends</h1>
+              <p className="text-muted-foreground">Track product performance and inventory insights</p>
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                 <Filter size={20} />
                 Filter
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                 <RefreshCw size={20} />
                 Refresh
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors">
                 <Download size={20} />
                 Export
               </button>
@@ -209,14 +209,14 @@ export default function ProductTrends() {
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             const colorClasses = {
-              blue: 'bg-blue-100 text-blue-600',
-              green: 'bg-green-100 text-green-600',
-              purple: 'bg-purple-100 text-purple-600',
-              orange: 'bg-orange-100 text-orange-600',
+              blue: 'bg-muted text-foreground',
+              green: 'bg-muted text-foreground',
+              purple: 'bg-muted text-foreground',
+              orange: 'bg-muted text-foreground',
             };
             
             return (
-              <div key={index} className="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card p-6 hover:shadow-card transition-shadow">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-3 rounded-lg ${colorClasses[stat.color]}`}>
                     <Icon size={24} />
@@ -228,17 +228,17 @@ export default function ProductTrends() {
                     {stat.change}
                   </div>
                 </div>
-                <h3 className="text-sm text-gray-600 mb-1">{stat.title}</h3>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</p>
-                <p className="text-xs text-gray-500">{stat.description}</p>
+                <h3 className="text-sm text-muted-foreground mb-1">{stat.title}</h3>
+                <p className="text-lg font-semibold tracking-tight text-foreground mb-1">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.description}</p>
               </div>
             );
           })}
         </div>
 
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+        <div className="bg-card border border-border rounded-lg shadow-card p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Product Performance</h2>
+            <h2 className="text-xl font-semibold text-foreground">Product Performance</h2>
             <div className="flex gap-2">
               {timeRanges.map((range) => (
                 <button
@@ -246,8 +246,8 @@ export default function ProductTrends() {
                   onClick={() => setTimeRange(range.value)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     timeRange === range.value
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-foreground text-background'
+                      : 'bg-muted text-foreground hover:bg-muted'
                   }`}
                 >
                   {range.label}
@@ -257,14 +257,14 @@ export default function ProductTrends() {
           </div>
 
           <div className="h-80 relative">
-            <div className="absolute left-0 top-0 bottom-8 w-16 flex flex-col justify-between text-xs text-gray-500">
+            <div className="absolute left-0 top-0 bottom-8 w-16 flex flex-col justify-between text-xs text-muted-foreground">
               <span>${(maxValue * 1.2 / 1000).toFixed(0)}k</span>
               <span>${(maxValue * 0.8 / 1000).toFixed(0)}k</span>
               <span>${(maxValue * 0.4 / 1000).toFixed(0)}k</span>
               <span>$0</span>
             </div>
 
-            <div className="ml-16 h-full flex items-end gap-1 pb-8 border-l-2 border-b-2 border-gray-200">
+            <div className="ml-16 h-full flex items-end gap-1 pb-8 border-l-2 border-b-2 border-border">
               {currentData.map((data, index) => {
                 const height = (data.revenue / maxValue) * 100;
                 
@@ -275,14 +275,14 @@ export default function ProductTrends() {
                         className="w-full bg-gradient-to-t from-blue-600 via-blue-500 to-blue-400 rounded-t-lg hover:from-blue-700 hover:via-blue-600 hover:to-blue-500 transition-all cursor-pointer group relative"
                         style={{ height: `${height}%` }}
                       >
-                        <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                           <div className="font-semibold mb-1">Revenue: ${data.revenue.toLocaleString()}</div>
                           <div>Sales: {data.sales}</div>
                           <div>Views: {data.views.toLocaleString()}</div>
                         </div>
                       </div>
                     </div>
-                    <span className="text-xs text-gray-600 font-medium">{data.date}</span>
+                    <span className="text-xs text-muted-foreground font-medium">{data.date}</span>
                   </div>
                 );
               })}
@@ -291,13 +291,13 @@ export default function ProductTrends() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <div className="lg:col-span-2 bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="lg:col-span-2 bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">Trending Products</h2>
+              <h2 className="text-xl font-semibold text-foreground">Trending Products</h2>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-ring"
               >
                 <option value="revenue">Sort by Revenue</option>
                 <option value="sales">Sort by Sales</option>
@@ -307,16 +307,16 @@ export default function ProductTrends() {
             </div>
             <div className="space-y-4">
               {trendingProducts.map((product) => (
-                <div key={product.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                  <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                    <Package className="text-white" size={32} />
+                <div key={product.id} className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted transition-colors">
+                  <div className="flex-shrink-0 w-16 h-16 bg-foreground rounded-lg flex items-center justify-center">
+                    <Package className="text-background" size={32} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-gray-900 truncate">{product.name}</h3>
+                      <h3 className="font-semibold text-foreground truncate">{product.name}</h3>
                       {getTrendBadge(product.trend)}
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Star size={14} className="text-yellow-500 fill-yellow-500" />
                         {product.rating}
@@ -334,13 +334,13 @@ export default function ProductTrends() {
                       <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
                         {product.category}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         Stock: {product.stock} units
                       </span>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <span className="text-lg font-bold text-gray-900">
+                    <span className="text-lg font-bold text-foreground">
                       ${product.revenue.toLocaleString()}
                     </span>
                     <div className={`flex items-center gap-1 text-sm font-semibold ${
@@ -356,16 +356,16 @@ export default function ProductTrends() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Low Stock Alert</h2>
+            <div className="bg-card border border-border rounded-lg shadow-card p-6">
+              <h2 className="text-xl font-semibold text-foreground mb-6">Low Stock Alert</h2>
               <div className="space-y-3">
                 {lowStockProducts.map((product, index) => (
-                  <div key={index} className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <div key={index} className="p-3 bg-muted border border-red-200 rounded-lg">
                     <div className="flex items-start gap-2 mb-2">
                       <AlertCircle size={16} className="text-red-600 mt-0.5 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{product.name}</p>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-sm font-medium text-foreground">{product.name}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
                           Only {product.stock} units left
                         </p>
                       </div>
@@ -386,18 +386,18 @@ export default function ProductTrends() {
               </button>
             </div>
 
-            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
+            <div className="bg-card border border-border rounded-lg shadow-card p-6">
+              <h2 className="text-xl font-semibold text-foreground mb-6">Quick Actions</h2>
               <div className="space-y-3">
-                <button className="w-full flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                <button className="w-full flex items-center gap-3 px-4 py-3 bg-muted text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
                   <Package size={20} />
                   <span className="font-medium">Add New Product</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                <button className="w-full flex items-center gap-3 px-4 py-3 bg-muted text-green-700 rounded-lg hover:bg-green-100 transition-colors">
                   <RefreshCw size={20} />
                   <span className="font-medium">Bulk Update Stock</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
+                <button className="w-full flex items-center gap-3 px-4 py-3 bg-muted text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
                   <BarChart3 size={20} />
                   <span className="font-medium">View Full Report</span>
                 </button>
@@ -406,26 +406,26 @@ export default function ProductTrends() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Category Performance</h2>
+        <div className="bg-card border border-border rounded-lg shadow-card p-6">
+          <h2 className="text-xl font-semibold text-foreground mb-6">Category Performance</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((category, index) => (
-              <div key={index} className="p-5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div key={index} className="p-5 bg-muted rounded-lg hover:bg-muted transition-colors">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-900">{category.name}</h3>
+                  <h3 className="font-semibold text-foreground">{category.name}</h3>
                   <div className={`w-3 h-3 rounded-full ${category.color}`}></div>
                 </div>
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Products</span>
+                    <span className="text-muted-foreground">Products</span>
                     <span className="font-semibold">{category.products}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Sales</span>
+                    <span className="text-muted-foreground">Sales</span>
                     <span className="font-semibold">{category.sales.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Revenue</span>
+                    <span className="text-muted-foreground">Revenue</span>
                     <span className="font-semibold">${category.revenue.toLocaleString()}</span>
                   </div>
                 </div>

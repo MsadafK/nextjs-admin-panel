@@ -1,10 +1,11 @@
 'use client';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useState, useEffect } from 'react';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { useLanguage } from '../../../contexts/LanguageContext';
+
+
 import { Archive, Search, Filter, Tags, User, Eye, Trash2, Star, MessageSquare } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+
 
 const mockArchivedByTags = [
   { id: 1, participant: { name: 'Alice Johnson', avatar: 'AJ', email: 'alice@company.com' }, subject: 'Project Q4 Planning', lastMessage: 'Milestones updated.', messageCount: 12, archivedDate: '1 week ago', tags: ['Project', 'Urgent'], starred: true },
@@ -30,9 +31,8 @@ const groupByTags = (data) => {
 };
 
 export default function ArchivedByTags() {
-  const { isDark } = useTheme();
-  const { t } = useLanguage();
-  const [conversations, setConversations] = useState(mockArchivedByTags);
+    const t = () => null;
+const [conversations, setConversations] = useState(mockArchivedByTags);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('all');
   const [groupedConversations, setGroupedConversations] = useState({});
@@ -54,16 +54,16 @@ export default function ArchivedByTags() {
   const totalArchived = conversations.length;
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`min-h-screen bg-muted text-foreground`}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-6 border-b border-border dark:border-border">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className={`text-3xl font-bold flex items-center gap-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h1 className={`text-lg sm:text-xl font-semibold tracking-tight flex items-center gap-3 text-foreground`}>
               <Tags className="w-8 h-8" />
               {t('archived_by_tags') || 'Archived by Tags'}
             </h1>
-            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`text-muted-foreground`}>
               {totalArchived} conversations categorized by tags. Efficient organization and retrieval.
             </p>
           </div>
@@ -83,23 +83,23 @@ export default function ArchivedByTags() {
         <div className="flex flex-col lg:flex-row gap-4 mb-6">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground`} />
             <input
               type="text"
               placeholder={t('search_archived') || 'Search by participant, subject, or content...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'} focus:outline-none focus:ring-2 focus:ring-pink-500`}
+              className={`w-full pl-10 pr-4 py-3 rounded-lg border bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-pink-500`}
             />
           </div>
 
           {/* Tag Filter */}
           <div className="flex items-center gap-2">
-            <Filter className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+            <Filter className={`w-5 h-5 text-muted-foreground`} />
             <select
               value={selectedTag}
               onChange={(e) => setSelectedTag(e.target.value)}
-              className={`px-4 py-3 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-pink-500`}
+              className={`px-4 py-3 rounded-lg border bg-card border-border text-foreground focus:outline-none focus:ring-2 focus:ring-pink-500`}
             >
               <option value="all">All Tags</option>
               {allTags.map(tag => (
@@ -124,13 +124,13 @@ export default function ArchivedByTags() {
                     initial={{ y: -10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: groupIndex * 0.1 }}
-                    className={`text-lg font-semibold mb-4 flex items-center gap-2 sticky top-0 bg-gray-900/80 dark:bg-gray-900/80 backdrop-blur-sm p-2 rounded-lg z-10 ${
-                      isDark ? 'text-gray-300' : 'text-gray-700'
+                    className={`text-lg font-semibold mb-4 flex items-center gap-2 sticky top-0 bg-foreground/80 /80 backdrop-blur-sm p-2 rounded-lg z-10 ${
+                      'text-foreground'
                     }`}
                   >
                     <Tags className="w-5 h-5" />
                     {tag}
-                    <span className="text-sm text-gray-500">({items.length})</span>
+                    <span className="text-sm text-muted-foreground">({items.length})</span>
                   </motion.h2>
                   <div className="space-y-4">
                     {items.map((convo, index) => (
@@ -140,12 +140,12 @@ export default function ArchivedByTags() {
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: (groupIndex * 0.2) + (index * 0.05) }}
                         whileHover={{ scale: 1.01 }}
-                        className={`p-4 rounded-xl shadow-md ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} transition-all duration-300 hover:shadow-lg`}
+                        className={`p-4 rounded-xl shadow-card bg-card border border-border transition-all duration-300 hover:shadow-card`}
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             <div className="relative">
-                              <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm`}>
+                              <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center text-background font-semibold text-sm`}>
                                 {convo.participant.avatar}
                               </div>
                               {convo.starred && (
@@ -154,11 +154,11 @@ export default function ArchivedByTags() {
                             </div>
                             <div className="min-w-0 flex-1">
                               <h3 className="font-semibold text-sm truncate">{convo.participant.name}</h3>
-                              <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-xs truncate`}>{convo.participant.email}</p>
+                              <p className={`text-muted-foreground text-xs truncate`}>{convo.participant.email}</p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <p className={`text-xs font-medium text-muted-foreground`}>
                               {convo.archivedDate}
                             </p>
                             <div className="flex items-center gap-1 text-xs text-pink-500 mt-1">
@@ -167,14 +167,14 @@ export default function ArchivedByTags() {
                             </div>
                           </div>
                         </div>
-                        <div className="ml-13 border-l-4 border-pink-200 dark:border-pink-800 pl-4">
+                        <div className="ml-13 border-l-2 border-pink-200 dark:border-pink-800 pl-4">
                           <h4 className="font-medium text-sm mb-1 line-clamp-1">{convo.subject}</h4>
-                          <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} text-sm line-clamp-2 mb-3`}>{convo.lastMessage}</p>
+                          <p className={`text-muted-foreground text-sm line-clamp-2 mb-3`}>{convo.lastMessage}</p>
                           <div className="flex items-center justify-end space-x-2">
-                            <button className="p-1 text-gray-500 hover:text-pink-500 transition-colors">
+                            <button className="p-1 text-muted-foreground hover:text-pink-500 transition-colors">
                               <Eye className="w-4 h-4" />
                             </button>
-                            <button className="p-1 text-gray-500 hover:text-red-500 transition-colors">
+                            <button className="p-1 text-muted-foreground hover:text-red-500 transition-colors">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -189,11 +189,11 @@ export default function ArchivedByTags() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className={`p-12 text-center rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'} border border-dashed ${isDark ? 'border-gray-700' : 'border-gray-300'}`}
+              className={`p-12 text-center rounded-xl bg-card border border-dashed border-border`}
             >
-              <Archive className={`w-16 h-16 mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+              <Archive className={`w-16 h-16 mx-auto mb-4 text-muted-foreground`} />
               <h3 className="text-lg font-semibold mb-2">{t('no_conversations_found') || 'No archived conversations'}</h3>
-              <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Try adjusting your search or tag filter.</p>
+              <p className={`text-muted-foreground`}>Try adjusting your search or tag filter.</p>
             </motion.div>
           )}
         </AnimatePresence>

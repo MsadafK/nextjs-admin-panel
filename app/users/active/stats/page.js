@@ -1,10 +1,11 @@
 'use client';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useState, useEffect } from 'react';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { useLanguage } from '../../../contexts/LanguageContext';
+
+
 import { Users, Search, BarChart3, Filter, TrendingUp, Clock, Heart, Activity, Zap, Award } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+
 
 const mockEngagementData = {
   totalEngaged: 245,
@@ -30,9 +31,8 @@ const mockTopUsers = [
 ];
 
 export default function EngagementStats() {
-  const { isDark } = useTheme();
-  const { t } = useLanguage();
-  const [searchTerm, setSearchTerm] = useState('');
+    const t = () => null;
+const [searchTerm, setSearchTerm] = useState('');
   const [filterPeriod, setFilterPeriod] = useState('week');
   const [data, setData] = useState(mockEngagementData);
   const [topUsers, setTopUsers] = useState(mockTopUsers);
@@ -63,27 +63,27 @@ export default function EngagementStats() {
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.1 }}
-      className={`p-6 rounded-xl shadow-lg ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} transition-all duration-300 hover:shadow-xl`}
+      className={`p-6 rounded-xl shadow-card bg-card border border-border transition-all duration-300 hover:shadow-dropdown`}
       whileHover={{ scale: 1.02 }}
     >
       <div className="flex items-center justify-between mb-4">
         <div className={`${color} p-3 rounded-lg`}>
-          <Icon className="w-6 h-6 text-white" />
+          <Icon className="w-6 h-6 text-background" />
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
-          <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{title}</p>
+          <p className="text-lg font-semibold tracking-tight text-foreground ">{value}</p>
+          <p className={`text-muted-foreground text-sm`}>{title}</p>
         </div>
       </div>
-      <p className={`${isDark ? 'text-gray-500' : 'text-gray-500'} text-sm`}>{description}</p>
+      <p className={`text-muted-foreground text-sm`}>{description}</p>
     </motion.div>
   );
 
   const renderBarChart = (trends) => (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+    <div className="bg-card  p-6 rounded-xl shadow-card border border-border dark:border-border">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-lg">Weekly Engagement Trend</h3>
-        <Zap className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-600'}`} />
+        <Zap className={`w-5 h-5 text-muted-foreground`} />
       </div>
       <div className="space-y-2">
         {trends.map((item, index) => (
@@ -92,13 +92,13 @@ export default function EngagementStats() {
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ delay: index * 0.1 }}
-            className="flex items-end justify-between h-12 bg-gray-100 dark:bg-gray-700 rounded"
+            className="flex items-end justify-between h-12 bg-muted  rounded"
           >
             <div 
               className="bg-gradient-to-r from-blue-500 to-purple-600 h-full rounded-l transition-all duration-700"
               style={{ width: `${item.value * 3}%`, minWidth: '20px' }}
             />
-            <span className={`text-xs font-medium ml-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            <span className={`text-xs font-medium ml-2 text-muted-foreground`}>
               {item.day}
             </span>
             <span className="text-xs font-semibold mr-2">{item.value}</span>
@@ -109,16 +109,16 @@ export default function EngagementStats() {
   );
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`min-h-screen bg-muted text-foreground`}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-6 border-b border-border dark:border-border">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className={`text-3xl font-bold flex items-center gap-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h1 className={`text-lg sm:text-xl font-semibold tracking-tight flex items-center gap-3 text-foreground`}>
               <BarChart3 className="w-8 h-8" />
               {t('engagement_stats') || 'Engagement Stats'}
             </h1>
-            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`text-muted-foreground`}>
               Track user interactions and engagement metrics. Live data updates.
             </p>
           </div>
@@ -137,21 +137,21 @@ export default function EngagementStats() {
         {/* Controls */}
         <div className="flex flex-col lg:flex-row gap-4 mb-6">
           <div className="relative flex-1">
-            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground`} />
             <input
               type="text"
               placeholder={t('search_users') || 'Search top users...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'} focus:outline-none focus:ring-2 focus:ring-purple-500`}
+              className={`w-full pl-10 pr-4 py-3 rounded-lg border bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+            <Filter className={`w-5 h-5 text-muted-foreground`} />
             <select
               value={filterPeriod}
               onChange={(e) => setFilterPeriod(e.target.value)}
-              className={`px-4 py-3 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-purple-500`}
+              className={`px-4 py-3 rounded-lg border bg-card border-border text-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
             >
               <option value="week">This Week</option>
               <option value="month">This Month</option>
@@ -166,21 +166,21 @@ export default function EngagementStats() {
             icon={Users}
             title="Active Users"
             value={data.totalEngaged.toLocaleString()}
-            color="bg-blue-500"
+            color="bg-muted0"
             description="Total engaged sessions today"
           />
           <StatCard
             icon={Clock}
             title="Avg Session"
             value={data.avgSessionTime}
-            color="bg-green-500"
+            color="bg-muted0"
             description="Average time per session"
           />
           <StatCard
             icon={TrendingUp}
             title="Growth"
             value="+12.5%"
-            color="bg-purple-500"
+            color="bg-muted0"
             description="Week-over-week increase"
           />
         </div>
@@ -202,7 +202,7 @@ export default function EngagementStats() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className={`p-6 rounded-xl shadow-lg ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}
+            className={`p-6 rounded-xl shadow-card bg-card border border-border`}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-lg flex items-center gap-2">
@@ -219,20 +219,20 @@ export default function EngagementStats() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                      className="flex items-center justify-between p-3 bg-muted  rounded-lg"
                     >
                       <div className="flex items-center gap-3">
                         <div className="relative">
-                          <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold`}>
+                          <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-background font-semibold`}>
                             {user.avatar}
                           </div>
                           <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-white">{index + 1}</span>
+                            <span className="text-xs font-bold text-background">{index + 1}</span>
                           </div>
                         </div>
                         <div>
                           <p className="font-medium">{user.name}</p>
-                          <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{user.sessions} sessions</p>
+                          <p className={`text-muted-foreground text-sm`}>{user.sessions} sessions</p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -240,7 +240,7 @@ export default function EngagementStats() {
                           <Heart className="w-4 h-4 fill-current" />
                           {user.engagementScore}
                         </div>
-                        <p className={`${isDark ? 'text-gray-500' : 'text-gray-500'} text-xs`}>{user.actions} actions</p>
+                        <p className={`text-muted-foreground text-xs`}>{user.actions} actions</p>
                       </div>
                     </motion.li>
                   ))}
@@ -251,8 +251,8 @@ export default function EngagementStats() {
                   animate={{ opacity: 1 }}
                   className="text-center py-8"
                 >
-                  <Users className={`w-12 h-12 mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
-                  <p className="text-gray-500 dark:text-gray-400">No users match your search.</p>
+                  <Users className={`w-12 h-12 mx-auto mb-4 text-muted-foreground`} />
+                  <p className="text-muted-foreground dark:text-muted-foreground">No users match your search.</p>
                 </motion.div>
               )}
             </AnimatePresence>

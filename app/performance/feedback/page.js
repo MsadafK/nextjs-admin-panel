@@ -195,16 +195,16 @@ const Feedback = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Feedback Management</h1>
-            <p className="text-slate-600">Track, manage, and respond to team feedback</p>
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Feedback Management</h1>
+            <p className="text-muted-foreground">Track, manage, and respond to team feedback</p>
           </div>
           <button 
             onClick={() => setShowSubmitModal(true)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 font-medium"
+            className="px-4 py-2 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 font-medium"
           >
             <Plus className="w-4 h-4" />
             Submit Feedback
@@ -213,54 +213,54 @@ const Feedback = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Total Feedback</span>
+              <span className="text-sm text-muted-foreground">Total Feedback</span>
               <MessageSquare className="w-5 h-5 text-indigo-600" />
             </div>
-            <div className="text-3xl font-bold text-slate-800">{stats.total}</div>
-            <div className="text-xs text-slate-500 mt-1">All time</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{stats.total}</div>
+            <div className="text-xs text-muted-foreground mt-1">All time</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Avg Rating</span>
+              <span className="text-sm text-muted-foreground">Avg Rating</span>
               <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
             </div>
-            <div className="text-3xl font-bold text-yellow-600">{stats.avgRating}</div>
-            <div className="text-xs text-slate-500 mt-1">Out of 5.0</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-yellow-600">{stats.avgRating}</div>
+            <div className="text-xs text-muted-foreground mt-1">Out of 5.0</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Response Rate</span>
+              <span className="text-sm text-muted-foreground">Response Rate</span>
               <Reply className="w-5 h-5 text-green-600" />
             </div>
-            <div className="text-3xl font-bold text-green-600">{stats.responseRate}%</div>
-            <div className="text-xs text-slate-500 mt-1">Within 24 hours</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-green-600">{stats.responseRate}%</div>
+            <div className="text-xs text-muted-foreground mt-1">Within 24 hours</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Satisfaction</span>
+              <span className="text-sm text-muted-foreground">Satisfaction</span>
               <TrendingUp className="w-5 h-5 text-purple-600" />
             </div>
-            <div className="text-3xl font-bold text-purple-600">{stats.satisfactionScore}</div>
-            <div className="text-xs text-slate-500 mt-1">Score this month</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-purple-600">{stats.satisfactionScore}</div>
+            <div className="text-xs text-muted-foreground mt-1">Score this month</div>
           </div>
         </div>
 
         {/* Feedback Type Distribution */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Feedback Distribution</h3>
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Feedback Distribution</h3>
           <div className="grid grid-cols-3 gap-4">
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="p-4 bg-muted border border-green-200 rounded-lg">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                   <ThumbsUp className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-green-700">{stats.positive}</div>
+                  <div className="text-lg font-semibold tracking-tight text-green-700">{stats.positive}</div>
                   <div className="text-xs text-green-600">Positive</div>
                 </div>
               </div>
@@ -272,13 +272,13 @@ const Feedback = () => {
               </div>
             </div>
 
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="p-4 bg-muted border border-blue-200 rounded-lg">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <MessageSquare className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-blue-700">{stats.suggestions}</div>
+                  <div className="text-lg font-semibold tracking-tight text-blue-700">{stats.suggestions}</div>
                   <div className="text-xs text-blue-600">Suggestions</div>
                 </div>
               </div>
@@ -290,13 +290,13 @@ const Feedback = () => {
               </div>
             </div>
 
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="p-4 bg-muted border border-red-200 rounded-lg">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                   <ThumbsDown className="w-5 h-5 text-red-600" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-red-700">{stats.negative}</div>
+                  <div className="text-lg font-semibold tracking-tight text-red-700">{stats.negative}</div>
                   <div className="text-xs text-red-600">Negative</div>
                 </div>
               </div>
@@ -311,7 +311,7 @@ const Feedback = () => {
         </div>
 
         {/* Tabs and Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex gap-2">
               <button
@@ -319,7 +319,7 @@ const Feedback = () => {
                 className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
                   activeTab === 'all'
                     ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-slate-600 hover:bg-slate-100'
+                    : 'text-muted-foreground hover:bg-muted'
                 }`}
               >
                 All ({feedbackData.length})
@@ -329,7 +329,7 @@ const Feedback = () => {
                 className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
                   activeTab === 'positive'
                     ? 'bg-green-100 text-green-700'
-                    : 'text-slate-600 hover:bg-slate-100'
+                    : 'text-muted-foreground hover:bg-muted'
                 }`}
               >
                 Positive ({stats.positive})
@@ -339,7 +339,7 @@ const Feedback = () => {
                 className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
                   activeTab === 'suggestion'
                     ? 'bg-blue-100 text-blue-700'
-                    : 'text-slate-600 hover:bg-slate-100'
+                    : 'text-muted-foreground hover:bg-muted'
                 }`}
               >
                 Suggestions ({stats.suggestions})
@@ -349,7 +349,7 @@ const Feedback = () => {
                 className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
                   activeTab === 'negative'
                     ? 'bg-red-100 text-red-700'
-                    : 'text-slate-600 hover:bg-slate-100'
+                    : 'text-muted-foreground hover:bg-muted'
                 }`}
               >
                 Negative ({stats.negative})
@@ -357,19 +357,19 @@ const Feedback = () => {
             </div>
             <div className="flex-1 flex gap-2">
               <div className="flex-1 relative">
-                <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search feedback..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
               <select 
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="all">All Status</option>
                 <option value="acknowledged">Acknowledged</option>
@@ -382,15 +382,15 @@ const Feedback = () => {
         </div>
 
         {/* Feedback List */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-800 mb-4">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">
             Feedback Items ({filteredFeedback.length})
           </h2>
           <div className="space-y-3">
             {filteredFeedback.map(feedback => (
               <div
                 key={feedback.id}
-                className="p-4 border border-slate-200 rounded-lg hover:shadow-md hover:border-indigo-300 transition-all"
+                className="p-4 border border-border rounded-lg hover:shadow-card hover:border-indigo-300 transition-all"
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0">
@@ -400,11 +400,11 @@ const Feedback = () => {
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-slate-800">{feedback.title}</h3>
+                          <h3 className="font-semibold text-foreground">{feedback.title}</h3>
                           {getTypeBadge(feedback.type)}
                           {getStatusBadge(feedback.status)}
                         </div>
-                        <p className="text-sm text-slate-600 line-clamp-2 mb-2">{feedback.message}</p>
+                        <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{feedback.message}</p>
                         <div className="flex flex-wrap gap-1 mb-2">
                           {feedback.tags.map((tag, idx) => (
                             <span key={idx} className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded">
@@ -413,13 +413,13 @@ const Feedback = () => {
                           ))}
                         </div>
                       </div>
-                      <button className="text-slate-400 hover:text-slate-600 ml-2">
+                      <button className="text-muted-foreground hover:text-muted-foreground ml-2">
                         <MoreVertical className="w-4 h-4" />
                       </button>
                     </div>
                     
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-xs text-slate-500">
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Users className="w-3 h-3" />
                           {feedback.author}
@@ -439,24 +439,24 @@ const Feedback = () => {
                               className={`w-3 h-3 ${
                                 i < feedback.rating
                                   ? 'text-yellow-500 fill-yellow-500'
-                                  : 'text-slate-300'
+                                  : 'text-muted-foreground'
                               }`}
                             />
                           ))}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-slate-500 flex items-center gap-1">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
                           <ThumbsUp className="w-3 h-3" />
                           {feedback.helpful}
                         </span>
-                        <span className="text-xs text-slate-500 flex items-center gap-1">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
                           <Reply className="w-3 h-3" />
                           {feedback.responses}
                         </span>
                         <button 
                           onClick={() => handleViewDetails(feedback)}
-                          className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-xs font-medium flex items-center gap-1"
+                          className="px-3 py-1.5 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors text-xs font-medium flex items-center gap-1"
                         >
                           <Eye className="w-3 h-3" />
                           View
@@ -474,31 +474,31 @@ const Feedback = () => {
       {/* Submit Feedback Modal */}
       {showSubmitModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
-            <div className="p-6 border-b border-slate-200">
-              <h3 className="text-xl font-semibold text-slate-800">Submit Feedback</h3>
+          <div className="bg-card rounded-xl shadow-card max-w-2xl w-full">
+            <div className="p-6 border-b border-border">
+              <h3 className="text-xl font-semibold text-foreground">Submit Feedback</h3>
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Feedback Type</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Feedback Type</label>
                 <div className="grid grid-cols-3 gap-3">
-                  <button className="p-3 border-2 border-green-300 bg-green-50 rounded-lg hover:border-green-500 transition-all">
+                  <button className="p-3 border-2 border-green-300 bg-muted rounded-lg hover:border-green-500 transition-all">
                     <ThumbsUp className="w-5 h-5 text-green-600 mx-auto mb-1" />
                     <span className="text-sm font-medium text-green-700">Positive</span>
                   </button>
-                  <button className="p-3 border-2 border-slate-300 rounded-lg hover:border-blue-500 transition-all">
+                  <button className="p-3 border-2 border-border rounded-lg hover:border-blue-500 transition-all">
                     <MessageSquare className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-                    <span className="text-sm font-medium text-slate-700">Suggestion</span>
+                    <span className="text-sm font-medium text-foreground">Suggestion</span>
                   </button>
-                  <button className="p-3 border-2 border-slate-300 rounded-lg hover:border-red-500 transition-all">
+                  <button className="p-3 border-2 border-border rounded-lg hover:border-red-500 transition-all">
                     <ThumbsDown className="w-5 h-5 text-red-600 mx-auto mb-1" />
-                    <span className="text-sm font-medium text-slate-700">Negative</span>
+                    <span className="text-sm font-medium text-foreground">Negative</span>
                   </button>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Category</label>
-                <select className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <label className="block text-sm font-medium text-foreground mb-2">Category</label>
+                <select className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                   <option>Product</option>
                   <option>Feature Request</option>
                   <option>Bug Report</option>
@@ -508,42 +508,42 @@ const Feedback = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Title</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Title</label>
                 <input
                   type="text"
                   placeholder="Brief summary of your feedback..."
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Message</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Message</label>
                 <textarea
                   placeholder="Provide detailed feedback..."
                   rows="4"
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Rating</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Rating</label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map(rating => (
                     <button key={rating} className="hover:scale-110 transition-transform">
-                      <Star className="w-8 h-8 text-slate-300 hover:text-yellow-500 hover:fill-yellow-500" />
+                      <Star className="w-8 h-8 text-muted-foreground hover:text-yellow-500 hover:fill-yellow-500" />
                     </button>
                   ))}
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t border-slate-200 flex gap-3 justify-end">
+            <div className="p-6 border-t border-border flex gap-3 justify-end">
               <button 
                 onClick={() => setShowSubmitModal(false)}
-                className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+                className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={() => setShowSubmitModal(false)}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
               >
                 <Send className="w-4 h-4" />
                 Submit Feedback
@@ -556,16 +556,16 @@ const Feedback = () => {
       {/* Detail Modal */}
       {showDetailModal && selectedFeedback && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-slate-200 sticky top-0 bg-white">
+          <div className="bg-card rounded-xl shadow-card max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-border sticky top-0 bg-card">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-xl font-semibold text-slate-800">{selectedFeedback.title}</h3>
+                    <h3 className="text-xl font-semibold text-foreground">{selectedFeedback.title}</h3>
                     {getTypeBadge(selectedFeedback.type)}
                     {getStatusBadge(selectedFeedback.status)}
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-slate-600">
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <span>{selectedFeedback.author}</span>
                     <span>•</span>
                     <span>{selectedFeedback.department}</span>
@@ -575,7 +575,7 @@ const Feedback = () => {
                 </div>
                 <button 
                   onClick={() => setShowDetailModal(false)}
-                  className="text-slate-400 hover:text-slate-600"
+                  className="text-muted-foreground hover:text-muted-foreground"
                 >
                   ✕
                 </button>
@@ -584,12 +584,12 @@ const Feedback = () => {
 
             <div className="p-6 space-y-6">
               <div>
-                <h4 className="font-semibold text-slate-800 mb-2">Feedback Details</h4>
-                <p className="text-slate-600">{selectedFeedback.message}</p>
+                <h4 className="font-semibold text-foreground mb-2">Feedback Details</h4>
+                <p className="text-muted-foreground">{selectedFeedback.message}</p>
               </div>
 
               <div>
-                <h4 className="font-semibold text-slate-800 mb-2">Rating</h4>
+                <h4 className="font-semibold text-foreground mb-2">Rating</h4>
                 <div className="flex gap-1">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -597,7 +597,7 @@ const Feedback = () => {
                       className={`w-5 h-5 ${
                         i < selectedFeedback.rating
                           ? 'text-yellow-500 fill-yellow-500'
-                          : 'text-slate-300'
+                          : 'text-muted-foreground'
                       }`}
                     />
                   ))}
@@ -605,7 +605,7 @@ const Feedback = () => {
               </div>
 
               <div>
-                <h4 className="font-semibold text-slate-800 mb-2">Tags</h4>
+                <h4 className="font-semibold text-foreground mb-2">Tags</h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedFeedback.tags.map((tag, idx) => (
                     <span key={idx} className="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm rounded-full">
@@ -615,38 +615,38 @@ const Feedback = () => {
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-lg">
-                <h4 className="font-semibold text-slate-800 mb-3">Response</h4>
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-semibold text-foreground mb-3">Response</h4>
                 <textarea
                   placeholder="Write your response..."
                   rows="3"
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
-                <button className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center gap-2">
+                <button className="mt-2 px-4 py-2 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center gap-2">
                   <Reply className="w-4 h-4" />
                   Send Response
                 </button>
               </div>
 
               <div>
-                <h4 className="font-semibold text-slate-800 mb-3">Previous Responses ({selectedFeedback.responses})</h4>
+                <h4 className="font-semibold text-foreground mb-3">Previous Responses ({selectedFeedback.responses})</h4>
                 <div className="space-y-3">
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="p-3 bg-muted border border-blue-200 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-slate-800">Admin Team</span>
-                      <span className="text-xs text-slate-500">2 hours ago</span>
+                      <span className="text-sm font-medium text-foreground">Admin Team</span>
+                      <span className="text-xs text-muted-foreground">2 hours ago</span>
                     </div>
-                    <p className="text-sm text-slate-600">Thank you for your feedback! We're looking into this and will update you soon.</p>
+                    <p className="text-sm text-muted-foreground">Thank you for your feedback! We're looking into this and will update you soon.</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-6 border-t border-slate-200 flex gap-3 justify-end bg-slate-50">
-              <button className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-white transition-colors">
+            <div className="p-6 border-t border-border flex gap-3 justify-end bg-muted">
+              <button className="px-4 py-2 border border-border rounded-lg hover:bg-card transition-colors">
                 Mark as Resolved
               </button>
-              <button className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors">
+              <button className="px-4 py-2 bg-foreground/80 text-background rounded-lg hover:bg-foreground/80 transition-colors">
                 Update Status
               </button>
             </div>

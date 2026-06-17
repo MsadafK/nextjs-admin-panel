@@ -33,7 +33,7 @@ export default function SystemLogsPage() {
       subtext: 'Last 24 hours',
       icon: FileText, 
       color: 'from-blue-500 to-indigo-600', 
-      bgColor: 'bg-blue-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-blue-600' 
     },
     { 
@@ -42,7 +42,7 @@ export default function SystemLogsPage() {
       subtext: 'Needs attention',
       icon: AlertTriangle, 
       color: 'from-red-500 to-pink-600', 
-      bgColor: 'bg-red-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-red-600' 
     },
     { 
@@ -51,7 +51,7 @@ export default function SystemLogsPage() {
       subtext: 'This month',
       icon: CheckCircle, 
       color: 'from-emerald-500 to-teal-600', 
-      bgColor: 'bg-emerald-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-emerald-600' 
     },
     { 
@@ -60,7 +60,7 @@ export default function SystemLogsPage() {
       subtext: 'System latency',
       icon: Zap, 
       color: 'from-purple-500 to-pink-600', 
-      bgColor: 'bg-purple-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-purple-600' 
     },
   ];
@@ -217,7 +217,7 @@ export default function SystemLogsPage() {
         badge: 'bg-red-100 text-red-700 border-red-300',
         icon: AlertTriangle,
         iconColor: 'text-red-600',
-        bgColor: 'bg-red-50/50',
+        bgColor: 'bg-muted/50',
         text: 'CRITICAL',
         pulse: true
       },
@@ -225,7 +225,7 @@ export default function SystemLogsPage() {
         badge: 'bg-orange-100 text-orange-700 border-orange-300',
         icon: XCircle,
         iconColor: 'text-orange-600',
-        bgColor: 'bg-orange-50/50',
+        bgColor: 'bg-muted/50',
         text: 'ERROR',
         pulse: false
       },
@@ -233,7 +233,7 @@ export default function SystemLogsPage() {
         badge: 'bg-yellow-100 text-yellow-700 border-yellow-300',
         icon: AlertCircle,
         iconColor: 'text-yellow-600',
-        bgColor: 'bg-yellow-50/50',
+        bgColor: 'bg-muted/50',
         text: 'WARNING',
         pulse: false
       },
@@ -241,7 +241,7 @@ export default function SystemLogsPage() {
         badge: 'bg-blue-100 text-blue-700 border-blue-300',
         icon: Info,
         iconColor: 'text-blue-600',
-        bgColor: 'bg-blue-50/50',
+        bgColor: 'bg-muted/50',
         text: 'INFO',
         pulse: false
       },
@@ -249,7 +249,7 @@ export default function SystemLogsPage() {
         badge: 'bg-purple-100 text-purple-700 border-purple-300',
         icon: Bug,
         iconColor: 'text-purple-600',
-        bgColor: 'bg-purple-50/50',
+        bgColor: 'bg-muted/50',
         text: 'DEBUG',
         pulse: false
       }
@@ -277,24 +277,24 @@ export default function SystemLogsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-blue-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-700 to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-slate-700 to-blue-600 bg-clip-text text-transparent">
                 System Logs
               </h1>
-              <Terminal className="w-8 h-8 text-slate-700" />
+              <Terminal className="w-8 h-8 text-foreground" />
             </div>
-            <p className="text-slate-600">Real-time system events and activity monitoring</p>
+            <p className="text-muted-foreground">Real-time system events and activity monitoring</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 bg-white text-slate-700 px-4 py-3 rounded-xl hover:shadow-lg transition-all duration-300 border border-slate-200">
+            <button className="flex items-center gap-2 bg-card text-foreground px-4 py-3 rounded-xl hover:shadow-card transition-all duration-300 border border-border">
               <Download className="w-5 h-5" />
               <span className="hidden sm:inline">Export</span>
             </button>
-            <button className="flex items-center gap-2 bg-gradient-to-r from-slate-700 to-blue-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-slate-700 to-blue-600 text-background px-6 py-3 rounded-xl hover:shadow-card transition-all duration-300">
               <RefreshCw className="w-5 h-5" />
               <span>Refresh</span>
             </button>
@@ -306,36 +306,36 @@ export default function SystemLogsPage() {
           {logStats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card hover:shadow-dropdown transition-all duration-300">
                 <div className={`${stat.bgColor} w-12 h-12 rounded-xl flex items-center justify-center mb-4`}>
                   <Icon className={`w-6 h-6 ${stat.textColor}`} />
                 </div>
-                <p className="text-slate-600 text-sm mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-slate-800 mb-1">{stat.value}</p>
-                <p className="text-xs text-slate-500">{stat.subtext}</p>
+                <p className="text-muted-foreground text-sm mb-1">{stat.label}</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-1">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.subtext}</p>
               </div>
             );
           })}
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+        <div className="bg-card border border-border rounded-lg shadow-card">
           <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search logs by message or source..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
               />
             </div>
 
             {/* Severity Filters */}
             <div>
-              <p className="text-sm font-semibold text-slate-700 mb-2">Severity Level</p>
+              <p className="text-sm font-semibold text-foreground mb-2">Severity Level</p>
               <div className="flex flex-wrap gap-2">
                 {severityFilters.map((filter) => (
                   <button
@@ -343,12 +343,12 @@ export default function SystemLogsPage() {
                     onClick={() => setSelectedSeverity(filter.value)}
                     className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                       selectedSeverity === filter.value
-                        ? 'bg-gradient-to-r from-slate-700 to-blue-600 text-white shadow-lg'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        ? 'bg-gradient-to-r from-slate-700 to-blue-600 text-background shadow-card'
+                        : 'bg-muted text-foreground hover:bg-muted'
                     }`}
                   >
                     {filter.label}
-                    <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-white/20">
+                    <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-card/20">
                       {filter.count}
                     </span>
                   </button>
@@ -358,7 +358,7 @@ export default function SystemLogsPage() {
 
             {/* Category Filters */}
             <div>
-              <p className="text-sm font-semibold text-slate-700 mb-2">Category</p>
+              <p className="text-sm font-semibold text-foreground mb-2">Category</p>
               <div className="flex flex-wrap gap-2">
                 {categoryFilters.map((filter) => (
                   <button
@@ -366,8 +366,8 @@ export default function SystemLogsPage() {
                     onClick={() => setSelectedCategory(filter.value)}
                     className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                       selectedCategory === filter.value
-                        ? 'bg-blue-600 text-white shadow-lg'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        ? 'bg-foreground text-background shadow-card'
+                        : 'bg-muted text-foreground hover:bg-muted'
                     }`}
                   >
                     {filter.label}
@@ -388,10 +388,10 @@ export default function SystemLogsPage() {
             return (
               <div 
                 key={log.id}
-                className={`bg-white rounded-2xl shadow-lg border-2 overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer ${
+                className={`bg-card rounded-lg shadow-card border-2 overflow-hidden transition-all duration-300 hover:shadow-dropdown cursor-pointer ${
                   log.severity === 'critical' ? 'border-red-300' : 
                   log.severity === 'error' ? 'border-orange-300' : 
-                  'border-slate-200'
+                  'border-border'
                 } ${severityConfig.bgColor}`}
                 onClick={() => setSelectedLog(selectedLog === log.id ? null : log.id)}
               >
@@ -419,29 +419,29 @@ export default function SystemLogsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4 mb-2">
                         <div className="flex items-center gap-2">
-                          <CategoryIcon className="w-5 h-5 text-slate-400" />
-                          <span className="text-xs font-semibold text-slate-500 uppercase">{log.category}</span>
+                          <CategoryIcon className="w-5 h-5 text-muted-foreground" />
+                          <span className="text-xs font-semibold text-muted-foreground uppercase">{log.category}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-slate-500">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Clock className="w-4 h-4" />
                           <span className="font-mono text-xs">{log.timestamp}</span>
                         </div>
                       </div>
 
-                      <h3 className="text-lg font-bold text-slate-800 mb-2">{log.message}</h3>
+                      <h3 className="text-lg font-bold text-foreground mb-2">{log.message}</h3>
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
                         <div className="flex items-center gap-2 text-sm">
-                          <Server className="w-4 h-4 text-slate-400" />
-                          <span className="text-slate-600 truncate">{log.source}</span>
+                          <Server className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-muted-foreground truncate">{log.source}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
-                          <User className="w-4 h-4 text-slate-400" />
-                          <span className="text-slate-600 truncate">{log.user}</span>
+                          <User className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-muted-foreground truncate">{log.user}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
-                          <MapPin className="w-4 h-4 text-slate-400" />
-                          <span className="text-slate-600 font-mono text-xs">{log.ip}</span>
+                          <MapPin className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-muted-foreground font-mono text-xs">{log.ip}</span>
                         </div>
                         <button className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700">
                           <Eye className="w-4 h-4" />
@@ -452,7 +452,7 @@ export default function SystemLogsPage() {
                       {/* Tags */}
                       <div className="flex flex-wrap items-center gap-2">
                         {log.tags.map((tag, idx) => (
-                          <span key={idx} className="bg-slate-100 text-slate-700 text-xs px-3 py-1 rounded-full">
+                          <span key={idx} className="bg-muted text-foreground text-xs px-3 py-1 rounded-full">
                             #{tag}
                           </span>
                         ))}
@@ -460,15 +460,15 @@ export default function SystemLogsPage() {
 
                       {/* Expanded Details */}
                       {selectedLog === log.id && (
-                        <div className="mt-4 pt-4 border-t border-slate-200">
-                          <h4 className="font-bold text-slate-800 mb-3">Detailed Information</h4>
-                          <div className="bg-slate-50 rounded-xl p-4 space-y-2">
+                        <div className="mt-4 pt-4 border-t border-border">
+                          <h4 className="font-bold text-foreground mb-3">Detailed Information</h4>
+                          <div className="bg-muted rounded-xl p-4 space-y-2">
                             {Object.entries(log.details).map(([key, value]) => (
                               <div key={key} className="flex justify-between items-start text-sm">
-                                <span className="text-slate-600 font-semibold capitalize">
+                                <span className="text-muted-foreground font-semibold capitalize">
                                   {key.replace(/_/g, ' ')}:
                                 </span>
-                                <span className="text-slate-800 text-right ml-4">
+                                <span className="text-foreground text-right ml-4">
                                   {Array.isArray(value) ? value.join(', ') : value}
                                 </span>
                               </div>
@@ -477,11 +477,11 @@ export default function SystemLogsPage() {
 
                           {log.stackTrace && (
                             <div className="mt-3">
-                              <h4 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                              <h4 className="font-bold text-foreground mb-2 flex items-center gap-2">
                                 <Terminal className="w-4 h-4" />
                                 Stack Trace
                               </h4>
-                              <div className="bg-slate-900 rounded-xl p-4">
+                              <div className="bg-foreground rounded-xl p-4">
                                 <pre className="text-emerald-400 text-xs font-mono overflow-x-auto">
                                   {log.stackTrace}
                                 </pre>
@@ -509,12 +509,12 @@ export default function SystemLogsPage() {
 
         {/* Empty State */}
         {filteredLogs.length === 0 && (
-          <div className="bg-white rounded-2xl p-12 shadow-lg border border-slate-100 text-center">
-            <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-12 h-12 text-slate-400" />
+          <div className="bg-card rounded-lg p-12 shadow-card border border-border text-center">
+            <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">No logs found</h3>
-            <p className="text-slate-600">Try adjusting your filters or search query</p>
+            <h3 className="text-base font-semibold text-foreground mb-2">No logs found</h3>
+            <p className="text-muted-foreground">Try adjusting your filters or search query</p>
           </div>
         )}
       </div>

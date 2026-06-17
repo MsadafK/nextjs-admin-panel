@@ -132,16 +132,16 @@ export default function UnreadMessages() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Unread Messages</h1>
-              <p className="text-gray-600">You have {filteredMessages.length} unread messages</p>
+              <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Unread Messages</h1>
+              <p className="text-muted-foreground">You have {filteredMessages.length} unread messages</p>
             </div>
             <div className="flex items-center gap-3">
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+              <button className="px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors flex items-center gap-2">
                 <Mail size={20} />
                 Compose
               </button>
@@ -149,50 +149,50 @@ export default function UnreadMessages() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-4 mb-4">
+        <div className="bg-card border border-border rounded-lg shadow-card p-4 mb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={toggleSelectAll}
-                className="p-2 hover:bg-gray-100 rounded transition-colors"
+                className="p-2 hover:bg-muted rounded transition-colors"
                 title={selectedMessages.length === filteredMessages.length ? 'Deselect All' : 'Select All'}
               >
                 {selectedMessages.length === filteredMessages.length && filteredMessages.length > 0 ? (
                   <CheckSquare size={20} className="text-blue-600" />
                 ) : (
-                  <Square size={20} className="text-gray-600" />
+                  <Square size={20} className="text-muted-foreground" />
                 )}
               </button>
 
-              <div className="h-6 w-px bg-gray-300"></div>
+              <div className="h-6 w-px bg-muted"></div>
 
               {selectedMessages.length > 0 ? (
                 <>
                   <button
                     onClick={archiveMessages}
-                    className="p-2 hover:bg-gray-100 rounded transition-colors"
+                    className="p-2 hover:bg-muted rounded transition-colors"
                     title="Archive"
                   >
-                    <Archive size={20} className="text-gray-600" />
+                    <Archive size={20} className="text-muted-foreground" />
                   </button>
                   <button
                     onClick={deleteMessages}
-                    className="p-2 hover:bg-gray-100 rounded transition-colors"
+                    className="p-2 hover:bg-muted rounded transition-colors"
                     title="Delete"
                   >
                     <Trash2 size={20} className="text-red-600" />
                   </button>
-                  <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Mark as Read">
-                    <MailOpen size={20} className="text-gray-600" />
+                  <button className="p-2 hover:bg-muted rounded transition-colors" title="Mark as Read">
+                    <MailOpen size={20} className="text-muted-foreground" />
                   </button>
-                  <span className="text-sm text-gray-600">{selectedMessages.length} selected</span>
+                  <span className="text-sm text-muted-foreground">{selectedMessages.length} selected</span>
                 </>
               ) : (
                 <>
                   <select
                     value={filterPriority}
                     onChange={(e) => setFilterPriority(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                    className="px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                   >
                     <option value="all">All Priority</option>
                     <option value="high">High Priority</option>
@@ -205,13 +205,13 @@ export default function UnreadMessages() {
 
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
                 <input
                   type="text"
                   placeholder="Search messages..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                 />
               </div>
             </div>
@@ -221,19 +221,19 @@ export default function UnreadMessages() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className={`${selectedMessage ? 'lg:col-span-1' : 'lg:col-span-3'} space-y-2`}>
             {filteredMessages.length === 0 ? (
-              <div className="bg-white rounded-lg shadow border border-gray-200 p-12 text-center">
-                <MailOpen size={64} className="mx-auto text-gray-300 mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No unread messages</h3>
-                <p className="text-gray-600">You're all caught up! Great work.</p>
+              <div className="bg-card border border-border rounded-lg shadow-card p-12 text-center">
+                <MailOpen size={64} className="mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold text-foreground mb-2">No unread messages</h3>
+                <p className="text-muted-foreground">You're all caught up! Great work.</p>
               </div>
             ) : (
               filteredMessages.map((message) => (
                 <div
                   key={message.id}
-                  className={`bg-white rounded-lg shadow border-2 transition-all cursor-pointer hover:shadow-md ${
+                  className={`bg-card rounded-lg shadow border-2 transition-all cursor-pointer hover:shadow-card ${
                     selectedMessage?.id === message.id
                       ? 'border-blue-500'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-border hover:border-border'
                   }`}
                   onClick={() => setSelectedMessage(message)}
                 >
@@ -249,50 +249,50 @@ export default function UnreadMessages() {
                         {selectedMessages.includes(message.id) ? (
                           <CheckSquare size={20} className="text-blue-600" />
                         ) : (
-                          <Square size={20} className="text-gray-400" />
+                          <Square size={20} className="text-muted-foreground" />
                         )}
                       </button>
 
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                        <span className="text-white font-semibold text-sm">{message.avatar}</span>
+                      <div className="flex-shrink-0 w-10 h-10 bg-foreground rounded-full flex items-center justify-center">
+                        <span className="text-background font-semibold text-sm">{message.avatar}</span>
                       </div>
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-gray-900">{message.sender}</h3>
+                              <h3 className="font-semibold text-foreground">{message.sender}</h3>
                               {message.priority === 'high' && (
                                 <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
                                   High Priority
                                 </span>
                               )}
                             </div>
-                            <p className="text-sm text-gray-500">{message.email}</p>
+                            <p className="text-sm text-muted-foreground">{message.email}</p>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-500 whitespace-nowrap">{message.time}</span>
+                            <span className="text-xs text-muted-foreground whitespace-nowrap">{message.time}</span>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 toggleStar(message.id);
                               }}
-                              className="p-1 hover:bg-gray-100 rounded transition-colors"
+                              className="p-1 hover:bg-muted rounded transition-colors"
                             >
                               <Star
                                 size={16}
-                                className={message.starred ? 'text-yellow-500 fill-yellow-500' : 'text-gray-400'}
+                                className={message.starred ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}
                               />
                             </button>
                           </div>
                         </div>
 
-                        <h4 className="font-medium text-gray-900 mb-1 truncate">{message.subject}</h4>
-                        <p className="text-sm text-gray-600 line-clamp-2">{message.preview}</p>
+                        <h4 className="font-medium text-foreground mb-1 truncate">{message.subject}</h4>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{message.preview}</p>
 
                         <div className="flex items-center gap-3 mt-2">
                           {message.hasAttachment && (
-                            <span className="flex items-center gap-1 text-xs text-gray-500">
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Paperclip size={14} />
                               Attachment
                             </span>
@@ -313,16 +313,16 @@ export default function UnreadMessages() {
           </div>
 
           {selectedMessage && (
-            <div className="lg:col-span-2 bg-white rounded-lg shadow border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
+            <div className="lg:col-span-2 bg-card border border-border rounded-lg shadow-card">
+              <div className="p-6 border-b border-border">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                      <span className="text-white font-semibold">{selectedMessage.avatar}</span>
+                    <div className="w-12 h-12 bg-foreground rounded-full flex items-center justify-center">
+                      <span className="text-background font-semibold">{selectedMessage.avatar}</span>
                     </div>
                     <div>
-                      <h2 className="text-xl font-bold text-gray-900 mb-1">{selectedMessage.subject}</h2>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <h2 className="text-base font-semibold text-foreground mb-1">{selectedMessage.subject}</h2>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <span className="font-medium">{selectedMessage.sender}</span>
                         <span>•</span>
                         <span>{selectedMessage.email}</span>
@@ -333,7 +333,7 @@ export default function UnreadMessages() {
                   </div>
                   <button
                     onClick={() => setSelectedMessage(null)}
-                    className="p-2 hover:bg-gray-100 rounded transition-colors"
+                    className="p-2 hover:bg-muted rounded transition-colors"
                   >
                     <X size={20} />
                   </button>
@@ -342,33 +342,33 @@ export default function UnreadMessages() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setShowReplyBox(!showReplyBox)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors"
                   >
                     <Reply size={18} />
                     Reply
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors">
                     <Forward size={18} />
                     Forward
                   </button>
                   <button
                     onClick={() => markAsRead(selectedMessage.id)}
-                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="p-2 border border-border rounded-lg hover:bg-muted transition-colors"
                     title="Mark as Read"
                   >
                     <MailOpen size={18} />
                   </button>
                   <button
                     onClick={() => toggleStar(selectedMessage.id)}
-                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="p-2 border border-border rounded-lg hover:bg-muted transition-colors"
                     title="Star"
                   >
                     <Star
                       size={18}
-                      className={selectedMessage.starred ? 'text-yellow-500 fill-yellow-500' : 'text-gray-600'}
+                      className={selectedMessage.starred ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}
                     />
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" title="More">
+                  <button className="p-2 border border-border rounded-lg hover:bg-muted transition-colors" title="More">
                     <MoreVertical size={18} />
                   </button>
                 </div>
@@ -376,48 +376,48 @@ export default function UnreadMessages() {
 
               <div className="p-6">
                 <div className="prose max-w-none">
-                  <p className="text-gray-700 leading-relaxed mb-4">
+                  <p className="text-foreground leading-relaxed mb-4">
                     {selectedMessage.preview}
                   </p>
-                  <p className="text-gray-700 leading-relaxed mb-4">
+                  <p className="text-foreground leading-relaxed mb-4">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                   </p>
-                  <p className="text-gray-700 leading-relaxed mb-4">
+                  <p className="text-foreground leading-relaxed mb-4">
                     Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                   </p>
 
                   {selectedMessage.hasAttachment && (
-                    <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <div className="mt-6 p-4 bg-muted rounded-lg border border-border">
+                      <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                         <Paperclip size={18} />
                         Attachments (2)
                       </h4>
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between p-3 bg-white rounded border border-gray-200 hover:border-blue-300 transition-colors">
+                        <div className="flex items-center justify-between p-3 bg-card rounded border border-border hover:border-blue-300 transition-colors">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-blue-100 rounded">
                               <FileText size={20} className="text-blue-600" />
                             </div>
                             <div>
-                              <p className="font-medium text-gray-900">Q4_Report.pdf</p>
-                              <p className="text-sm text-gray-500">2.4 MB</p>
+                              <p className="font-medium text-foreground">Q4_Report.pdf</p>
+                              <p className="text-sm text-muted-foreground">2.4 MB</p>
                             </div>
                           </div>
-                          <button className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                          <button className="px-3 py-1 text-sm text-blue-600 hover:bg-muted rounded transition-colors">
                             Download
                           </button>
                         </div>
-                        <div className="flex items-center justify-between p-3 bg-white rounded border border-gray-200 hover:border-blue-300 transition-colors">
+                        <div className="flex items-center justify-between p-3 bg-card rounded border border-border hover:border-blue-300 transition-colors">
                           <div className="flex items-center gap-3">
                             <div className="p-2 bg-green-100 rounded">
                               <FileText size={20} className="text-green-600" />
                             </div>
                             <div>
-                              <p className="font-medium text-gray-900">Budget_Spreadsheet.xlsx</p>
-                              <p className="text-sm text-gray-500">1.8 MB</p>
+                              <p className="font-medium text-foreground">Budget_Spreadsheet.xlsx</p>
+                              <p className="text-sm text-muted-foreground">1.8 MB</p>
                             </div>
                           </div>
-                          <button className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                          <button className="px-3 py-1 text-sm text-blue-600 hover:bg-muted rounded transition-colors">
                             Download
                           </button>
                         </div>
@@ -427,37 +427,37 @@ export default function UnreadMessages() {
                 </div>
 
                 {showReplyBox && (
-                  <div className="mt-6 border-t border-gray-200 pt-6">
-                    <h3 className="font-semibold text-gray-900 mb-3">Reply to {selectedMessage.sender}</h3>
+                  <div className="mt-6 border-t border-border pt-6">
+                    <h3 className="font-semibold text-foreground mb-3">Reply to {selectedMessage.sender}</h3>
                     <textarea
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
                       placeholder="Type your reply..."
                       rows={6}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring resize-none"
                     />
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Emoji">
-                          <Smile size={20} className="text-gray-600" />
+                        <button className="p-2 hover:bg-muted rounded transition-colors" title="Emoji">
+                          <Smile size={20} className="text-muted-foreground" />
                         </button>
-                        <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Attach">
-                          <Paperclip size={20} className="text-gray-600" />
+                        <button className="p-2 hover:bg-muted rounded transition-colors" title="Attach">
+                          <Paperclip size={20} className="text-muted-foreground" />
                         </button>
-                        <button className="p-2 hover:bg-gray-100 rounded transition-colors" title="Image">
-                          <Image size={20} className="text-gray-600" />
+                        <button className="p-2 hover:bg-muted rounded transition-colors" title="Image">
+                          <Image size={20} className="text-muted-foreground" />
                         </button>
                       </div>
                       <div className="flex gap-2">
                         <button
                           onClick={() => setShowReplyBox(false)}
-                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                          className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
                         >
                           Cancel
                         </button>
                         <button
                           onClick={handleReply}
-                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors"
                         >
                           <Send size={18} />
                           Send Reply

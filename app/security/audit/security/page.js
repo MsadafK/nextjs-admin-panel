@@ -34,7 +34,7 @@ export default function SecurityEventsPage() {
       trend: 'down',
       icon: Shield, 
       color: 'from-red-500 to-pink-600', 
-      bgColor: 'bg-red-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-red-600' 
     },
     { 
@@ -44,7 +44,7 @@ export default function SecurityEventsPage() {
       trend: 'down',
       icon: AlertTriangle, 
       color: 'from-orange-500 to-red-600', 
-      bgColor: 'bg-orange-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-orange-600' 
     },
     { 
@@ -54,7 +54,7 @@ export default function SecurityEventsPage() {
       trend: 'up',
       icon: Ban, 
       color: 'from-purple-500 to-pink-600', 
-      bgColor: 'bg-purple-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-purple-600' 
     },
     { 
@@ -64,7 +64,7 @@ export default function SecurityEventsPage() {
       trend: 'up',
       icon: ShieldCheck, 
       color: 'from-emerald-500 to-teal-600', 
-      bgColor: 'bg-emerald-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-emerald-600' 
     },
   ];
@@ -269,7 +269,7 @@ export default function SecurityEventsPage() {
         badge: 'bg-red-100 text-red-700 border-red-300',
         icon: AlertTriangle,
         iconColor: 'text-red-600',
-        bgColor: 'bg-red-50/50',
+        bgColor: 'bg-muted/50',
         text: 'CRITICAL',
         pulse: true,
         borderColor: 'border-red-300'
@@ -278,7 +278,7 @@ export default function SecurityEventsPage() {
         badge: 'bg-orange-100 text-orange-700 border-orange-300',
         icon: ShieldAlert,
         iconColor: 'text-orange-600',
-        bgColor: 'bg-orange-50/50',
+        bgColor: 'bg-muted/50',
         text: 'HIGH',
         pulse: false,
         borderColor: 'border-orange-300'
@@ -287,7 +287,7 @@ export default function SecurityEventsPage() {
         badge: 'bg-yellow-100 text-yellow-700 border-yellow-300',
         icon: AlertCircle,
         iconColor: 'text-yellow-600',
-        bgColor: 'bg-yellow-50/50',
+        bgColor: 'bg-muted/50',
         text: 'MEDIUM',
         pulse: false,
         borderColor: 'border-yellow-300'
@@ -296,7 +296,7 @@ export default function SecurityEventsPage() {
         badge: 'bg-green-100 text-green-700 border-green-300',
         icon: CheckCircle,
         iconColor: 'text-green-600',
-        bgColor: 'bg-green-50/50',
+        bgColor: 'bg-muted/50',
         text: 'LOW',
         pulse: false,
         borderColor: 'border-green-300'
@@ -312,7 +312,7 @@ export default function SecurityEventsPage() {
       'challenged': { badge: 'bg-yellow-100 text-yellow-700', icon: Lock, text: 'CHALLENGED' },
       'quarantined': { badge: 'bg-purple-100 text-purple-700', icon: AlertCircle, text: 'QUARANTINED' },
       'denied': { badge: 'bg-blue-100 text-blue-700', icon: XCircle, text: 'DENIED' },
-      'rejected': { badge: 'bg-slate-100 text-slate-700', icon: XCircle, text: 'REJECTED' }
+      'rejected': { badge: 'bg-muted text-foreground', icon: XCircle, text: 'REJECTED' }
     };
     return configs[status] || configs.rejected;
   };
@@ -326,24 +326,24 @@ export default function SecurityEventsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-orange-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
                 Security Events
               </h1>
               <Shield className="w-8 h-8 text-red-600" />
             </div>
-            <p className="text-slate-600">Monitor and respond to security threats in real-time</p>
+            <p className="text-muted-foreground">Monitor and respond to security threats in real-time</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 bg-white text-slate-700 px-4 py-3 rounded-xl hover:shadow-lg transition-all duration-300 border border-slate-200">
+            <button className="flex items-center gap-2 bg-card text-foreground px-4 py-3 rounded-xl hover:shadow-card transition-all duration-300 border border-border">
               <Download className="w-5 h-5" />
               <span className="hidden sm:inline">Export</span>
             </button>
-            <button className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-600 text-background px-6 py-3 rounded-xl hover:shadow-card transition-all duration-300">
               <RefreshCw className="w-5 h-5" />
               <span>Refresh</span>
             </button>
@@ -356,7 +356,7 @@ export default function SecurityEventsPage() {
             const Icon = stat.icon;
             const TrendIcon = stat.trend === 'up' ? TrendingUp : TrendingDown;
             return (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card hover:shadow-dropdown transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`${stat.bgColor} w-12 h-12 rounded-xl flex items-center justify-center`}>
                     <Icon className={`w-6 h-6 ${stat.textColor}`} />
@@ -368,29 +368,29 @@ export default function SecurityEventsPage() {
                     {stat.change}
                   </span>
                 </div>
-                <p className="text-slate-600 text-sm mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-slate-800">{stat.value}</p>
+                <p className="text-muted-foreground text-sm mb-1">{stat.label}</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{stat.value}</p>
               </div>
             );
           })}
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+        <div className="bg-card border border-border rounded-lg shadow-card">
           <div className="space-y-4">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search security events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-red-500 focus:outline-none transition-colors"
+                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:border-red-500 focus:outline-none transition-colors"
               />
             </div>
 
             <div>
-              <p className="text-sm font-semibold text-slate-700 mb-2">Severity Level</p>
+              <p className="text-sm font-semibold text-foreground mb-2">Severity Level</p>
               <div className="flex flex-wrap gap-2">
                 {severityFilters.map((filter) => (
                   <button
@@ -398,12 +398,12 @@ export default function SecurityEventsPage() {
                     onClick={() => setSelectedSeverity(filter.value)}
                     className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                       selectedSeverity === filter.value
-                        ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        ? 'bg-gradient-to-r from-red-600 to-orange-600 text-background shadow-card'
+                        : 'bg-muted text-foreground hover:bg-muted'
                     }`}
                   >
                     {filter.label}
-                    <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-white/20">
+                    <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-card/20">
                       {filter.count}
                     </span>
                   </button>
@@ -412,7 +412,7 @@ export default function SecurityEventsPage() {
             </div>
 
             <div>
-              <p className="text-sm font-semibold text-slate-700 mb-2">Category</p>
+              <p className="text-sm font-semibold text-foreground mb-2">Category</p>
               <div className="flex flex-wrap gap-2">
                 {categoryFilters.map((filter) => (
                   <button
@@ -420,8 +420,8 @@ export default function SecurityEventsPage() {
                     onClick={() => setSelectedCategory(filter.value)}
                     className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                       selectedCategory === filter.value
-                        ? 'bg-red-600 text-white shadow-lg'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        ? 'bg-red-600 text-background shadow-card'
+                        : 'bg-muted text-foreground hover:bg-muted'
                     }`}
                   >
                     {filter.label}
@@ -444,7 +444,7 @@ export default function SecurityEventsPage() {
             return (
               <div 
                 key={event.id}
-                className={`bg-white rounded-2xl shadow-lg border-2 overflow-hidden transition-all duration-300 hover:shadow-xl ${severityConfig.borderColor} ${severityConfig.bgColor}`}
+                className={`bg-card rounded-lg shadow-card border-2 overflow-hidden transition-all duration-300 hover:shadow-dropdown ${severityConfig.borderColor} ${severityConfig.bgColor}`}
               >
                 <div className="p-6">
                   <div className="flex items-start gap-4">
@@ -470,38 +470,38 @@ export default function SecurityEventsPage() {
                       <div className="flex items-start justify-between gap-4 mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-xl font-bold text-slate-800">{event.title}</h3>
+                            <h3 className="text-base font-semibold text-foreground">{event.title}</h3>
                             <span className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${statusConfig.badge}`}>
                               <StatusIcon className="w-3 h-3" />
                               {statusConfig.text}
                             </span>
                           </div>
-                          <p className="text-slate-700 mb-3">{event.description}</p>
+                          <p className="text-foreground mb-3">{event.description}</p>
                         </div>
                       </div>
 
                       {/* Details Grid */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                        <div className="bg-slate-50 rounded-lg p-3">
+                        <div className="bg-muted rounded-lg p-3">
                           <div className="flex items-center gap-2 mb-1">
-                            <Clock className="w-4 h-4 text-slate-400" />
-                            <span className="text-xs text-slate-600">Timestamp</span>
+                            <Clock className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">Timestamp</span>
                           </div>
-                          <p className="text-sm font-semibold text-slate-800 font-mono text-xs">{event.timestamp}</p>
+                          <p className="text-sm font-semibold text-foreground font-mono text-xs">{event.timestamp}</p>
                         </div>
-                        <div className="bg-slate-50 rounded-lg p-3">
+                        <div className="bg-muted rounded-lg p-3">
                           <div className="flex items-center gap-2 mb-1">
-                            <Globe className="w-4 h-4 text-slate-400" />
-                            <span className="text-xs text-slate-600">IP Address</span>
+                            <Globe className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">IP Address</span>
                           </div>
-                          <p className="text-sm font-semibold text-slate-800 font-mono">{event.ip}</p>
+                          <p className="text-sm font-semibold text-foreground font-mono">{event.ip}</p>
                         </div>
-                        <div className="bg-slate-50 rounded-lg p-3">
+                        <div className="bg-muted rounded-lg p-3">
                           <div className="flex items-center gap-2 mb-1">
-                            <MapPin className="w-4 h-4 text-slate-400" />
-                            <span className="text-xs text-slate-600">Location</span>
+                            <MapPin className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">Location</span>
                           </div>
-                          <p className="text-sm font-semibold text-slate-800">{event.location}</p>
+                          <p className="text-sm font-semibold text-foreground">{event.location}</p>
                         </div>
                         <div className={`rounded-lg p-3 ${
                           event.risk_score >= 80 ? 'bg-red-100' :
@@ -510,8 +510,8 @@ export default function SecurityEventsPage() {
                           'bg-green-100'
                         }`}>
                           <div className="flex items-center gap-2 mb-1">
-                            <Fingerprint className="w-4 h-4 text-slate-400" />
-                            <span className="text-xs text-slate-600">Risk Score</span>
+                            <Fingerprint className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">Risk Score</span>
                           </div>
                           <p className={`text-lg font-bold ${
                             event.risk_score >= 80 ? 'text-red-600' :
@@ -525,13 +525,13 @@ export default function SecurityEventsPage() {
                       {/* Threat Info */}
                       <div className="flex items-center gap-4 mb-3 text-sm">
                         <div className="flex items-center gap-2">
-                          <Server className="w-4 h-4 text-slate-400" />
-                          <span className="text-slate-600">Source:</span>
-                          <span className="font-semibold text-slate-800">{event.source}</span>
+                          <Server className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">Source:</span>
+                          <span className="font-semibold text-foreground">{event.source}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Shield className="w-4 h-4 text-slate-400" />
-                          <span className="text-slate-600">Threat Level:</span>
+                          <Shield className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-muted-foreground">Threat Level:</span>
                           <span className={`font-bold ${
                             event.threatLevel === 'Critical' ? 'text-red-600' :
                             event.threatLevel === 'High' ? 'text-orange-600' :
@@ -560,12 +560,12 @@ export default function SecurityEventsPage() {
 
                       {/* Expanded Details */}
                       {isExpanded && (
-                        <div className="mt-4 pt-4 border-t border-slate-200 space-y-4">
+                        <div className="mt-4 pt-4 border-t border-border space-y-4">
                           <div>
-                            <h4 className="font-bold text-slate-800 mb-2">Affected Resources</h4>
+                            <h4 className="font-bold text-foreground mb-2">Affected Resources</h4>
                             <div className="flex flex-wrap gap-2">
                               {event.affectedResources.map((resource, idx) => (
-                                <span key={idx} className="bg-slate-100 text-slate-700 text-sm px-3 py-1 rounded-lg">
+                                <span key={idx} className="bg-muted text-foreground text-sm px-3 py-1 rounded-lg">
                                   {resource}
                                 </span>
                               ))}
@@ -573,19 +573,19 @@ export default function SecurityEventsPage() {
                           </div>
 
                           <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4">
-                            <h4 className="font-bold text-slate-800 mb-2">Action Taken</h4>
-                            <p className="text-slate-700">{event.actionTaken}</p>
+                            <h4 className="font-bold text-foreground mb-2">Action Taken</h4>
+                            <p className="text-foreground">{event.actionTaken}</p>
                           </div>
 
-                          <div className="bg-slate-50 rounded-xl p-4">
-                            <h4 className="font-bold text-slate-800 mb-3">Event Details</h4>
+                          <div className="bg-muted rounded-xl p-4">
+                            <h4 className="font-bold text-foreground mb-3">Event Details</h4>
                             <div className="space-y-2">
                               {Object.entries(event.details).map(([key, value]) => (
                                 <div key={key} className="flex justify-between items-start text-sm">
-                                  <span className="text-slate-600 font-semibold capitalize">
+                                  <span className="text-muted-foreground font-semibold capitalize">
                                     {key.replace(/_/g, ' ')}:
                                   </span>
-                                  <span className="text-slate-800 text-right ml-4 font-mono text-xs">
+                                  <span className="text-foreground text-right ml-4 font-mono text-xs">
                                     {Array.isArray(value) ? value.join(', ') : value.toString()}
                                   </span>
                                 </div>
@@ -613,12 +613,12 @@ export default function SecurityEventsPage() {
 
         {/* Empty State */}
         {filteredEvents.length === 0 && (
-          <div className="bg-white rounded-2xl p-12 shadow-lg border border-slate-100 text-center">
+          <div className="bg-card rounded-lg p-12 shadow-card border border-border text-center">
             <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <ShieldCheck className="w-12 h-12 text-green-600" />
             </div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">All Clear!</h3>
-            <p className="text-slate-600">No security events found matching your criteria</p>
+            <h3 className="text-base font-semibold text-foreground mb-2">All Clear!</h3>
+            <p className="text-muted-foreground">No security events found matching your criteria</p>
           </div>
         )}
       </div>

@@ -121,15 +121,15 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="page-container space-y-6">
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Generate API Key</h1>
-          <p className="text-gray-600">Create a new API key with custom permissions and security settings</p>
+          <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Generate API Key</h1>
+          <p className="text-muted-foreground">Create a new API key with custom permissions and security settings</p>
         </div>
 
         {currentStep <= 4 && (
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6 mb-6">
             <div className="flex items-center justify-between">
               {steps.map((step, index) => {
                 const StepIcon = step.icon;
@@ -140,22 +140,22 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                   <React.Fragment key={step.number}>
                     <div className="flex flex-col items-center flex-1">
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all ${
-                        isCompleted ? 'bg-green-500' :
-                        isActive ? 'bg-blue-600' : 'bg-gray-200'
+                        isCompleted ? 'bg-muted0' :
+                        isActive ? 'bg-blue-600' : 'bg-muted'
                       }`}>
                         {isCompleted ? (
-                          <Check size={24} className="text-white" />
+                          <Check size={24} className="text-background" />
                         ) : (
-                          <StepIcon size={24} className={isActive ? 'text-white' : 'text-gray-500'} />
+                          <StepIcon size={24} className={isActive ? 'text-background' : 'text-muted-foreground'} />
                         )}
                       </div>
-                      <p className={`text-sm font-medium ${isActive ? 'text-blue-600' : 'text-gray-600'}`}>
+                      <p className={`text-sm font-medium ${isActive ? 'text-blue-600' : 'text-muted-foreground'}`}>
                         {step.title}
                       </p>
                     </div>
                     {index < steps.length - 1 && (
                       <div className={`h-1 flex-1 mx-4 rounded ${
-                        isCompleted ? 'bg-green-500' : 'bg-gray-200'
+                        isCompleted ? 'bg-muted0' : 'bg-muted'
                       }`}></div>
                     )}
                   </React.Fragment>
@@ -165,14 +165,14 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow border border-gray-200">
+        <div className="bg-card border border-border rounded-lg shadow-card">
           {currentStep === 1 && (
             <div className="p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Basic Information</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-foreground mb-6">Basic Information</h2>
               
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Key Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -180,13 +180,13 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                     value={formData.keyName}
                     onChange={(e) => handleInputChange('keyName', e.target.value)}
                     placeholder="e.g., Production API Key"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Choose a descriptive name for this API key</p>
+                  <p className="text-xs text-muted-foreground mt-1">Choose a descriptive name for this API key</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Description
                   </label>
                   <textarea
@@ -194,12 +194,12 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     placeholder="Describe the purpose of this key..."
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-foreground mb-3">
                     Environment <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-2 gap-4">
@@ -209,15 +209,15 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                         onClick={() => handleInputChange('environment', env.value)}
                         className={`p-4 rounded-lg border-2 transition-all text-left ${
                           formData.environment === env.value
-                            ? 'border-blue-500 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-blue-500 bg-muted'
+                            : 'border-border hover:border-border'
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           <div className={`w-3 h-3 rounded-full bg-${env.color}-500`}></div>
                           <div>
-                            <h3 className="font-semibold text-gray-900">{env.label}</h3>
-                            <p className="text-xs text-gray-600">{env.description}</p>
+                            <h3 className="font-semibold text-foreground">{env.label}</h3>
+                            <p className="text-xs text-muted-foreground">{env.description}</p>
                           </div>
                         </div>
                       </button>
@@ -226,13 +226,13 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Expiry Period <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.expiryDays}
                     onChange={(e) => handleInputChange('expiryDays', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
                   >
                     <option value="30">30 Days</option>
                     <option value="90">90 Days (Recommended)</option>
@@ -247,11 +247,11 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
 
           {currentStep === 2 && (
             <div className="p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Permissions & Scope</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-foreground mb-6">Permissions & Scope</h2>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-foreground mb-3">
                     Access Scope <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-2 gap-4">
@@ -263,8 +263,8 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                           onClick={() => handleInputChange('scope', scope.value)}
                           className={`p-4 rounded-lg border-2 transition-all text-left ${
                             formData.scope === scope.value
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
+                              ? 'border-blue-500 bg-muted'
+                              : 'border-border hover:border-border'
                           }`}
                         >
                           <div className="flex items-start gap-3">
@@ -272,8 +272,8 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                               <ScopeIcon size={20} className={`text-${scope.color}-600`} />
                             </div>
                             <div>
-                              <h3 className="font-semibold text-gray-900 mb-1">{scope.label}</h3>
-                              <p className="text-xs text-gray-600">{scope.description}</p>
+                              <h3 className="font-semibold text-foreground mb-1">{scope.label}</h3>
+                              <p className="text-xs text-muted-foreground">{scope.description}</p>
                             </div>
                           </div>
                         </button>
@@ -283,12 +283,12 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                 </div>
 
                 {formData.scope === 'custom' && (
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <h3 className="font-semibold text-gray-900 mb-4">Custom Permissions</h3>
+                  <div className="p-4 bg-muted rounded-lg border border-border">
+                    <h3 className="font-semibold text-foreground mb-4">Custom Permissions</h3>
                     <div className="space-y-4">
                       {Object.keys(formData.customPermissions).map((resource) => (
-                        <div key={resource} className="p-3 bg-white rounded-lg border border-gray-200">
-                          <h4 className="font-medium text-gray-900 mb-3 capitalize">{resource}</h4>
+                        <div key={resource} className="p-3 bg-card rounded-lg border border-border">
+                          <h4 className="font-medium text-foreground mb-3 capitalize">{resource}</h4>
                           <div className="flex gap-4">
                             {Object.keys(formData.customPermissions[resource]).map((action) => (
                               <label key={action} className="flex items-center gap-2 cursor-pointer">
@@ -296,9 +296,9 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                                   type="checkbox"
                                   checked={formData.customPermissions[resource][action]}
                                   onChange={() => handlePermissionChange(resource, action)}
-                                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                                  className="w-4 h-4 text-blue-600 rounded focus:ring-ring"
                                 />
-                                <span className="text-sm text-gray-700 capitalize">{action}</span>
+                                <span className="text-sm text-foreground capitalize">{action}</span>
                               </label>
                             ))}
                           </div>
@@ -309,7 +309,7 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Rate Limit
                   </label>
                   <div className="flex gap-4">
@@ -318,19 +318,19 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                       value={formData.rateLimit}
                       onChange={(e) => handleInputChange('rateLimit', e.target.value)}
                       placeholder="1000"
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
                     />
                     <select
                       value={formData.rateLimitPeriod}
                       onChange={(e) => handleInputChange('rateLimitPeriod', e.target.value)}
-                      className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
                     >
                       <option value="minute">per Minute</option>
                       <option value="hour">per Hour</option>
                       <option value="day">per Day</option>
                     </select>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Maximum number of requests allowed</p>
+                  <p className="text-xs text-muted-foreground mt-1">Maximum number of requests allowed</p>
                 </div>
               </div>
             </div>
@@ -338,10 +338,10 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
 
           {currentStep === 3 && (
             <div className="p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Security Settings</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-foreground mb-6">Security Settings</h2>
 
               <div className="space-y-6">
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="p-4 bg-muted border border-blue-200 rounded-lg">
                   <div className="flex items-start gap-3">
                     <Shield size={20} className="text-blue-600 mt-0.5" />
                     <div>
@@ -352,7 +352,7 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                           type="checkbox"
                           checked={formData.ipRestriction}
                           onChange={(e) => handleInputChange('ipRestriction', e.target.checked)}
-                          className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                          className="w-4 h-4 text-blue-600 rounded focus:ring-ring"
                         />
                         <span className="text-sm font-medium text-blue-900">Enable IP Restriction</span>
                       </label>
@@ -362,7 +362,7 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
 
                 {formData.ipRestriction && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-foreground mb-2">
                       Allowed IP Addresses
                     </label>
                     <textarea
@@ -370,14 +370,14 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                       onChange={(e) => handleInputChange('allowedIPs', e.target.value)}
                       placeholder="192.168.1.0/24&#10;10.0.0.50&#10;203.45.67.89"
                       rows={4}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring font-mono text-sm"
                     />
-                    <p className="text-xs text-gray-500 mt-1">One IP address or CIDR range per line</p>
+                    <p className="text-xs text-muted-foreground mt-1">One IP address or CIDR range per line</p>
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Webhook URL (Optional)
                   </label>
                   <input
@@ -385,22 +385,22 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                     value={formData.webhookUrl}
                     onChange={(e) => handleInputChange('webhookUrl', e.target.value)}
                     placeholder="https://your-domain.com/webhook"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Receive notifications about key usage</p>
+                  <p className="text-xs text-muted-foreground mt-1">Receive notifications about key usage</p>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="p-4 bg-muted rounded-lg border border-border">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={formData.notifyExpiry}
                       onChange={(e) => handleInputChange('notifyExpiry', e.target.checked)}
-                      className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-blue-600 rounded focus:ring-ring"
                     />
-                    <span className="text-sm font-medium text-gray-900">Notify me before key expires</span>
+                    <span className="text-sm font-medium text-foreground">Notify me before key expires</span>
                   </label>
-                  <p className="text-xs text-gray-500 mt-2 ml-6">You'll receive an email 7 days before expiration</p>
+                  <p className="text-xs text-muted-foreground mt-2 ml-6">You'll receive an email 7 days before expiration</p>
                 </div>
               </div>
             </div>
@@ -408,42 +408,42 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
 
           {currentStep === 4 && (
             <div className="p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Review & Generate</h2>
+              <h2 className="text-lg font-semibold tracking-tight text-foreground mb-6">Review & Generate</h2>
 
               <div className="space-y-6">
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <h3 className="font-semibold text-gray-900 mb-4">Configuration Summary</h3>
+                <div className="p-4 bg-muted rounded-lg border border-border">
+                  <h3 className="font-semibold text-foreground mb-4">Configuration Summary</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs text-gray-500 uppercase tracking-wide">Key Name</label>
-                      <p className="font-medium text-gray-900">{formData.keyName || 'Not set'}</p>
+                      <label className="text-xs text-muted-foreground uppercase tracking-wide">Key Name</label>
+                      <p className="font-medium text-foreground">{formData.keyName || 'Not set'}</p>
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 uppercase tracking-wide">Environment</label>
-                      <p className="font-medium text-gray-900 capitalize">{formData.environment}</p>
+                      <label className="text-xs text-muted-foreground uppercase tracking-wide">Environment</label>
+                      <p className="font-medium text-foreground capitalize">{formData.environment}</p>
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 uppercase tracking-wide">Scope</label>
-                      <p className="font-medium text-gray-900 capitalize">{formData.scope.replace('-', ' ')}</p>
+                      <label className="text-xs text-muted-foreground uppercase tracking-wide">Scope</label>
+                      <p className="font-medium text-foreground capitalize">{formData.scope.replace('-', ' ')}</p>
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 uppercase tracking-wide">Expires In</label>
-                      <p className="font-medium text-gray-900">
+                      <label className="text-xs text-muted-foreground uppercase tracking-wide">Expires In</label>
+                      <p className="font-medium text-foreground">
                         {formData.expiryDays === 'never' ? 'Never' : `${formData.expiryDays} days`}
                       </p>
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 uppercase tracking-wide">Rate Limit</label>
-                      <p className="font-medium text-gray-900">{formData.rateLimit} / {formData.rateLimitPeriod}</p>
+                      <label className="text-xs text-muted-foreground uppercase tracking-wide">Rate Limit</label>
+                      <p className="font-medium text-foreground">{formData.rateLimit} / {formData.rateLimitPeriod}</p>
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 uppercase tracking-wide">IP Restriction</label>
-                      <p className="font-medium text-gray-900">{formData.ipRestriction ? 'Enabled' : 'Disabled'}</p>
+                      <label className="text-xs text-muted-foreground uppercase tracking-wide">IP Restriction</label>
+                      <p className="font-medium text-foreground">{formData.ipRestriction ? 'Enabled' : 'Disabled'}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="p-4 bg-muted border border-yellow-200 rounded-lg">
                   <div className="flex items-start gap-3">
                     <AlertCircle size={20} className="text-yellow-600 mt-0.5" />
                     <div>
@@ -458,7 +458,7 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                 <button
                   onClick={handleGenerate}
                   disabled={!formData.keyName}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg"
                 >
                   <Key size={24} />
                   Generate API Key
@@ -473,17 +473,17 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle size={32} className="text-green-600" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">API Key Generated Successfully!</h2>
-                <p className="text-gray-600">Copy and save your key now. You won't be able to see it again.</p>
+                <h2 className="text-lg font-semibold tracking-tight text-foreground mb-2">API Key Generated Successfully!</h2>
+                <p className="text-muted-foreground">Copy and save your key now. You won't be able to see it again.</p>
               </div>
 
               <div className="space-y-6">
-                <div className="p-6 bg-gray-900 rounded-lg border-2 border-green-500">
+                <div className="p-6 bg-foreground rounded-lg border-2 border-green-500">
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-sm font-medium text-green-400">Your API Key</label>
                     <button
                       onClick={() => setShowKey(!showKey)}
-                      className="p-1 text-gray-400 hover:text-white transition-colors"
+                      className="p-1 text-muted-foreground hover:text-background transition-colors"
                     >
                       {showKey ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -496,43 +496,43 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => copyToClipboard(generatedKey.key)}
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors"
                   >
                     <Copy size={20} />
                     Copy Key
                   </button>
                   <button
                     onClick={downloadKey}
-                    className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-muted transition-colors"
                   >
                     <Download size={20} />
                     Download Config
                   </button>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <h3 className="font-semibold text-gray-900 mb-3">Key Details</h3>
+                <div className="p-4 bg-muted rounded-lg border border-border">
+                  <h3 className="font-semibold text-foreground mb-3">Key Details</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Key Name:</span>
-                      <span className="font-medium text-gray-900">{generatedKey.name}</span>
+                      <span className="text-muted-foreground">Key Name:</span>
+                      <span className="font-medium text-foreground">{generatedKey.name}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Environment:</span>
-                      <span className="font-medium text-gray-900 capitalize">{generatedKey.environment}</span>
+                      <span className="text-muted-foreground">Environment:</span>
+                      <span className="font-medium text-foreground capitalize">{generatedKey.environment}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Created:</span>
-                      <span className="font-medium text-gray-900">{new Date(generatedKey.created).toLocaleString()}</span>
+                      <span className="text-muted-foreground">Created:</span>
+                      <span className="font-medium text-foreground">{new Date(generatedKey.created).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Expires:</span>
-                      <span className="font-medium text-gray-900">{new Date(generatedKey.expires).toLocaleString()}</span>
+                      <span className="text-muted-foreground">Expires:</span>
+                      <span className="font-medium text-foreground">{new Date(generatedKey.expires).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="p-4 bg-muted border border-red-200 rounded-lg">
                   <div className="flex items-start gap-3">
                     <AlertCircle size={20} className="text-red-600 mt-0.5" />
                     <div>
@@ -548,11 +548,11 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                 </div>
 
                 <div className="flex gap-4">
-                  <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                  <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted transition-colors">
                     <Terminal size={20} />
                     View Documentation
                   </button>
-                  <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                  <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-background rounded-lg hover:bg-green-700 transition-colors">
                     <CheckCircle size={20} />
                     I've Saved the Key
                   </button>
@@ -562,22 +562,22 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
           )}
 
           {currentStep <= 4 && (
-            <div className="p-6 border-t border-gray-200 flex items-center justify-between">
+            <div className="p-6 border-t border-border flex items-center justify-between">
               <button
                 onClick={prevStep}
                 disabled={currentStep === 1}
-                className="flex items-center gap-2 px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-6 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft size={20} />
                 Previous
               </button>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 Step {currentStep} of 4
               </div>
               <button
                 onClick={nextStep}
                 disabled={currentStep === 4 || (currentStep === 1 && !formData.keyName)}
-                className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-6 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {currentStep === 4 ? 'Generate' : 'Next'}
                 <ChevronRight size={20} />

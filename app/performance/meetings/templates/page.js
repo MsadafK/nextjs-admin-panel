@@ -200,16 +200,16 @@ const AgendaTemplates = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Agenda Templates</h1>
-            <p className="text-slate-600">Pre-built meeting agendas for efficient and productive meetings</p>
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Agenda Templates</h1>
+            <p className="text-muted-foreground">Pre-built meeting agendas for efficient and productive meetings</p>
           </div>
           <button 
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 font-medium"
+            className="px-4 py-2 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 font-medium"
           >
             <Plus className="w-4 h-4" />
             Create Template
@@ -218,57 +218,57 @@ const AgendaTemplates = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Total Templates</span>
+              <span className="text-sm text-muted-foreground">Total Templates</span>
               <FileText className="w-5 h-5 text-indigo-600" />
             </div>
-            <div className="text-3xl font-bold text-slate-800">{stats.total}</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{stats.total}</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Favorites</span>
+              <span className="text-sm text-muted-foreground">Favorites</span>
               <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
             </div>
-            <div className="text-3xl font-bold text-yellow-600">{stats.favorites}</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-yellow-600">{stats.favorites}</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Total Usage</span>
+              <span className="text-sm text-muted-foreground">Total Usage</span>
               <CheckCircle2 className="w-5 h-5 text-green-600" />
             </div>
-            <div className="text-3xl font-bold text-green-600">{stats.totalUsage}</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-green-600">{stats.totalUsage}</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Avg Duration</span>
+              <span className="text-sm text-muted-foreground">Avg Duration</span>
               <Clock className="w-5 h-5 text-purple-600" />
             </div>
-            <div className="text-3xl font-bold text-purple-600">{stats.avgDuration} min</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-purple-600">{stats.avgDuration} min</div>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search templates..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div className="flex gap-2">
               <select 
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>
@@ -276,16 +276,16 @@ const AgendaTemplates = () => {
                   </option>
                 ))}
               </select>
-              <div className="flex gap-1 border border-slate-300 rounded-lg p-1">
+              <div className="flex gap-1 border border-border rounded-lg p-1">
                 <button 
                   onClick={() => setViewMode('grid')}
-                  className={`px-3 py-1.5 rounded transition-colors ${viewMode === 'grid' ? 'bg-indigo-100 text-indigo-700' : 'text-slate-600 hover:bg-slate-100'}`}
+                  className={`px-3 py-1.5 rounded transition-colors ${viewMode === 'grid' ? 'bg-indigo-100 text-indigo-700' : 'text-muted-foreground hover:bg-muted'}`}
                 >
                   <Grid className="w-4 h-4" />
                 </button>
                 <button 
                   onClick={() => setViewMode('list')}
-                  className={`px-3 py-1.5 rounded transition-colors ${viewMode === 'list' ? 'bg-indigo-100 text-indigo-700' : 'text-slate-600 hover:bg-slate-100'}`}
+                  className={`px-3 py-1.5 rounded transition-colors ${viewMode === 'list' ? 'bg-indigo-100 text-indigo-700' : 'text-muted-foreground hover:bg-muted'}`}
                 >
                   <List className="w-4 h-4" />
                 </button>
@@ -299,29 +299,29 @@ const AgendaTemplates = () => {
           <div className="lg:col-span-3 space-y-6">
             {/* Favorite Templates */}
             {favoriteTemplates.length > 0 && categoryFilter === 'all' && (
-              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <div className="bg-card rounded-xl shadow-sm border border-border p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                  <h2 className="text-lg font-semibold text-slate-800">Favorite Templates</h2>
+                  <h2 className="text-lg font-semibold text-foreground">Favorite Templates</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {favoriteTemplates.map(template => (
                     <div
                       key={template.id}
-                      className="p-4 border-2 border-yellow-200 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg hover:shadow-lg transition-all"
+                      className="p-4 border-2 border-yellow-200 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg hover:shadow-card transition-all"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-start gap-3">
-                          <div className={`w-12 h-12 bg-gradient-to-br ${template.color} rounded-lg flex items-center justify-center text-2xl shadow-md`}>
+                          <div className={`w-12 h-12 bg-gradient-to-br ${template.color} rounded-lg flex items-center justify-center text-2xl shadow-card`}>
                             {template.icon}
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-semibold text-slate-800 mb-1">{template.name}</h3>
-                            <p className="text-xs text-slate-600 line-clamp-2">{template.description}</p>
+                            <h3 className="font-semibold text-foreground mb-1">{template.name}</h3>
+                            <p className="text-xs text-muted-foreground line-clamp-2">{template.description}</p>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-slate-600 mb-3">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           {template.duration}
@@ -335,12 +335,12 @@ const AgendaTemplates = () => {
                       <div className="flex gap-2">
                         <button 
                           onClick={() => handlePreview(template)}
-                          className="flex-1 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
+                          className="flex-1 px-3 py-2 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
                         >
                           Use Template
                         </button>
-                        <button className="px-3 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
-                          <Eye className="w-4 h-4 text-slate-600" />
+                        <button className="px-3 py-2 bg-card border border-border rounded-lg hover:bg-muted transition-colors">
+                          <Eye className="w-4 h-4 text-muted-foreground" />
                         </button>
                       </div>
                     </div>
@@ -350,8 +350,8 @@ const AgendaTemplates = () => {
             )}
 
             {/* All Templates */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h2 className="text-lg font-semibold text-slate-800 mb-4">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-4">
                 All Templates ({filteredTemplates.length})
               </h2>
 
@@ -360,7 +360,7 @@ const AgendaTemplates = () => {
                   {filteredTemplates.map(template => (
                     <div
                       key={template.id}
-                      className="p-4 border border-slate-200 rounded-lg hover:shadow-md hover:border-indigo-300 transition-all"
+                      className="p-4 border border-border rounded-lg hover:shadow-card hover:border-indigo-300 transition-all"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-start gap-3">
@@ -369,7 +369,7 @@ const AgendaTemplates = () => {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-slate-800">{template.name}</h3>
+                              <h3 className="font-semibold text-foreground">{template.name}</h3>
                               {template.isFavorite && (
                                 <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                               )}
@@ -377,14 +377,14 @@ const AgendaTemplates = () => {
                             <span className="text-xs text-indigo-600 font-medium">{template.category}</span>
                           </div>
                         </div>
-                        <button className="text-slate-400 hover:text-slate-600">
+                        <button className="text-muted-foreground hover:text-muted-foreground">
                           <MoreVertical className="w-4 h-4" />
                         </button>
                       </div>
 
-                      <p className="text-sm text-slate-600 mb-3 line-clamp-2">{template.description}</p>
+                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{template.description}</p>
 
-                      <div className="flex items-center gap-3 text-xs text-slate-500 mb-3 pb-3 border-b border-slate-100">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3 pb-3 border-b border-border">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           {template.duration}
@@ -399,7 +399,7 @@ const AgendaTemplates = () => {
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between text-xs text-slate-500 mb-3">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
                         <span>Used {template.usageCount} times</span>
                         <span>{template.lastUsed}</span>
                       </div>
@@ -407,15 +407,15 @@ const AgendaTemplates = () => {
                       <div className="flex gap-2">
                         <button 
                           onClick={() => handlePreview(template)}
-                          className="flex-1 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
+                          className="flex-1 px-3 py-2 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
                         >
                           Use Template
                         </button>
-                        <button className="px-2 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
-                          <Copy className="w-4 h-4 text-slate-600" />
+                        <button className="px-2 py-2 bg-muted rounded-lg hover:bg-muted transition-colors">
+                          <Copy className="w-4 h-4 text-muted-foreground" />
                         </button>
-                        <button className="px-2 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
-                          <Edit3 className="w-4 h-4 text-slate-600" />
+                        <button className="px-2 py-2 bg-muted rounded-lg hover:bg-muted transition-colors">
+                          <Edit3 className="w-4 h-4 text-muted-foreground" />
                         </button>
                       </div>
                     </div>
@@ -426,23 +426,23 @@ const AgendaTemplates = () => {
                   {filteredTemplates.map(template => (
                     <div
                       key={template.id}
-                      className="p-4 border border-slate-200 rounded-lg hover:shadow-md transition-all flex items-center gap-4"
+                      className="p-4 border border-border rounded-lg hover:shadow-card transition-all flex items-center gap-4"
                     >
                       <div className={`w-12 h-12 bg-gradient-to-br ${template.color} rounded-lg flex items-center justify-center text-2xl flex-shrink-0`}>
                         {template.icon}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-slate-800">{template.name}</h3>
+                          <h3 className="font-semibold text-foreground">{template.name}</h3>
                           {template.isFavorite && (
                             <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                           )}
-                          <span className="text-xs text-indigo-600 font-medium px-2 py-0.5 bg-indigo-50 rounded">
+                          <span className="text-xs text-indigo-600 font-medium px-2 py-0.5 bg-muted rounded">
                             {template.category}
                           </span>
                         </div>
-                        <p className="text-sm text-slate-600 mb-2">{template.description}</p>
-                        <div className="flex items-center gap-4 text-xs text-slate-500">
+                        <p className="text-sm text-muted-foreground mb-2">{template.description}</p>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {template.duration}
@@ -459,12 +459,12 @@ const AgendaTemplates = () => {
                       <div className="flex gap-2 flex-shrink-0">
                         <button 
                           onClick={() => handlePreview(template)}
-                          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
+                          className="px-4 py-2 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
                         >
                           Use Template
                         </button>
-                        <button className="px-3 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
-                          <Copy className="w-4 h-4 text-slate-600" />
+                        <button className="px-3 py-2 bg-muted rounded-lg hover:bg-muted transition-colors">
+                          <Copy className="w-4 h-4 text-muted-foreground" />
                         </button>
                       </div>
                     </div>
@@ -477,8 +477,8 @@ const AgendaTemplates = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Categories */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Categories</h3>
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Categories</h3>
               <div className="space-y-2">
                 {categories.map(cat => (
                   <button
@@ -486,12 +486,12 @@ const AgendaTemplates = () => {
                     onClick={() => setCategoryFilter(cat.id)}
                     className={`w-full flex items-center justify-between p-3 rounded-lg transition-all text-sm ${
                       categoryFilter === cat.id
-                        ? 'bg-indigo-50 border-2 border-indigo-500 text-indigo-700 font-medium'
-                        : 'border border-slate-200 hover:border-indigo-300 text-slate-700'
+                        ? 'bg-muted border-2 border-indigo-500 text-indigo-700 font-medium'
+                        : 'border border-border hover:border-indigo-300 text-foreground'
                     }`}
                   >
                     <span>{cat.name}</span>
-                    <span className={`text-xs ${categoryFilter === cat.id ? 'text-indigo-600' : 'text-slate-500'}`}>
+                    <span className={`text-xs ${categoryFilter === cat.id ? 'text-indigo-600' : 'text-muted-foreground'}`}>
                       {cat.count}
                     </span>
                   </button>
@@ -526,14 +526,14 @@ const AgendaTemplates = () => {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Quick Actions</h3>
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
               <div className="space-y-2">
-                <button className="w-full px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium">
+                <button className="w-full px-4 py-2.5 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium">
                   <Plus className="w-4 h-4" />
                   Create New Template
                 </button>
-                <button className="w-full px-4 py-2.5 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 text-sm font-medium text-slate-700">
+                <button className="w-full px-4 py-2.5 border border-border rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2 text-sm font-medium text-foreground">
                   <Download className="w-4 h-4" />
                   Import Templates
                 </button>
@@ -546,17 +546,17 @@ const AgendaTemplates = () => {
       {/* Preview Modal */}
       {showPreviewModal && selectedTemplate && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-slate-200 sticky top-0 bg-white">
+          <div className="bg-card rounded-xl shadow-card max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-border sticky top-0 bg-card">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
                   <div className={`w-14 h-14 bg-gradient-to-br ${selectedTemplate.color} rounded-lg flex items-center justify-center text-3xl`}>
                     {selectedTemplate.icon}
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-slate-800">{selectedTemplate.name}</h3>
-                    <p className="text-sm text-slate-600 mt-1">{selectedTemplate.description}</p>
-                    <div className="flex items-center gap-4 text-sm text-slate-500 mt-2">
+                    <h3 className="text-xl font-semibold text-foreground">{selectedTemplate.name}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">{selectedTemplate.description}</p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
                       <span className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
                         {selectedTemplate.duration}
@@ -570,7 +570,7 @@ const AgendaTemplates = () => {
                 </div>
                 <button 
                   onClick={() => setShowPreviewModal(false)}
-                  className="text-slate-400 hover:text-slate-600"
+                  className="text-muted-foreground hover:text-muted-foreground"
                 >
                   ✕
                 </button>
@@ -578,16 +578,16 @@ const AgendaTemplates = () => {
             </div>
 
             <div className="p-6 space-y-4">
-              <h4 className="font-semibold text-slate-800 mb-3">Agenda Sections</h4>
+              <h4 className="font-semibold text-foreground mb-3">Agenda Sections</h4>
               {selectedTemplate.sections.map((section, idx) => (
-                <div key={idx} className="p-4 border border-slate-200 rounded-lg">
+                <div key={idx} className="p-4 border border-border rounded-lg">
                   <div className="flex items-center justify-between mb-3">
-                    <h5 className="font-semibold text-slate-800">{section.title}</h5>
+                    <h5 className="font-semibold text-foreground">{section.title}</h5>
                     <span className="text-sm text-indigo-600 font-medium">{section.duration}</span>
                   </div>
                   <ul className="space-y-2">
                     {section.items.map((item, itemIdx) => (
-                      <li key={itemIdx} className="flex items-start gap-2 text-sm text-slate-600">
+                      <li key={itemIdx} className="flex items-start gap-2 text-sm text-muted-foreground">
                         <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </li>
@@ -597,18 +597,18 @@ const AgendaTemplates = () => {
               ))}
             </div>
 
-            <div className="p-6 border-t border-slate-200 flex gap-3 justify-end bg-slate-50">
+            <div className="p-6 border-t border-border flex gap-3 justify-end bg-muted">
               <button 
                 onClick={() => setShowPreviewModal(false)}
-                className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-white transition-colors"
+                className="px-4 py-2 border border-border rounded-lg hover:bg-card transition-colors"
               >
                 Close
               </button>
-              <button className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2">
+              <button className="px-4 py-2 bg-foreground/80 text-background rounded-lg hover:bg-foreground/80 transition-colors flex items-center gap-2">
                 <Copy className="w-4 h-4" />
                 Duplicate
               </button>
-              <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2">
+              <button className="px-4 py-2 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 Use for Meeting
               </button>
@@ -620,31 +620,31 @@ const AgendaTemplates = () => {
       {/* Create Template Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-slate-200">
-              <h3 className="text-xl font-semibold text-slate-800">Create New Template</h3>
+          <div className="bg-card rounded-xl shadow-card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-border">
+              <h3 className="text-xl font-semibold text-foreground">Create New Template</h3>
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Template Name</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Template Name</label>
                 <input
                   type="text"
                   placeholder="e.g., Weekly Team Standup"
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Description</label>
                 <textarea
                   placeholder="Describe the purpose of this meeting template..."
                   rows="3"
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Category</label>
-                  <select className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                  <label className="block text-sm font-medium text-foreground mb-2">Category</label>
+                  <select className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     <option>Team Meeting</option>
                     <option>Executive</option>
                     <option>Project</option>
@@ -653,35 +653,35 @@ const AgendaTemplates = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Duration</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">Duration</label>
                   <input
                     type="text"
                     placeholder="e.g., 30 min"
-                    className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Participants</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Participants</label>
                 <input
                   type="text"
                   placeholder="e.g., 5-10"
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Agenda Sections</label>
-                <div className="space-y-3 p-4 border border-slate-200 rounded-lg bg-slate-50">
+                <label className="block text-sm font-medium text-foreground mb-2">Agenda Sections</label>
+                <div className="space-y-3 p-4 border border-border rounded-lg bg-muted">
                   <div className="flex gap-2">
                     <input
                       type="text"
                       placeholder="Section title..."
-                      className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                      className="flex-1 px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
                     />
                     <input
                       type="text"
                       placeholder="Duration"
-                      className="w-24 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                      className="w-24 px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
                     />
                   </div>
                   <button className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
@@ -691,16 +691,16 @@ const AgendaTemplates = () => {
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t border-slate-200 flex gap-3 justify-end">
+            <div className="p-6 border-t border-border flex gap-3 justify-end">
               <button 
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+                className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={() => setShowCreateModal(false)}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                className="px-4 py-2 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors"
               >
                 Create Template
               </button>

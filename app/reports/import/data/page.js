@@ -178,10 +178,10 @@ const ImportData = () => {
       XLS: <FileSpreadsheet className="w-5 h-5 text-emerald-600" />,
       JSON: <FileJson className="w-5 h-5 text-blue-600" />,
       XML: <FileCode className="w-5 h-5 text-purple-600" />,
-      TXT: <FileText className="w-5 h-5 text-gray-600" />,
+      TXT: <FileText className="w-5 h-5 text-muted-foreground" />,
       SQL: <Database className="w-5 h-5 text-indigo-600" />
     };
-    return icons[type] || <File className="w-5 h-5 text-slate-600" />;
+    return icons[type] || <File className="w-5 h-5 text-muted-foreground" />;
   };
 
   const getStatusBadge = (status) => {
@@ -196,19 +196,19 @@ const ImportData = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Import Data</h1>
-            <p className="text-slate-600">Upload and import your data files with automatic validation</p>
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Import Data</h1>
+            <p className="text-muted-foreground">Upload and import your data files with automatic validation</p>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-slate-700">
+            <button className="px-4 py-2 bg-card border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-foreground">
               <Settings className="w-4 h-4" />
               Settings
             </button>
-            <button className="px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-slate-700">
+            <button className="px-4 py-2 bg-card border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-foreground">
               <Download className="w-4 h-4" />
               Template
             </button>
@@ -219,17 +219,17 @@ const ImportData = () => {
           {/* Main Import Area */}
           <div className="lg:col-span-2 space-y-6">
             {/* Upload Zone */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Upload className="w-5 h-5 text-blue-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Upload Files</h2>
+                <h2 className="text-lg font-semibold text-foreground">Upload Files</h2>
               </div>
 
               <div
                 className={`relative border-2 border-dashed rounded-xl p-12 text-center transition-all ${
                   dragActive 
-                    ? 'border-blue-500 bg-blue-50' 
-                    : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'
+                    ? 'border-blue-500 bg-muted' 
+                    : 'border-border hover:border-blue-400 hover:bg-muted'
                 }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -248,40 +248,40 @@ const ImportData = () => {
                   <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Upload className="w-8 h-8 text-blue-600" />
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
                     {dragActive ? 'Drop files here' : 'Drag & drop files here'}
                   </h3>
-                  <p className="text-slate-500 mb-4">or click to browse from your computer</p>
-                  <button className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                  <p className="text-muted-foreground mb-4">or click to browse from your computer</p>
+                  <button className="px-6 py-2.5 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors font-medium">
                     Select Files
                   </button>
                 </label>
               </div>
 
-              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-slate-500">
+              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <span>Supported formats:</span>
-                <span className="font-medium text-slate-700">CSV, Excel, JSON, XML, TXT, SQL</span>
+                <span className="font-medium text-foreground">CSV, Excel, JSON, XML, TXT, SQL</span>
               </div>
             </div>
 
             {/* Supported Formats */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <FileText className="w-5 h-5 text-blue-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Supported File Formats</h2>
+                <h2 className="text-lg font-semibold text-foreground">Supported File Formats</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {supportedFormats.map((format) => (
                   <div
                     key={format.id}
-                    className="p-4 rounded-lg border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all"
+                    className="p-4 rounded-lg border border-border hover:border-blue-300 hover:shadow-card transition-all"
                   >
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${format.color} flex items-center justify-center text-white text-xl mb-3 shadow-inner`}>
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${format.color} flex items-center justify-center text-background text-lg mb-3 shadow-inner`}>
                       {format.icon}
                     </div>
-                    <div className="font-semibold text-slate-800 text-sm mb-1">{format.name}</div>
-                    <div className="text-xs text-slate-500 mb-1">{format.description}</div>
-                    <div className="text-xs text-slate-400">{format.extensions}</div>
+                    <div className="font-semibold text-foreground text-sm mb-1">{format.name}</div>
+                    <div className="text-xs text-muted-foreground mb-1">{format.description}</div>
+                    <div className="text-xs text-muted-foreground">{format.extensions}</div>
                   </div>
                 ))}
               </div>
@@ -289,11 +289,11 @@ const ImportData = () => {
 
             {/* Uploaded Files List */}
             {uploadedFiles.length > 0 && (
-              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <div className="bg-card rounded-xl shadow-sm border border-border p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Database className="w-5 h-5 text-blue-600" />
-                    <h2 className="text-lg font-semibold text-slate-800">Uploaded Files ({uploadedFiles.length})</h2>
+                    <h2 className="text-lg font-semibold text-foreground">Uploaded Files ({uploadedFiles.length})</h2>
                   </div>
                   <button 
                     onClick={() => setUploadedFiles([])}
@@ -308,16 +308,16 @@ const ImportData = () => {
                   {uploadedFiles.map((file) => (
                     <div 
                       key={file.id} 
-                      className="p-4 border border-slate-200 rounded-lg hover:shadow-md transition-shadow"
+                      className="p-4 border border-border rounded-lg hover:shadow-card transition-shadow"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-start gap-3 flex-1">
-                          <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
                             {getFileIcon(file.type)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-slate-800 truncate">{file.name}</div>
-                            <div className="text-sm text-slate-500 mt-1">{file.size} • {file.type}</div>
+                            <div className="font-medium text-foreground truncate">{file.name}</div>
+                            <div className="text-sm text-muted-foreground mt-1">{file.size} • {file.type}</div>
                             {file.status === 'success' && (
                               <div className="text-xs text-green-600 mt-1 flex items-center gap-1">
                                 <CheckCircle2 className="w-3 h-3" />
@@ -330,14 +330,14 @@ const ImportData = () => {
                           {getStatusBadge(file.status)}
                           <button 
                             onClick={() => removeFile(file.id)}
-                            className="text-slate-400 hover:text-red-600"
+                            className="text-muted-foreground hover:text-red-600"
                           >
                             <X className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
                       {file.status === 'pending' && file.progress > 0 && (
-                        <div className="w-full bg-slate-200 rounded-full h-2">
+                        <div className="w-full bg-muted rounded-full h-2">
                           <div 
                             className="bg-blue-600 h-2 rounded-full transition-all" 
                             style={{ width: `${file.progress}%` }}
@@ -351,80 +351,80 @@ const ImportData = () => {
             )}
 
             {/* Import Settings */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Settings className="w-5 h-5 text-blue-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Import Settings</h2>
+                <h2 className="text-lg font-semibold text-foreground">Import Settings</h2>
               </div>
               <div className="space-y-3">
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       🔍
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Skip Duplicates</div>
-                      <div className="text-xs text-slate-500">Ignore records that already exist</div>
+                      <div className="font-medium text-foreground">Skip Duplicates</div>
+                      <div className="text-xs text-muted-foreground">Ignore records that already exist</div>
                     </div>
                   </div>
                   <input 
                     type="checkbox" 
                     checked={importSettings.skipDuplicates}
                     onChange={(e) => setImportSettings({...importSettings, skipDuplicates: e.target.checked})}
-                    className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    className="w-5 h-5 text-blue-600 rounded focus:outline-none focus:ring-1 focus:ring-ring"
                   />
                 </label>
 
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                       ✓
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Validate Data</div>
-                      <div className="text-xs text-slate-500">Check data integrity before import</div>
+                      <div className="font-medium text-foreground">Validate Data</div>
+                      <div className="text-xs text-muted-foreground">Check data integrity before import</div>
                     </div>
                   </div>
                   <input 
                     type="checkbox" 
                     checked={importSettings.validateData}
                     onChange={(e) => setImportSettings({...importSettings, validateData: e.target.checked})}
-                    className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    className="w-5 h-5 text-blue-600 rounded focus:outline-none focus:ring-1 focus:ring-ring"
                   />
                 </label>
 
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                       💾
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Create Backup</div>
-                      <div className="text-xs text-slate-500">Backup existing data before import</div>
+                      <div className="font-medium text-foreground">Create Backup</div>
+                      <div className="text-xs text-muted-foreground">Backup existing data before import</div>
                     </div>
                   </div>
                   <input 
                     type="checkbox" 
                     checked={importSettings.createBackup}
                     onChange={(e) => setImportSettings({...importSettings, createBackup: e.target.checked})}
-                    className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    className="w-5 h-5 text-blue-600 rounded focus:outline-none focus:ring-1 focus:ring-ring"
                   />
                 </label>
 
-                <div className="p-3 border border-slate-200 rounded-lg">
+                <div className="p-3 border border-border rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
                       📋
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-slate-800">Delimiter</div>
-                      <div className="text-xs text-slate-500">CSV file delimiter character</div>
+                      <div className="font-medium text-foreground">Delimiter</div>
+                      <div className="text-xs text-muted-foreground">CSV file delimiter character</div>
                     </div>
                   </div>
                   <select 
                     value={importSettings.delimiter}
                     onChange={(e) => setImportSettings({...importSettings, delimiter: e.target.value})}
-                    className="w-full mt-2 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="w-full mt-2 px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring text-sm"
                   >
                     <option value="comma">Comma (,)</option>
                     <option value="semicolon">Semicolon (;)</option>
@@ -437,18 +437,18 @@ const ImportData = () => {
 
             {/* Start Import Button */}
             {uploadedFiles.length > 0 && (
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-6 text-white">
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-card p-6 text-background">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold mb-1">Ready to Import</h3>
-                    <p className="text-blue-100 text-sm">
+                    <p className="text-background/70 text-sm">
                       {uploadedFiles.length} file{uploadedFiles.length > 1 ? 's' : ''} ready • {uploadedFiles.reduce((sum, f) => sum + parseFloat(f.size), 0).toFixed(2)} MB total
                     </p>
                   </div>
                   <button 
                     onClick={startImport}
                     disabled={importing}
-                    className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors flex items-center gap-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 bg-card text-blue-600 rounded-lg hover:bg-muted transition-colors flex items-center gap-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {importing ? (
                       <>
@@ -471,7 +471,7 @@ const ImportData = () => {
                     </div>
                     <div className="w-full bg-blue-300 rounded-full h-2">
                       <div 
-                        className="bg-white h-2 rounded-full transition-all" 
+                        className="bg-card h-2 rounded-full transition-all" 
                         style={{ width: `${importProgress}%` }}
                       ></div>
                     </div>
@@ -484,53 +484,53 @@ const ImportData = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Stats */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Import Statistics</h3>
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Import Statistics</h3>
               <div className="space-y-4">
-                <div className="p-3 bg-blue-50 rounded-lg">
+                <div className="p-3 bg-muted rounded-lg">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-slate-600">Total Imports</span>
+                    <span className="text-sm text-muted-foreground">Total Imports</span>
                     <Database className="w-4 h-4 text-blue-600" />
                   </div>
-                  <div className="text-2xl font-bold text-slate-800">1,247</div>
+                  <div className="text-lg font-semibold tracking-tight text-foreground">1,247</div>
                 </div>
                 
-                <div className="p-3 bg-green-50 rounded-lg">
+                <div className="p-3 bg-muted rounded-lg">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-slate-600">Success Rate</span>
+                    <span className="text-sm text-muted-foreground">Success Rate</span>
                     <CheckCircle2 className="w-4 h-4 text-green-600" />
                   </div>
-                  <div className="text-2xl font-bold text-slate-800">98.3%</div>
+                  <div className="text-lg font-semibold tracking-tight text-foreground">98.3%</div>
                 </div>
 
-                <div className="p-3 bg-purple-50 rounded-lg">
+                <div className="p-3 bg-muted rounded-lg">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm text-slate-600">Records Imported</span>
+                    <span className="text-sm text-muted-foreground">Records Imported</span>
                     <FileText className="w-4 h-4 text-purple-600" />
                   </div>
-                  <div className="text-2xl font-bold text-slate-800">2.4M</div>
+                  <div className="text-lg font-semibold tracking-tight text-foreground">2.4M</div>
                 </div>
               </div>
             </div>
 
             {/* Validation Rules */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Validation Rules</h3>
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Validation Rules</h3>
               <div className="space-y-2">
                 {validationRules.map((rule) => (
                   <div key={rule.id} className="flex items-start gap-2 text-sm">
                     <div className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      rule.enabled ? 'bg-green-100' : 'bg-slate-100'
+                      rule.enabled ? 'bg-green-100' : 'bg-muted'
                     }`}>
                       {rule.enabled ? (
                         <CheckCircle2 className="w-3 h-3 text-green-600" />
                       ) : (
-                        <X className="w-3 h-3 text-slate-400" />
+                        <X className="w-3 h-3 text-muted-foreground" />
                       )}
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">{rule.rule}</div>
-                      <div className="text-xs text-slate-500">{rule.description}</div>
+                      <div className="font-medium text-foreground">{rule.rule}</div>
+                      <div className="text-xs text-muted-foreground">{rule.description}</div>
                     </div>
                   </div>
                 ))}
@@ -538,24 +538,24 @@ const ImportData = () => {
             </div>
 
             {/* Import History */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Recent Imports</h3>
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Recent Imports</h3>
               <div className="space-y-3">
                 {importHistory.map((item) => (
-                  <div key={item.id} className="p-3 border border-slate-200 rounded-lg hover:shadow-md transition-shadow">
+                  <div key={item.id} className="p-3 border border-border rounded-lg hover:shadow-card transition-shadow">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-start gap-3 flex-1">
                         <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                           {getFileIcon(item.name.split('.').pop().toUpperCase())}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-slate-800 truncate">{item.name}</div>
-                          <div className="text-xs text-slate-500 mt-1">{item.date}</div>
+                          <div className="text-sm font-medium text-foreground truncate">{item.name}</div>
+                          <div className="text-xs text-muted-foreground mt-1">{item.date}</div>
                         </div>
                       </div>
                       {getStatusBadge(item.status)}
                     </div>
-                    <div className="flex justify-between text-xs text-slate-500 mt-2 pt-2 border-t border-slate-100">
+                    <div className="flex justify-between text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
                       <span>{item.records} records</span>
                       <span>{item.size}</span>
                     </div>

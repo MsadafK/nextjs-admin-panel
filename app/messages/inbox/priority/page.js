@@ -21,7 +21,7 @@ export default function PriorityMessagesPage() {
       subtext: 'Needs immediate action',
       icon: Zap, 
       color: 'from-red-500 to-pink-600', 
-      bgColor: 'bg-red-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-red-600' 
     },
     { 
@@ -30,7 +30,7 @@ export default function PriorityMessagesPage() {
       subtext: 'Important items',
       icon: Flag, 
       color: 'from-orange-500 to-amber-600', 
-      bgColor: 'bg-orange-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-orange-600' 
     },
     { 
@@ -39,7 +39,7 @@ export default function PriorityMessagesPage() {
       subtext: 'Awaiting your reply',
       icon: MessageSquare, 
       color: 'from-blue-500 to-indigo-600', 
-      bgColor: 'bg-blue-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-blue-600' 
     },
     { 
@@ -48,7 +48,7 @@ export default function PriorityMessagesPage() {
       subtext: 'Past deadline',
       icon: Clock, 
       color: 'from-purple-500 to-pink-600', 
-      bgColor: 'bg-purple-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-purple-600' 
     },
   ];
@@ -224,7 +224,7 @@ export default function PriorityMessagesPage() {
 
   const getStatusConfig = (status) => {
     const configs = {
-      'pending': { badge: 'bg-slate-100 text-slate-700', text: 'Pending', icon: Clock },
+      'pending': { badge: 'bg-muted text-foreground', text: 'Pending', icon: Clock },
       'in-progress': { badge: 'bg-blue-100 text-blue-700', text: 'In Progress', icon: ArrowUpRight },
       'completed': { badge: 'bg-emerald-100 text-emerald-700', text: 'Completed', icon: CheckCircle }
     };
@@ -239,20 +239,20 @@ export default function PriorityMessagesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-red-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
                 Priority Messages
               </h1>
               <div className="flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full">
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-muted0 rounded-full animate-pulse"></div>
                 <span className="text-sm font-semibold">8 URGENT</span>
               </div>
             </div>
-            <p className="text-slate-600">Critical messages requiring immediate attention</p>
+            <p className="text-muted-foreground">Critical messages requiring immediate attention</p>
           </div>
         </div>
 
@@ -261,29 +261,29 @@ export default function PriorityMessagesPage() {
           {quickStats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card hover:shadow-dropdown transition-all duration-300">
                 <div className={`${stat.bgColor} w-12 h-12 rounded-xl flex items-center justify-center mb-4`}>
                   <Icon className={`w-6 h-6 ${stat.textColor}`} />
                 </div>
-                <p className="text-slate-600 text-sm mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-slate-800 mb-1">{stat.value}</p>
-                <p className="text-xs text-slate-500">{stat.subtext}</p>
+                <p className="text-muted-foreground text-sm mb-1">{stat.label}</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-1">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.subtext}</p>
               </div>
             );
           })}
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+        <div className="bg-card border border-border rounded-lg shadow-card">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search messages by subject or sender..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-red-500 focus:outline-none transition-colors"
+                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:border-red-500 focus:outline-none transition-colors"
               />
             </div>
             <div className="flex gap-2 overflow-x-auto">
@@ -293,12 +293,12 @@ export default function PriorityMessagesPage() {
                   onClick={() => setPriorityFilter(filter.value)}
                   className={`px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all ${
                     priorityFilter === filter.value
-                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-background shadow-card'
+                      : 'bg-muted text-foreground hover:bg-muted'
                   }`}
                 >
                   {filter.label}
-                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-white/20">
+                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-card/20">
                     {filter.count}
                   </span>
                 </button>
@@ -318,7 +318,7 @@ export default function PriorityMessagesPage() {
             return (
               <div 
                 key={message.id}
-                className={`bg-white rounded-2xl shadow-lg border-2 overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer ${
+                className={`bg-card rounded-lg shadow-card border-2 overflow-hidden transition-all duration-300 hover:shadow-dropdown cursor-pointer ${
                   message.priority === 'urgent' ? 'border-red-300' : 
                   message.priority === 'high' ? 'border-orange-300' : 
                   'border-yellow-300'
@@ -339,28 +339,28 @@ export default function PriorityMessagesPage() {
                       <div className="flex items-start justify-between gap-4 mb-2">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-1">
-                            <h3 className={`text-lg font-bold text-slate-800 ${!message.isRead ? 'text-slate-900' : ''}`}>
+                            <h3 className={`text-lg font-bold text-foreground ${!message.isRead ? 'text-foreground' : ''}`}>
                               {message.subject}
                             </h3>
                             {!message.isRead && (
-                              <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                              <span className="bg-foreground text-background text-xs font-bold px-2 py-0.5 rounded-full">
                                 NEW
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 text-sm text-slate-600 mb-2">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                             <span className="font-semibold">{message.sender}</span>
                             <span>•</span>
                             <span>{message.senderRole}</span>
                             <span>•</span>
                             <span>{message.timestamp}</span>
                           </div>
-                          <p className="text-slate-600 text-sm line-clamp-2 mb-3">{message.preview}</p>
+                          <p className="text-muted-foreground text-sm line-clamp-2 mb-3">{message.preview}</p>
                           
                           {/* Tags */}
                           <div className="flex flex-wrap items-center gap-2 mb-3">
                             {message.tags.map((tag, idx) => (
-                              <span key={idx} className="bg-slate-100 text-slate-700 text-xs px-3 py-1 rounded-full">
+                              <span key={idx} className="bg-muted text-foreground text-xs px-3 py-1 rounded-full">
                                 {tag}
                               </span>
                             ))}
@@ -368,20 +368,20 @@ export default function PriorityMessagesPage() {
 
                           {/* Action Bar */}
                           <div className="flex items-center gap-4 text-sm">
-                            <button className="flex items-center gap-1 text-slate-600 hover:text-blue-600 transition-colors">
+                            <button className="flex items-center gap-1 text-muted-foreground hover:text-blue-600 transition-colors">
                               <Reply className="w-4 h-4" />
                               Reply
                             </button>
-                            <button className="flex items-center gap-1 text-slate-600 hover:text-blue-600 transition-colors">
+                            <button className="flex items-center gap-1 text-muted-foreground hover:text-blue-600 transition-colors">
                               <Forward className="w-4 h-4" />
                               Forward
                             </button>
-                            <button className="flex items-center gap-1 text-slate-600 hover:text-slate-800 transition-colors">
+                            <button className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
                               <Archive className="w-4 h-4" />
                               Archive
                             </button>
                             {message.responses > 0 && (
-                              <span className="flex items-center gap-1 text-slate-600">
+                              <span className="flex items-center gap-1 text-muted-foreground">
                                 <MessageSquare className="w-4 h-4" />
                                 {message.responses} responses
                               </span>
@@ -415,9 +415,9 @@ export default function PriorityMessagesPage() {
                           </div>
 
                           <div className="text-right">
-                            <p className="text-xs text-slate-500 mb-1">Deadline</p>
+                            <p className="text-xs text-muted-foreground mb-1">Deadline</p>
                             <p className={`text-sm font-bold ${
-                              message.deadline === 'ASAP' || message.deadline === 'Immediate' ? 'text-red-600' : 'text-slate-800'
+                              message.deadline === 'ASAP' || message.deadline === 'Immediate' ? 'text-red-600' : 'text-foreground'
                             }`}>
                               {message.deadline}
                             </p>
@@ -439,12 +439,12 @@ export default function PriorityMessagesPage() {
 
         {/* Empty State */}
         {filteredMessages.length === 0 && (
-          <div className="bg-white rounded-2xl p-12 shadow-lg border border-slate-100 text-center">
-            <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageSquare className="w-12 h-12 text-slate-400" />
+          <div className="bg-card rounded-lg p-12 shadow-card border border-border text-center">
+            <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">No messages found</h3>
-            <p className="text-slate-600">Try adjusting your filters or search query</p>
+            <h3 className="text-base font-semibold text-foreground mb-2">No messages found</h3>
+            <p className="text-muted-foreground">Try adjusting your filters or search query</p>
           </div>
         )}
       </div>

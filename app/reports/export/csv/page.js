@@ -63,15 +63,15 @@ const ExportCSV = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Export Data to CSV</h1>
-            <p className="text-slate-600">Download your data in CSV format with custom field selection</p>
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Export Data to CSV</h1>
+            <p className="text-muted-foreground">Download your data in CSV format with custom field selection</p>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-slate-700">
+            <button className="px-4 py-2 bg-card border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-foreground">
               <Settings className="w-4 h-4" />
               Settings
             </button>
@@ -82,10 +82,10 @@ const ExportCSV = () => {
           {/* Main Export Configuration */}
           <div className="lg:col-span-2 space-y-6">
             {/* Data Type Selection */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Database className="w-5 h-5 text-purple-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Select Data Type</h2>
+                <h2 className="text-lg font-semibold text-foreground">Select Data Type</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {dataTypes.map((type) => (
@@ -97,32 +97,32 @@ const ExportCSV = () => {
                     }}
                     className={`p-4 rounded-lg border-2 transition-all text-left ${
                       selectedDataType === type.id
-                        ? 'border-purple-500 bg-purple-50 shadow-md'
-                        : 'border-slate-200 hover:border-purple-300 hover:bg-slate-50'
+                        ? 'border-purple-500 bg-muted shadow-card'
+                        : 'border-border hover:border-purple-300 hover:bg-muted'
                     }`}
                   >
                     <div className="text-2xl mb-2">{type.icon}</div>
-                    <div className="font-medium text-slate-800 text-sm mb-1">{type.name}</div>
-                    <div className="text-xs text-slate-500">{type.records} records</div>
-                    <div className="text-xs text-slate-400 mt-1">{type.size}</div>
+                    <div className="font-medium text-foreground text-sm mb-1">{type.name}</div>
+                    <div className="text-xs text-muted-foreground">{type.records} records</div>
+                    <div className="text-xs text-muted-foreground mt-1">{type.size}</div>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Date Range & Filters */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Calendar className="w-5 h-5 text-purple-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Date Range & Filters</h2>
+                <h2 className="text-lg font-semibold text-foreground">Date Range & Filters</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Date Range</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">Date Range</label>
                   <select 
                     value={dateRange}
                     onChange={(e) => setDateRange(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                   >
                     <option value="today">Today</option>
                     <option value="yesterday">Yesterday</option>
@@ -135,11 +135,11 @@ const ExportCSV = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Export Format</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">Export Format</label>
                   <select 
                     value={exportFormat}
                     onChange={(e) => setExportFormat(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                   >
                     <option value="csv">CSV (Comma Separated)</option>
                     <option value="excel">Excel (.xlsx)</option>
@@ -152,17 +152,17 @@ const ExportCSV = () => {
               {dateRange === 'custom' && (
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Start Date</label>
+                    <label className="block text-sm font-medium text-foreground mb-2">Start Date</label>
                     <input 
                       type="date"
-                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">End Date</label>
+                    <label className="block text-sm font-medium text-foreground mb-2">End Date</label>
                     <input 
                       type="date"
-                      className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                     />
                   </div>
                 </div>
@@ -170,11 +170,11 @@ const ExportCSV = () => {
             </div>
 
             {/* Field Selection */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Filter className="w-5 h-5 text-purple-600" />
-                  <h2 className="text-lg font-semibold text-slate-800">Select Fields to Export</h2>
+                  <h2 className="text-lg font-semibold text-foreground">Select Fields to Export</h2>
                 </div>
                 <div className="flex gap-2">
                   <button 
@@ -183,10 +183,10 @@ const ExportCSV = () => {
                   >
                     Select All
                   </button>
-                  <span className="text-slate-300">|</span>
+                  <span className="text-muted-foreground">|</span>
                   <button 
                     onClick={clearAllFields}
-                    className="text-sm text-slate-600 hover:text-slate-700 font-medium"
+                    className="text-sm text-muted-foreground hover:text-foreground font-medium"
                   >
                     Clear All
                   </button>
@@ -200,8 +200,8 @@ const ExportCSV = () => {
                     onClick={() => toggleField(field)}
                     className={`px-4 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
                       selectedFields.includes(field)
-                        ? 'border-purple-500 bg-purple-50 text-purple-700'
-                        : 'border-slate-200 text-slate-700 hover:border-purple-300'
+                        ? 'border-purple-500 bg-muted text-purple-700'
+                        : 'border-border text-foreground hover:border-purple-300'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -214,7 +214,7 @@ const ExportCSV = () => {
                 ))}
               </div>
 
-              <div className="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
+              <div className="mt-4 p-3 bg-muted rounded-lg border border-purple-200">
                 <div className="text-sm text-purple-800">
                   <span className="font-semibold">{selectedFields.length}</span> fields selected out of {(availableFields[selectedDataType] || []).length}
                 </div>
@@ -222,18 +222,18 @@ const ExportCSV = () => {
             </div>
 
             {/* Export Button */}
-            <div className="bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-xl shadow-lg p-6 text-white">
+            <div className="bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-xl shadow-card p-6 text-background">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold mb-1">Ready to Export</h3>
-                  <p className="text-purple-100 text-sm">
+                  <p className="text-background/70 text-sm">
                     {currentDataType?.records} records • {currentDataType?.size} • {selectedFields.length} fields
                   </p>
                 </div>
                 <button 
                   onClick={handleExport}
                   disabled={selectedFields.length === 0}
-                  className="px-6 py-3 bg-white text-purple-600 rounded-lg hover:bg-purple-50 transition-colors flex items-center gap-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-card text-purple-600 rounded-lg hover:bg-muted transition-colors flex items-center gap-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Download className="w-5 h-5" />
                   Export Now
@@ -245,41 +245,41 @@ const ExportCSV = () => {
           {/* Sidebar - Export History & Info */}
           <div className="space-y-6">
             {/* Quick Stats */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Export Summary</h3>
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Export Summary</h3>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-                      <FileText className="w-5 h-5 text-white" />
+                      <FileText className="w-5 h-5 text-background" />
                     </div>
                     <div>
-                      <div className="text-sm text-slate-600">Total Exports</div>
-                      <div className="text-xl font-bold text-slate-800">142</div>
+                      <div className="text-sm text-muted-foreground">Total Exports</div>
+                      <div className="text-base font-semibold text-foreground">142</div>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                      <Database className="w-5 h-5 text-white" />
+                      <Database className="w-5 h-5 text-background" />
                     </div>
                     <div>
-                      <div className="text-sm text-slate-600">Data Exported</div>
-                      <div className="text-xl font-bold text-slate-800">24.8 GB</div>
+                      <div className="text-sm text-muted-foreground">Data Exported</div>
+                      <div className="text-base font-semibold text-foreground">24.8 GB</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-                      <Clock className="w-5 h-5 text-white" />
+                      <Clock className="w-5 h-5 text-background" />
                     </div>
                     <div>
-                      <div className="text-sm text-slate-600">This Month</div>
-                      <div className="text-xl font-bold text-slate-800">18</div>
+                      <div className="text-sm text-muted-foreground">This Month</div>
+                      <div className="text-base font-semibold text-foreground">18</div>
                     </div>
                   </div>
                 </div>
@@ -287,20 +287,20 @@ const ExportCSV = () => {
             </div>
 
             {/* Export History */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Recent Exports</h3>
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Recent Exports</h3>
               <div className="space-y-3">
                 {exportHistory.map((item) => (
-                  <div key={item.id} className="p-3 border border-slate-200 rounded-lg hover:shadow-md transition-shadow">
+                  <div key={item.id} className="p-3 border border-border rounded-lg hover:shadow-card transition-shadow">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3 flex-1">
                         <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                           <FileText className="w-4 h-4 text-purple-600" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-slate-800 truncate">{item.name}</div>
-                          <div className="text-xs text-slate-500 mt-1">{item.date}</div>
-                          <div className="text-xs text-slate-400 mt-0.5">{item.size}</div>
+                          <div className="text-sm font-medium text-foreground truncate">{item.name}</div>
+                          <div className="text-xs text-muted-foreground mt-1">{item.date}</div>
+                          <div className="text-xs text-muted-foreground mt-0.5">{item.size}</div>
                         </div>
                       </div>
                       <button className="text-purple-600 hover:text-purple-700">
@@ -344,17 +344,17 @@ const ExportCSV = () => {
       {/* Export Progress Modal */}
       {showPreview && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 animate-scale-in">
+          <div className="bg-card rounded-xl shadow-card p-8 max-w-md w-full mx-4 animate-scale-in">
             <div className="text-center">
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="w-8 h-8 text-purple-600 animate-bounce" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-800 mb-2">Export Started!</h3>
-              <p className="text-slate-600 mb-4">Your file is being prepared for download</p>
-              <div className="w-full bg-slate-200 rounded-full h-2 mb-4">
+              <h3 className="text-xl font-semibold text-foreground mb-2">Export Started!</h3>
+              <p className="text-muted-foreground mb-4">Your file is being prepared for download</p>
+              <div className="w-full bg-muted rounded-full h-2 mb-4">
                 <div className="bg-purple-600 h-2 rounded-full animate-progress" style={{ width: '100%' }}></div>
               </div>
-              <p className="text-sm text-slate-500">Download will start automatically...</p>
+              <p className="text-sm text-muted-foreground">Download will start automatically...</p>
             </div>
           </div>
         </div>

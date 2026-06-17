@@ -19,7 +19,16 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
   const positionMenuButtonRef = useRef(null);
   const [userName, setUserName] = useState('John Doe');
   const [userEmail, setUserEmail] = useState('john@example.com');
+  const [windowWidth, setWindowWidth] = useState(1024);
   const { t } = useLanguage();
+
+  // Track window width safely (avoids SSR crash)
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Black & white active state tokens
   const colors = {
@@ -415,29 +424,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
     }
   };
 
-  // const handleMenuClick = (item) => {
-  //   setActiveItem(item.label);
-    
-  //   if (item.subItems) {
-  //     const newExpandedMenus = expandedMenus[item.label] 
-  //       ? {} 
-  //       : { [item.label]: true };
-  //     setExpandedMenus(newExpandedMenus);
-  //     localStorage.setItem('sidebarExpandedMenus', JSON.stringify(newExpandedMenus));
-  //     return;
-  //   }
-
-  //   setExpandedMenus({});
-  //   localStorage.setItem('sidebarExpandedMenus', JSON.stringify({}));
-
-  //   if (item.href && item.href !== '#') {
-  //     router.push(item.href);
-  //   }
-  // };
-
   const handleMenuClick = (item, e) => {
-    console.log('[handleMenuClick] Item:', item.label, 'subItems:', !!item.subItems);
-    
     // Prevent default link behavior
     if (e) {
       e.preventDefault();
@@ -445,36 +432,31 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
     }
     
     if (item.subItems) {
-      // Agar current item already open hai to usko close karo, warna sirf isko hi open rakho
+      // Toggle: close if open, else open only this item
       const newExpandedMenus = expandedMenus[item.label] 
         ? {} 
         : { [item.label]: true };
-      console.log('[handleMenuClick] Setting expandedMenus:', newExpandedMenus);
       setExpandedMenus(newExpandedMenus);
-      // Active path update karo bina navigation ke
+      // Update active path without navigating
       const path = findPathToItem(item.label);
       if (path) {
         setActivePath(path);
         localStorage.setItem('sidebarActivePath', JSON.stringify(path));
       }
-      // IMPORTANT: SubItems wale items pe navigation nahi karna
       return;
     }
 
-    // Agar item ke subItems nahi hai (jaise Dashboard), to sab menus collapse kar do
-    console.log('[handleMenuClick] Collapsing all menus');
+    // For items without subItems (e.g., Dashboard), collapse all menus
     setExpandedMenus({});
     
-    // Sirf un items pe navigate karo jinke subItems nahi hain
     const path = findPathToItem(item.label);
     if (path) {
       setActivePath(path);
       localStorage.setItem('sidebarActivePath', JSON.stringify(path));
     }
 
-    // Navigation sirf valid routes ke liye
+    // Navigate only for valid routes
     if (item.href && item.href !== '#') {
-      console.log('[handleMenuClick] Navigating to:', item.href);
       router.push(item.href);
     }
   };
@@ -627,115 +609,6 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
     return { left, right, top, bottom };
   };
 
-  // const renderHoverMenu = () => {
-  //   if (!hoveredItem || (!isCollapsed && position !== 'bottom' && position !== 'top')) return null;
-
-  //   const menuPosition = getHoverMenuPosition();
-    
-  //   return (
-  //     <div
-  //       ref={hoverMenuRef}
-  //       className={`fixed z-[60] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border rounded-lg shadow-xl min-w-[250px] py-2`}
-  //       style={menuPosition}
-  //       onMouseEnter={handleHoverMenuMouseEnter}
-  //       onMouseLeave={handleHoverMenuMouseLeave}
-  //     >
-  //       <div className={`px-3 py-2 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-  //         <div className="flex items-center space-x-2">
-  //           <hoveredItem.icon size={16} className={isDarkMode ? "text-zinc-300" : "text-zinc-600"} />
-  //           <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-  //             {t ? t(hoveredItem.label) : hoveredItem.label}
-  //           </span>
-  //           {hoveredItem.badge && (
-  //             <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
-  //               {hoveredItem.badge}
-  //             </span>
-  //           )}
-  //         </div>
-  //       </div>
-        
-  //       {hoveredItem.subItems && (
-  //         <div className="py-1">
-  //           {hoveredItem.subItems.map((subItem) => {
-  //             const SubIcon = subItem.icon;
-  //             return (
-  //               <div key={subItem.label} className="relative group/submenu">
-  //                 <button
-  //                   onClick={() => setActiveItem(subItem.label)}
-  //                   className={`w-full flex items-center px-3 py-2 text-sm ${
-  //                     isDarkMode 
-  //                       ? 'text-gray-300 hover:bg-gray-700 hover:text-white' 
-  //                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-  //                   } transition-colors`}
-  //                 >
-  //                   <SubIcon size={16} className="mr-3 text-gray-400" />
-  //                   <span className="flex-1 text-left">
-  //                     {t ? t(subItem.label) : subItem.label}
-  //                   </span>
-  //                   {subItem.badge && (
-  //                     <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
-  //                       {subItem.badge}
-  //                     </span>
-  //                   )}
-  //                   {subItem.childItems && (
-  //                     position === 'right' || position === 'bottom' ? (
-  //                       <ChevronLeft size={14} className="ml-2 text-gray-400" />
-  //                     ) : (
-  //                       <ChevronRight size={14} className="ml-2 text-gray-400" />
-  //                     )
-  //                   )}
-  //                 </button>
-                  
-  //                 {subItem.childItems && (
-  //                   <div className={`absolute ${
-  //                     position === 'right' || position === 'bottom' 
-  //                       ? 'right-full mr-1' 
-  //                       : 'left-full ml-1'
-  //                   } ${
-  //                     position === 'bottom' 
-  //                       ? 'bottom-0' 
-  //                       : 'top-0'
-  //                   } ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border rounded-lg shadow-xl min-w-[200px] py-2 opacity-0 invisible group-hover/submenu:opacity-100 group-hover/submenu:visible transition-all duration-200 z-[70]`}>
-  //                     <div className={`px-3 py-2 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} mb-1`}>
-  //                       <span className={`text-xs font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} uppercase tracking-wide`}>
-  //                         {t ? t(subItem.label) : subItem.label}
-  //                       </span>
-  //                     </div>
-  //                     {subItem.childItems.map((childItem) => {
-  //                       const ChildIcon = childItem.icon;
-  //                       return (
-  //                         <button
-  //                           key={childItem.label}
-  //                           onClick={() => setActiveItem(childItem.label)}
-  //                           className={`w-full flex items-center px-3 py-2 text-sm ${
-  //                             isDarkMode 
-  //                               ? 'text-gray-300 hover:bg-gray-700 hover:text-white' 
-  //                               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-  //                           } transition-colors`}
-  //                         >
-  //                           <ChildIcon size={14} className="mr-3 text-gray-400" />
-  //                           <span className="text-left">
-  //                             {t ? t(childItem.label) : childItem.label}
-  //                           </span>
-  //                           {childItem.badge && (
-  //                             <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
-  //                               {childItem.badge}
-  //                             </span>
-  //                           )}
-  //                         </button>
-  //                       );
-  //                     })}
-  //                   </div>
-  //                 )}
-  //               </div>
-  //             );
-  //           })}
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
-  // };
-
   const renderHoverMenu = () => {
     if (!hoveredItem || (!isCollapsed && position !== 'bottom' && position !== 'top')) return null;
 
@@ -864,14 +737,14 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
               <h1 className={`text-xl font-semibold tracking-tight ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`}>{translateText('app_name')}</h1>
             </div>
           )}
-          {window.innerWidth > 768 && (
+          {windowWidth > 768 && (
             <div className="flex items-center space-x-1">
               <div className="relative">
               <button
                 ref={positionMenuButtonRef}
                 onClick={() => setShowPositionMenu(!showPositionMenu)}
-                disabled={window.innerWidth < 1279}
-                className={`p-2 rounded-md ${window.innerWidth < 1280 ? 'opacity-40 cursor-not-allowed' : (isDarkMode ? 'hover:bg-zinc-800 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-500')} transition-colors`}
+                disabled={windowWidth < 1279}
+                className={`p-2 rounded-md ${windowWidth < 1280 ? 'opacity-40 cursor-not-allowed' : (isDarkMode ? 'hover:bg-zinc-800 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-500')} transition-colors`}
                 title="Change sidebar position"
               >
                 <Settings size={ICON_SIZE} />
@@ -880,8 +753,8 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
 
               <button
                 onClick={onToggle}
-                disabled={window.innerWidth < 1279}
-                className={`p-2 rounded-md ${window.innerWidth < 1280 ? 'opacity-40 cursor-not-allowed' : (isDarkMode ? 'hover:bg-zinc-800 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-500')} transition-colors`}
+                disabled={windowWidth < 1279}
+                className={`p-2 rounded-md ${windowWidth < 1280 ? 'opacity-40 cursor-not-allowed' : (isDarkMode ? 'hover:bg-zinc-800 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-500')} transition-colors`}
               >
                 <ToggleIcon size={ICON_SIZE} />
               </button>

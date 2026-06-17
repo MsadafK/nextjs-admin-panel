@@ -54,9 +54,9 @@ export default function AccessControl() {
   const getStatusColor = (status) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800 border-green-200';
-      case 'inactive': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'inactive': return 'bg-muted text-foreground border-border';
       case 'revoked': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      default: return 'bg-muted text-foreground border-border';
     }
   };
 
@@ -65,28 +65,28 @@ export default function AccessControl() {
       case 'critical': return 'bg-red-100 text-red-800 border-red-200';
       case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'medium': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'low': return 'bg-gray-100 text-gray-800 border-gray-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'low': return 'bg-muted text-foreground border-border';
+      default: return 'bg-muted text-foreground border-border';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Access Control</h1>
-              <p className="text-gray-600">Manage IP whitelists, API keys, and access policies</p>
+              <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Access Control</h1>
+              <p className="text-muted-foreground">Manage IP whitelists, API keys, and access policies</p>
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors">
                 <Download size={20} />
                 Export Logs
               </button>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors"
               >
                 <Plus size={20} />
                 Add New
@@ -99,31 +99,31 @@ export default function AccessControl() {
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             const colorClasses = {
-              blue: 'bg-blue-100 text-blue-600',
-              green: 'bg-green-100 text-green-600',
-              purple: 'bg-purple-100 text-purple-600',
-              orange: 'bg-orange-100 text-orange-600',
+              blue: 'bg-muted text-foreground',
+              green: 'bg-muted text-foreground',
+              purple: 'bg-muted text-foreground',
+              orange: 'bg-muted text-foreground',
             };
 
             return (
-              <div key={index} className="bg-white rounded-lg shadow border border-gray-200 p-6">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-3 rounded-lg ${colorClasses[stat.color]}`}>
                     <Icon size={24} />
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    <p className="text-xs text-gray-500">of {stat.total}</p>
+                    <p className="text-lg font-semibold tracking-tight text-foreground">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground">of {stat.total}</p>
                   </div>
                 </div>
-                <h3 className="text-sm text-gray-600">{stat.title}</h3>
+                <h3 className="text-sm text-muted-foreground">{stat.title}</h3>
               </div>
             );
           })}
         </div>
 
-        <div className="bg-white rounded-lg shadow border border-gray-200 mb-6">
-          <div className="border-b border-gray-200">
+        <div className="bg-card border border-border rounded-lg shadow-card mb-6">
+          <div className="border-b border-border">
             <nav className="flex">
               {tabs.map((tab) => {
                 const TabIcon = tab.icon;
@@ -134,7 +134,7 @@ export default function AccessControl() {
                     className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors border-b-2 ${
                       selectedTab === tab.id
                         ? 'border-blue-600 text-blue-600'
-                        : 'border-transparent text-gray-600 hover:text-gray-900'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     <TabIcon size={20} />
@@ -148,20 +148,20 @@ export default function AccessControl() {
           <div className="p-6">
             <div className="flex items-center gap-4 mb-6">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
                 <input
                   type="text"
                   placeholder={`Search ${tabs.find(t => t.id === selectedTab)?.label.toLowerCase()}...`}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                 />
               </div>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors">
                 <Filter size={20} />
                 Filter
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors">
                 <RefreshCw size={20} />
                 Refresh
               </button>
@@ -170,7 +170,7 @@ export default function AccessControl() {
             {selectedTab === 'ip-whitelist' && (
               <div className="space-y-3">
                 {ipWhitelist.map((item) => (
-                  <div key={item.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={item.id} className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted transition-colors">
                     <div className="flex-shrink-0">
                       <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                         <Globe size={24} className="text-blue-600" />
@@ -178,13 +178,13 @@ export default function AccessControl() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">{item.ip}</h3>
+                        <h3 className="font-semibold text-foreground">{item.ip}</h3>
                         <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${getStatusColor(item.status)}`}>
                           {item.status.toUpperCase()}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <p className="text-sm text-muted-foreground mb-2">{item.description}</p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span>Added by {item.addedBy}</span>
                         <span>•</span>
                         <span>{item.addedAt}</span>
@@ -196,13 +196,13 @@ export default function AccessControl() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                      <button className="p-2 text-blue-600 hover:bg-muted rounded-lg transition-colors" title="Edit">
                         <Edit2 size={18} />
                       </button>
-                      <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Remove">
+                      <button className="p-2 text-red-600 hover:bg-muted rounded-lg transition-colors" title="Remove">
                         <Trash2 size={18} />
                       </button>
-                      <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Toggle Status">
+                      <button className="p-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors" title="Toggle Status">
                         {item.status === 'active' ? <Lock size={18} /> : <Unlock size={18} />}
                       </button>
                     </div>
@@ -214,7 +214,7 @@ export default function AccessControl() {
             {selectedTab === 'api-keys' && (
               <div className="space-y-3">
                 {apiKeys.map((key) => (
-                  <div key={key.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={key.id} className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted transition-colors">
                     <div className="flex-shrink-0">
                       <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                         <Key size={24} className="text-green-600" />
@@ -222,20 +222,20 @@ export default function AccessControl() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">{key.name}</h3>
+                        <h3 className="font-semibold text-foreground">{key.name}</h3>
                         <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${getStatusColor(key.status)}`}>
                           {key.status.toUpperCase()}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 mb-2">
-                        <code className="px-2 py-1 bg-gray-800 text-green-400 text-xs font-mono rounded">
+                        <code className="px-2 py-1 bg-foreground/80 text-green-400 text-xs font-mono rounded">
                           {key.key}
                         </code>
-                        <button className="p-1 text-gray-600 hover:text-gray-900" title="Copy">
+                        <button className="p-1 text-muted-foreground hover:text-foreground" title="Copy">
                           <Eye size={14} />
                         </button>
                       </div>
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">{key.scope}</span>
                         <span>Created: {key.created}</span>
                         <span>•</span>
@@ -250,10 +250,10 @@ export default function AccessControl() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Regenerate">
+                      <button className="p-2 text-blue-600 hover:bg-muted rounded-lg transition-colors" title="Regenerate">
                         <RefreshCw size={18} />
                       </button>
-                      <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Revoke">
+                      <button className="p-2 text-red-600 hover:bg-muted rounded-lg transition-colors" title="Revoke">
                         <XCircle size={18} />
                       </button>
                     </div>
@@ -265,7 +265,7 @@ export default function AccessControl() {
             {selectedTab === 'policies' && (
               <div className="space-y-3">
                 {accessPolicies.map((policy) => (
-                  <div key={policy.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={policy.id} className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted transition-colors">
                     <div className="flex-shrink-0">
                       <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                         <Shield size={24} className="text-purple-600" />
@@ -273,7 +273,7 @@ export default function AccessControl() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">{policy.name}</h3>
+                        <h3 className="font-semibold text-foreground">{policy.name}</h3>
                         <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${getPriorityColor(policy.priority)}`}>
                           {policy.priority.toUpperCase()}
                         </span>
@@ -281,7 +281,7 @@ export default function AccessControl() {
                           {policy.status.toUpperCase()}
                         </span>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
                         <span className="flex items-center gap-1">
                           <Database size={14} />
                           Resource: {policy.resource}
@@ -299,13 +299,13 @@ export default function AccessControl() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit Policy">
+                      <button className="p-2 text-blue-600 hover:bg-muted rounded-lg transition-colors" title="Edit Policy">
                         <Edit2 size={18} />
                       </button>
-                      <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Toggle">
+                      <button className="p-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors" title="Toggle">
                         {policy.status === 'active' ? <Lock size={18} /> : <Unlock size={18} />}
                       </button>
-                      <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                      <button className="p-2 text-red-600 hover:bg-muted rounded-lg transition-colors" title="Delete">
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -317,7 +317,7 @@ export default function AccessControl() {
             {selectedTab === 'sessions' && (
               <div className="space-y-3">
                 {sessions.map((session) => (
-                  <div key={session.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={session.id} className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted transition-colors">
                     <div className="flex-shrink-0">
                       <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                         <Activity size={24} className="text-orange-600" />
@@ -325,14 +325,14 @@ export default function AccessControl() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900">{session.user}</h3>
+                        <h3 className="font-semibold text-foreground">{session.user}</h3>
                         <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs font-semibold rounded-full border border-green-200 flex items-center gap-1">
                           <Activity size={12} />
                           ACTIVE
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">{session.email}</p>
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <p className="text-sm text-muted-foreground mb-2">{session.email}</p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Globe size={12} />
                           {session.ip}
@@ -352,7 +352,7 @@ export default function AccessControl() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button className="px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium">
+                      <button className="px-3 py-1.5 text-sm text-red-600 hover:bg-muted rounded-lg transition-colors font-medium">
                         Terminate
                       </button>
                     </div>
@@ -364,37 +364,37 @@ export default function AccessControl() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
+            <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
               <AlertTriangle size={20} className="text-orange-600" />
               Recent Security Events
             </h3>
             <div className="space-y-3">
-              <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-start gap-3 p-3 bg-muted border border-red-200 rounded-lg">
                 <XCircle size={16} className="text-red-600 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">Failed login attempt from unknown IP</p>
-                  <p className="text-xs text-gray-600 mt-1">203.45.67.100 • 5 minutes ago</p>
+                  <p className="text-sm font-medium text-foreground">Failed login attempt from unknown IP</p>
+                  <p className="text-xs text-muted-foreground mt-1">203.45.67.100 • 5 minutes ago</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-start gap-3 p-3 bg-muted border border-yellow-200 rounded-lg">
                 <AlertTriangle size={16} className="text-yellow-600 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">API rate limit exceeded</p>
-                  <p className="text-xs text-gray-600 mt-1">Mobile App Key • 15 minutes ago</p>
+                  <p className="text-sm font-medium text-foreground">API rate limit exceeded</p>
+                  <p className="text-xs text-muted-foreground mt-1">Mobile App Key • 15 minutes ago</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-start gap-3 p-3 bg-muted border border-green-200 rounded-lg">
                 <CheckCircle size={16} className="text-green-600 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">New IP whitelisted successfully</p>
-                  <p className="text-xs text-gray-600 mt-1">192.168.1.100 • 1 hour ago</p>
+                  <p className="text-sm font-medium text-foreground">New IP whitelisted successfully</p>
+                  <p className="text-xs text-muted-foreground mt-1">192.168.1.100 • 1 hour ago</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="bg-muted border border-blue-200 rounded-lg p-6">
             <h3 className="font-semibold text-blue-900 mb-4 flex items-center gap-2">
               <Shield size={20} />
               Security Best Practices

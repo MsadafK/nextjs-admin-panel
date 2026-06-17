@@ -40,10 +40,10 @@ export default function SalesTrends() {
   ];
 
   const categories = [
-    { name: 'Electronics', percentage: 35, revenue: 175000, color: 'bg-blue-500' },
-    { name: 'Accessories', percentage: 28, revenue: 140000, color: 'bg-green-500' },
-    { name: 'Furniture', percentage: 20, revenue: 100000, color: 'bg-purple-500' },
-    { name: 'Office Supplies', percentage: 17, revenue: 85000, color: 'bg-orange-500' },
+    { name: 'Electronics', percentage: 35, revenue: 175000, color: 'bg-muted0' },
+    { name: 'Accessories', percentage: 28, revenue: 140000, color: 'bg-muted0' },
+    { name: 'Furniture', percentage: 20, revenue: 100000, color: 'bg-muted0' },
+    { name: 'Office Supplies', percentage: 17, revenue: 85000, color: 'bg-muted0' },
   ];
 
   const currentData = salesData[timeRange];
@@ -101,20 +101,20 @@ export default function SalesTrends() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Sales Trends</h1>
-              <p className="text-gray-600">Track and analyze your sales performance over time</p>
+              <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Sales Trends</h1>
+              <p className="text-muted-foreground">Track and analyze your sales performance over time</p>
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                 <Filter size={20} />
                 Filter
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors">
                 <Download size={20} />
                 Export
               </button>
@@ -126,14 +126,14 @@ export default function SalesTrends() {
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             const colorClasses = {
-              blue: 'bg-blue-100 text-blue-600',
-              green: 'bg-green-100 text-green-600',
-              purple: 'bg-purple-100 text-purple-600',
-              orange: 'bg-orange-100 text-orange-600',
+              blue: 'bg-muted text-foreground',
+              green: 'bg-muted text-foreground',
+              purple: 'bg-muted text-foreground',
+              orange: 'bg-muted text-foreground',
             };
             
             return (
-              <div key={index} className="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card p-6 hover:shadow-card transition-shadow">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-3 rounded-lg ${colorClasses[stat.color]}`}>
                     <Icon size={24} />
@@ -145,17 +145,17 @@ export default function SalesTrends() {
                     {stat.change}
                   </div>
                 </div>
-                <h3 className="text-sm text-gray-600 mb-1">{stat.title}</h3>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</p>
-                <p className="text-xs text-gray-500">{stat.description}</p>
+                <h3 className="text-sm text-muted-foreground mb-1">{stat.title}</h3>
+                <p className="text-lg font-semibold tracking-tight text-foreground mb-1">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.description}</p>
               </div>
             );
           })}
         </div>
 
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+        <div className="bg-card border border-border rounded-lg shadow-card p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Sales Performance</h2>
+            <h2 className="text-xl font-semibold text-foreground">Sales Performance</h2>
             <div className="flex gap-3">
               <div className="flex gap-2">
                 {timeRanges.map((range) => (
@@ -164,8 +164,8 @@ export default function SalesTrends() {
                     onClick={() => setTimeRange(range.value)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       timeRange === range.value
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-foreground text-background'
+                        : 'bg-muted text-foreground hover:bg-muted'
                     }`}
                   >
                     {range.label}
@@ -178,8 +178,8 @@ export default function SalesTrends() {
                   onClick={() => setChartType('line')}
                   className={`p-2 rounded-lg transition-colors ${
                     chartType === 'line'
-                      ? 'bg-blue-100 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'bg-muted text-foreground'
+                      : 'text-muted-foreground hover:bg-muted'
                   }`}
                   title="Line Chart"
                 >
@@ -189,8 +189,8 @@ export default function SalesTrends() {
                   onClick={() => setChartType('bar')}
                   className={`p-2 rounded-lg transition-colors ${
                     chartType === 'bar'
-                      ? 'bg-blue-100 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'bg-muted text-foreground'
+                      : 'text-muted-foreground hover:bg-muted'
                   }`}
                   title="Bar Chart"
                 >
@@ -207,8 +207,8 @@ export default function SalesTrends() {
                 onClick={() => setSelectedMetric(metric.value)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
                   selectedMetric === metric.value
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-blue-500 bg-muted text-blue-700'
+                    : 'border-border hover:border-border'
                 }`}
               >
                 <div className={`w-3 h-3 rounded-full bg-${metric.color}-500`}></div>
@@ -218,14 +218,14 @@ export default function SalesTrends() {
           </div>
 
           <div className="h-80 relative">
-            <div className="absolute left-0 top-0 bottom-8 w-16 flex flex-col justify-between text-xs text-gray-500">
+            <div className="absolute left-0 top-0 bottom-8 w-16 flex flex-col justify-between text-xs text-muted-foreground">
               <span>${(maxValue * 1.2 / 1000).toFixed(0)}k</span>
               <span>${(maxValue * 0.8 / 1000).toFixed(0)}k</span>
               <span>${(maxValue * 0.4 / 1000).toFixed(0)}k</span>
               <span>$0</span>
             </div>
 
-            <div className="ml-16 h-full flex items-end gap-2 pb-8 border-l-2 border-b-2 border-gray-200">
+            <div className="ml-16 h-full flex items-end gap-2 pb-8 border-l-2 border-b-2 border-border">
               {currentData.map((data, index) => {
                 const height = (data[selectedMetric] / maxValue) * 100;
                 
@@ -237,17 +237,17 @@ export default function SalesTrends() {
                           className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg hover:from-blue-700 hover:to-blue-500 transition-all cursor-pointer group relative"
                           style={{ height: `${height}%` }}
                         >
-                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                             ${data[selectedMetric].toLocaleString()}
                           </div>
                         </div>
                       ) : (
                         <div className="w-full relative" style={{ height: '100%' }}>
                           <div
-                            className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-lg hover:scale-125 transition-transform cursor-pointer group"
+                            className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-card hover:scale-125 transition-transform cursor-pointer group"
                             style={{ bottom: `${height}%` }}
                           >
-                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                               ${data[selectedMetric].toLocaleString()}
                             </div>
                           </div>
@@ -267,7 +267,7 @@ export default function SalesTrends() {
                       )}
                     </div>
                     
-                    <span className="text-xs text-gray-600 font-medium">{data.date}</span>
+                    <span className="text-xs text-muted-foreground font-medium">{data.date}</span>
                   </div>
                 );
               })}
@@ -276,19 +276,19 @@ export default function SalesTrends() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Top Selling Products</h2>
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Top Selling Products</h2>
             <div className="space-y-4">
               {topProducts.map((product, index) => (
-                <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div key={index} className="flex items-center gap-4 p-4 bg-muted rounded-lg hover:bg-muted transition-colors">
                   <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                     <span className="text-blue-600 font-bold">#{index + 1}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 truncate">{product.name}</h3>
+                    <h3 className="font-semibold text-foreground truncate">{product.name}</h3>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="text-sm text-gray-600">{product.units} units</span>
-                      <span className="text-sm font-semibold text-gray-900">
+                      <span className="text-sm text-muted-foreground">{product.units} units</span>
+                      <span className="text-sm font-semibold text-foreground">
                         ${product.revenue.toLocaleString()}
                       </span>
                     </div>
@@ -304,23 +304,23 @@ export default function SalesTrends() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Sales by Category</h2>
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Sales by Category</h2>
             <div className="space-y-4">
               {categories.map((category, index) => (
                 <div key={index}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-gray-900">{category.name}</span>
-                    <span className="text-sm text-gray-600">${category.revenue.toLocaleString()}</span>
+                    <span className="font-medium text-foreground">{category.name}</span>
+                    <span className="text-sm text-muted-foreground">${category.revenue.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="flex-1 h-3 bg-muted rounded-full overflow-hidden">
                       <div
                         className={`h-full ${category.color} rounded-full transition-all duration-500`}
                         style={{ width: `${category.percentage}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm font-semibold text-gray-900 w-12 text-right">
+                    <span className="text-sm font-semibold text-foreground w-12 text-right">
                       {category.percentage}%
                     </span>
                   </div>
@@ -328,10 +328,10 @@ export default function SalesTrends() {
               ))}
             </div>
 
-            <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="mt-6 pt-6 border-t border-border">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-gray-900">Total Revenue</span>
-                <span className="text-xl font-bold text-gray-900">
+                <span className="font-semibold text-foreground">Total Revenue</span>
+                <span className="text-base font-semibold text-foreground">
                   ${categories.reduce((sum, cat) => sum + cat.revenue, 0).toLocaleString()}
                 </span>
               </div>

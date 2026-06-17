@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { useLanguage } from '../../../contexts/LanguageContext';
+
+
 import { Bell, Calendar, Clock, MapPin, Users, Tag, Repeat, Volume2, VolumeX, Paperclip, Send, Zap, AlertCircle, CheckCircle2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CreateReminder() {
-  const { isDark } = useTheme();
-  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -66,14 +64,14 @@ export default function CreateReminder() {
 
   const getCategoryColor = (category) => {
     const colors = {
-      work: 'bg-blue-500',
-      personal: 'bg-green-500',
-      health: 'bg-red-500',
-      family: 'bg-purple-500',
-      finance: 'bg-yellow-500',
-      social: 'bg-pink-500'
+      work: 'bg-muted0',
+      personal: 'bg-muted0',
+      health: 'bg-muted0',
+      family: 'bg-muted0',
+      finance: 'bg-muted0',
+      social: 'bg-muted0'
     };
-    return colors[category] || 'bg-gray-500';
+    return colors[category] || 'bg-muted0';
   };
 
   const getPriorityIcon = (priority) => {
@@ -81,17 +79,17 @@ export default function CreateReminder() {
       case 'high': return <AlertCircle className="w-5 h-5 text-red-500" />;
       case 'medium': return <Zap className="w-5 h-5 text-yellow-500" />;
       case 'low': return <Bell className="w-5 h-5 text-green-500" />;
-      default: return <Bell className="w-5 h-5 text-gray-500" />;
+      default: return <Bell className="w-5 h-5 text-muted-foreground" />;
     }
   };
 
   const categories = [
-    { value: 'personal', label: 'Personal', color: 'bg-green-500' },
-    { value: 'work', label: 'Work', color: 'bg-blue-500' },
-    { value: 'health', label: 'Health', color: 'bg-red-500' },
-    { value: 'family', label: 'Family', color: 'bg-purple-500' },
-    { value: 'finance', label: 'Finance', color: 'bg-yellow-500' },
-    { value: 'social', label: 'Social', color: 'bg-pink-500' }
+    { value: 'personal', label: 'Personal', color: 'bg-muted0' },
+    { value: 'work', label: 'Work', color: 'bg-muted0' },
+    { value: 'health', label: 'Health', color: 'bg-muted0' },
+    { value: 'family', label: 'Family', color: 'bg-muted0' },
+    { value: 'finance', label: 'Finance', color: 'bg-muted0' },
+    { value: 'social', label: 'Social', color: 'bg-muted0' }
   ];
 
   const recurringOptions = [
@@ -104,7 +102,7 @@ export default function CreateReminder() {
   ];
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-50 to-indigo-100'} py-8`}>
+    <div className={`min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8`}>
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -112,13 +110,13 @@ export default function CreateReminder() {
           animate={{ y: 0, opacity: 1 }}
           className="text-center mb-8"
         >
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl shadow-lg mb-4">
-            <Bell className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg shadow-card mb-4">
+            <Bell className="w-8 h-8 text-background" />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
             Create New Reminder
           </h1>
-          <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-lg text-muted-foreground`}>
             Set up your reminder with all the important details
           </p>
         </motion.div>
@@ -130,7 +128,7 @@ export default function CreateReminder() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="mb-6 p-4 bg-green-500 text-white rounded-2xl shadow-lg flex items-center gap-3"
+              className="mb-6 p-4 bg-muted0 text-background rounded-lg shadow-card flex items-center gap-3"
             >
               <CheckCircle2 className="w-6 h-6" />
               <div>
@@ -148,12 +146,12 @@ export default function CreateReminder() {
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className={`rounded-3xl shadow-2xl ${isDark ? 'bg-gray-800' : 'bg-white'} p-8`}
+              className={`rounded-lg shadow-card bg-card p-8`}
             >
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Title */}
                 <div>
-                  <label className={`block text-sm font-semibold mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`block text-sm font-semibold mb-3 text-foreground`}>
                     Reminder Title *
                   </label>
                   <input
@@ -162,14 +160,14 @@ export default function CreateReminder() {
                     value={formData.title}
                     onChange={handleFormChange}
                     placeholder="What do you want to be reminded about?"
-                    className={`w-full px-4 py-4 text-lg rounded-2xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'} focus:outline-none focus:border-blue-500 transition-colors`}
+                    className={`w-full px-4 py-4 text-lg rounded-lg border-2 bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                     required
                   />
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label className={`block text-sm font-semibold mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`block text-sm font-semibold mb-3 text-foreground`}>
                     Description
                   </label>
                   <textarea
@@ -178,14 +176,14 @@ export default function CreateReminder() {
                     onChange={handleFormChange}
                     rows={4}
                     placeholder="Add any additional details or notes..."
-                    className={`w-full px-4 py-4 rounded-2xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'} focus:outline-none focus:border-blue-500 transition-colors resize-none`}
+                    className={`w-full px-4 py-4 rounded-lg border-2 bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500 transition-colors resize-none`}
                   />
                 </div>
 
                 {/* Date and Time */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className={`block text-sm font-semibold mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label className={`block text-sm font-semibold mb-3 text-foreground`}>
                       <Calendar className="w-4 h-4 inline mr-2" />
                       Date *
                     </label>
@@ -194,12 +192,12 @@ export default function CreateReminder() {
                       name="date"
                       value={formData.date}
                       onChange={handleFormChange}
-                      className={`w-full px-4 py-4 rounded-2xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-900'} focus:outline-none focus:border-blue-500 transition-colors`}
+                      className={`w-full px-4 py-4 rounded-lg border-2 bg-card border-border text-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                       required
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-semibold mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label className={`block text-sm font-semibold mb-3 text-foreground`}>
                       <Clock className="w-4 h-4 inline mr-2" />
                       Time *
                     </label>
@@ -208,7 +206,7 @@ export default function CreateReminder() {
                       name="time"
                       value={formData.time}
                       onChange={handleFormChange}
-                      className={`w-full px-4 py-4 rounded-2xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-900'} focus:outline-none focus:border-blue-500 transition-colors`}
+                      className={`w-full px-4 py-4 rounded-lg border-2 bg-card border-border text-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                       required
                     />
                   </div>
@@ -217,7 +215,7 @@ export default function CreateReminder() {
                 {/* Location and Attendees */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className={`block text-sm font-semibold mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label className={`block text-sm font-semibold mb-3 text-foreground`}>
                       <MapPin className="w-4 h-4 inline mr-2" />
                       Location
                     </label>
@@ -227,11 +225,11 @@ export default function CreateReminder() {
                       value={formData.location}
                       onChange={handleFormChange}
                       placeholder="Add location"
-                      className={`w-full px-4 py-4 rounded-2xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'} focus:outline-none focus:border-blue-500 transition-colors`}
+                      className={`w-full px-4 py-4 rounded-lg border-2 bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-semibold mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label className={`block text-sm font-semibold mb-3 text-foreground`}>
                       <Users className="w-4 h-4 inline mr-2" />
                       Attendees
                     </label>
@@ -241,7 +239,7 @@ export default function CreateReminder() {
                       value={formData.attendees}
                       onChange={handleFormChange}
                       placeholder="Add people (comma separated)"
-                      className={`w-full px-4 py-4 rounded-2xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'} focus:outline-none focus:border-blue-500 transition-colors`}
+                      className={`w-full px-4 py-4 rounded-lg border-2 bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                     />
                   </div>
                 </div>
@@ -249,7 +247,7 @@ export default function CreateReminder() {
                 {/* Category and Priority */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className={`block text-sm font-semibold mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label className={`block text-sm font-semibold mb-3 text-foreground`}>
                       <Tag className="w-4 h-4 inline mr-2" />
                       Category
                     </label>
@@ -261,15 +259,15 @@ export default function CreateReminder() {
                           onClick={() => setFormData(prev => ({ ...prev, category: category.value }))}
                           className={`p-3 rounded-xl border-2 transition-all duration-200 ${
                             formData.category === category.value
-                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 transform scale-105'
-                              : isDark 
-                                ? 'border-gray-600 bg-gray-700 hover:border-gray-500' 
-                                : 'border-gray-200 bg-white hover:border-gray-300'
+                              ? 'border-blue-500 bg-muted dark:bg-blue-900/20 transform scale-105'
+                              : false 
+                                ? 'border-border bg-foreground/80 hover:border-border' 
+                                : 'border-border bg-card hover:border-border'
                           }`}
                         >
                           <div className="flex items-center gap-2">
                             <div className={`w-3 h-3 rounded-full ${category.color}`} />
-                            <span className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                            <span className={`text-sm font-medium text-foreground`}>
                               {category.label}
                             </span>
                           </div>
@@ -279,7 +277,7 @@ export default function CreateReminder() {
                   </div>
 
                   <div>
-                    <label className={`block text-sm font-semibold mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label className={`block text-sm font-semibold mb-3 text-foreground`}>
                       Priority Level
                     </label>
                     <div className="space-y-3">
@@ -290,21 +288,21 @@ export default function CreateReminder() {
                           onClick={() => setFormData(prev => ({ ...prev, priority }))}
                           className={`w-full p-4 rounded-xl border-2 transition-all duration-200 ${
                             formData.priority === priority
-                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 transform scale-105'
-                              : isDark 
-                                ? 'border-gray-600 bg-gray-700 hover:border-gray-500' 
-                                : 'border-gray-200 bg-white hover:border-gray-300'
+                              ? 'border-blue-500 bg-muted dark:bg-blue-900/20 transform scale-105'
+                              : false 
+                                ? 'border-border bg-foreground/80 hover:border-border' 
+                                : 'border-border bg-card hover:border-border'
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               {getPriorityIcon(priority)}
-                              <span className={`font-medium capitalize ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                              <span className={`font-medium capitalize text-foreground`}>
                                 {priority} Priority
                               </span>
                             </div>
                             {formData.priority === priority && (
-                              <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                              <div className="w-2 h-2 bg-muted0 rounded-full" />
                             )}
                           </div>
                         </button>
@@ -315,13 +313,13 @@ export default function CreateReminder() {
 
                 {/* Recurring Options */}
                 <div>
-                  <label className={`flex items-center gap-3 mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`flex items-center gap-3 mb-4 text-foreground`}>
                     <input
                       type="checkbox"
                       name="recurring"
                       checked={formData.recurring}
                       onChange={handleFormChange}
-                      className="w-5 h-5 text-blue-500 rounded focus:ring-blue-500"
+                      className="w-5 h-5 text-blue-500 rounded focus:ring-ring"
                     />
                     <Repeat className="w-5 h-5" />
                     <span className="font-semibold">Make this a recurring reminder</span>
@@ -337,7 +335,7 @@ export default function CreateReminder() {
                         name="recurringType"
                         value={formData.recurringType}
                         onChange={handleFormChange}
-                        className={`w-full px-4 py-4 rounded-2xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-900'} focus:outline-none focus:border-blue-500 transition-colors`}
+                        className={`w-full px-4 py-4 rounded-lg border-2 bg-card border-border text-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                       >
                         {recurringOptions.map(option => (
                           <option key={option.value} value={option.value}>
@@ -350,18 +348,18 @@ export default function CreateReminder() {
                 </div>
 
                 {/* Sound Toggle */}
-                <div className="flex items-center justify-between p-4 rounded-2xl border-2 border-gray-200 dark:border-gray-600">
+                <div className="flex items-center justify-between p-4 rounded-lg border-2 border-border dark:border-border">
                   <div className="flex items-center gap-3">
                     {formData.sound ? (
                       <Volume2 className="w-6 h-6 text-blue-500" />
                     ) : (
-                      <VolumeX className="w-6 h-6 text-gray-500" />
+                      <VolumeX className="w-6 h-6 text-muted-foreground" />
                     )}
                     <div>
-                      <p className={`font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      <p className={`font-semibold text-foreground`}>
                         Sound Notification
                       </p>
-                      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <p className={`text-sm text-muted-foreground`}>
                         {formData.sound ? 'Sound will play when reminder triggers' : 'Reminder will be silent'}
                       </p>
                     </div>
@@ -370,11 +368,11 @@ export default function CreateReminder() {
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, sound: !prev.sound }))}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      formData.sound ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
+                      formData.sound ? 'bg-muted0' : 'bg-muted dark:bg-muted-foreground'
                     }`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform ${
                         formData.sound ? 'translate-x-6' : 'translate-x-1'
                       }`}
                     />
@@ -385,7 +383,7 @@ export default function CreateReminder() {
                 <button
                   type="submit"
                   disabled={isSubmitting || !formData.title || !formData.date || !formData.time}
-                  className="w-full py-5 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-2xl font-bold text-lg hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
+                  className="w-full py-5 bg-gradient-to-r from-blue-500 to-purple-500 text-background rounded-lg font-bold text-lg hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-card flex items-center justify-center gap-3"
                 >
                   {isSubmitting ? (
                     <>
@@ -412,8 +410,8 @@ export default function CreateReminder() {
               className="space-y-6"
             >
               {/* Preview Card */}
-              <div className={`rounded-3xl shadow-2xl ${isDark ? 'bg-gray-800' : 'bg-white'} p-6`}>
-                <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              <div className={`rounded-lg shadow-card bg-card p-6`}>
+                <h3 className={`text-lg font-semibold mb-4 text-foreground`}>
                   Reminder Preview
                 </h3>
                 
@@ -421,11 +419,11 @@ export default function CreateReminder() {
                   {/* Title Preview */}
                   {formData.title && (
                     <div>
-                      <h4 className={`font-bold text-xl mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      <h4 className={`font-bold text-xl mb-2 text-foreground`}>
                         {formData.title}
                       </h4>
                       {formData.description && (
-                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <p className={`text-sm text-muted-foreground`}>
                           {formData.description}
                         </p>
                       )}
@@ -438,7 +436,7 @@ export default function CreateReminder() {
                       {formData.date && (
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-blue-500" />
-                          <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>
+                          <span className={'text-foreground'}>
                             {new Date(formData.date).toLocaleDateString()}
                           </span>
                         </div>
@@ -446,7 +444,7 @@ export default function CreateReminder() {
                       {formData.time && (
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-green-500" />
-                          <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>
+                          <span className={'text-foreground'}>
                             {formData.time}
                           </span>
                         </div>
@@ -460,7 +458,7 @@ export default function CreateReminder() {
                       {formData.location && (
                         <div className="flex items-center gap-2 text-sm">
                           <MapPin className="w-4 h-4 text-red-500" />
-                          <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>
+                          <span className={'text-foreground'}>
                             {formData.location}
                           </span>
                         </div>
@@ -468,7 +466,7 @@ export default function CreateReminder() {
                       {formData.attendees && (
                         <div className="flex items-center gap-2 text-sm">
                           <Users className="w-4 h-4 text-purple-500" />
-                          <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>
+                          <span className={'text-foreground'}>
                             With: {formData.attendees}
                           </span>
                         </div>
@@ -479,7 +477,7 @@ export default function CreateReminder() {
                   {/* Tags Preview */}
                   <div className="flex flex-wrap gap-2">
                     {formData.category && (
-                      <span className={`px-3 py-1 text-xs rounded-full ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'} capitalize`}>
+                      <span className={`px-3 py-1 text-xs rounded-full bg-muted text-muted-foreground capitalize`}>
                         {formData.category}
                       </span>
                     )}
@@ -504,7 +502,7 @@ export default function CreateReminder() {
                   </div>
 
                   {!formData.title && !formData.date && !formData.time && (
-                    <div className={`text-center py-8 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                    <div className={`text-center py-8 text-muted-foreground`}>
                       <Bell className="w-12 h-12 mx-auto mb-3 opacity-50" />
                       <p>Fill in the form to see preview</p>
                     </div>
@@ -513,25 +511,25 @@ export default function CreateReminder() {
               </div>
 
               {/* Quick Tips */}
-              <div className={`rounded-3xl shadow-2xl ${isDark ? 'bg-gray-800' : 'bg-white'} p-6`}>
-                <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              <div className={`rounded-lg shadow-card bg-card p-6`}>
+                <h3 className={`text-lg font-semibold mb-4 text-foreground`}>
                   💡 Quick Tips
                 </h3>
-                <ul className={`space-y-3 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <ul className={`space-y-3 text-sm text-muted-foreground`}>
                   <li className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5" />
+                    <div className="w-2 h-2 bg-muted0 rounded-full mt-1.5" />
                     <span>Be specific with your reminder titles</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mt-1.5" />
+                    <div className="w-2 h-2 bg-muted0 rounded-full mt-1.5" />
                     <span>Set reminders 15 minutes before actual events</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mt-1.5" />
+                    <div className="w-2 h-2 bg-muted0 rounded-full mt-1.5" />
                     <span>Use categories to organize your reminders</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full mt-1.5" />
+                    <div className="w-2 h-2 bg-muted0 rounded-full mt-1.5" />
                     <span>High priority reminders will notify you multiple times</span>
                   </li>
                 </ul>

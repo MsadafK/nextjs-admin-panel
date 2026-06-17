@@ -317,4 +317,44 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* ── Page container — consistent bg/text for all sub-pages ── */
+  .page-container {
+    min-height: 100%;
+    padding: 1rem;
+    color: hsl(var(--foreground));
+  }
+
+  @media (min-width: 640px) {
+    .page-container {
+      padding: 1.5rem;
+    }
+  }
+
+  /* ── Status dot (success / warning / danger / neutral) ── */
+  .status-success { color: hsl(142 76% 36%); }
+  .status-warning { color: hsl(38 92% 50%); }
+  .status-danger  { color: hsl(0 84% 60%); }
+
+  .dark .status-success { color: hsl(142 70% 45%); }
+  .dark .status-warning { color: hsl(38 92% 50%); }
+  .dark .status-danger  { color: hsl(0 62% 50%); }
+
+  /* ── Skeleton pulse (for loading states) ── */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--border)) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    border-radius: calc(var(--radius) - 2px);
+  }
+
+  @keyframes skeleton-pulse {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
 }

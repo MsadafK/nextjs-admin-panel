@@ -183,20 +183,20 @@ export default function QuarterlyReports() {
       case 'average':
         return 'text-yellow-600';
       default:
-        return 'text-gray-600';
+        return 'text-muted-foreground';
     }
   };
 
   const getHighlightStyle = (type) => {
     switch (type) {
       case 'success':
-        return 'bg-green-50 border-green-200';
+        return 'bg-muted border-green-200';
       case 'warning':
-        return 'bg-orange-50 border-orange-200';
+        return 'bg-muted border-orange-200';
       case 'info':
-        return 'bg-blue-50 border-blue-200';
+        return 'bg-muted border-blue-200';
       default:
-        return 'bg-gray-50 border-gray-200';
+        return 'bg-muted border-border';
     }
   };
 
@@ -205,28 +205,28 @@ export default function QuarterlyReports() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Quarterly Reports</h1>
-              <p className="text-gray-600">Comprehensive quarterly business performance analysis</p>
+              <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Quarterly Reports</h1>
+              <p className="text-muted-foreground">Comprehensive quarterly business performance analysis</p>
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                 <Printer size={20} />
                 Print
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                 <Mail size={20} />
                 Email
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                 <Share2 size={20} />
                 Share
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors">
                 <Download size={20} />
                 Export PDF
               </button>
@@ -234,15 +234,15 @@ export default function QuarterlyReports() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-4 mb-6">
+        <div className="bg-card border border-border rounded-lg shadow-card p-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Calendar size={20} className="text-gray-600" />
+                <Calendar size={20} className="text-muted-foreground" />
                 <select
                   value={selectedQuarter}
                   onChange={(e) => setSelectedQuarter(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                 >
                   {quarters.map((quarter) => (
                     <option key={quarter.value} value={quarter.value}>
@@ -258,7 +258,7 @@ export default function QuarterlyReports() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     comparisonMode === 'qoq'
                       ? 'bg-blue-100 text-blue-700'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-muted text-foreground hover:bg-muted'
                   }`}
                 >
                   QoQ Comparison
@@ -268,7 +268,7 @@ export default function QuarterlyReports() {
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     comparisonMode === 'yoy'
                       ? 'bg-blue-100 text-blue-700'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-muted text-foreground hover:bg-muted'
                   }`}
                 >
                   YoY Comparison
@@ -277,10 +277,10 @@ export default function QuarterlyReports() {
             </div>
 
             <div className="flex gap-2">
-              <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+              <button className="p-2 border border-border rounded-lg hover:bg-muted">
                 <ChevronLeft size={20} />
               </button>
-              <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+              <button className="p-2 border border-border rounded-lg hover:bg-muted">
                 <ChevronRight size={20} />
               </button>
             </div>
@@ -288,9 +288,9 @@ export default function QuarterlyReports() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+              <div className="p-3 bg-muted text-foreground rounded-lg">
                 <DollarSign size={24} />
               </div>
               <div className={`flex items-center gap-1 text-sm font-semibold ${
@@ -302,16 +302,16 @@ export default function QuarterlyReports() {
                 {comparisonMode === 'qoq' ? quarterlyStats.revenue.growth : quarterlyStats.revenue.yoyGrowth}%
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Quarterly Revenue</h3>
-            <p className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-sm text-muted-foreground mb-1">Quarterly Revenue</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground mb-3">
               ${(quarterlyStats.revenue.current / 1000).toFixed(1)}M
             </p>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500">Target: ${(quarterlyStats.revenue.target / 1000).toFixed(1)}M</span>
+                <span className="text-muted-foreground">Target: ${(quarterlyStats.revenue.target / 1000).toFixed(1)}M</span>
                 <span className="font-semibold">{calculateProgress(quarterlyStats.revenue.current, quarterlyStats.revenue.target).toFixed(1)}%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
                   style={{ width: `${calculateProgress(quarterlyStats.revenue.current, quarterlyStats.revenue.target)}%` }}
@@ -320,9 +320,9 @@ export default function QuarterlyReports() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-green-100 text-green-600 rounded-lg">
+              <div className="p-3 bg-muted text-foreground rounded-lg">
                 <ShoppingCart size={24} />
               </div>
               <div className={`flex items-center gap-1 text-sm font-semibold ${
@@ -334,16 +334,16 @@ export default function QuarterlyReports() {
                 {comparisonMode === 'qoq' ? quarterlyStats.orders.growth : quarterlyStats.orders.yoyGrowth}%
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Total Orders</h3>
-            <p className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-sm text-muted-foreground mb-1">Total Orders</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground mb-3">
               {quarterlyStats.orders.current.toLocaleString()}
             </p>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500">Target: {quarterlyStats.orders.target.toLocaleString()}</span>
+                <span className="text-muted-foreground">Target: {quarterlyStats.orders.target.toLocaleString()}</span>
                 <span className="font-semibold">{calculateProgress(quarterlyStats.orders.current, quarterlyStats.orders.target).toFixed(1)}%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full transition-all duration-500"
                   style={{ width: `${calculateProgress(quarterlyStats.orders.current, quarterlyStats.orders.target)}%` }}
@@ -352,9 +352,9 @@ export default function QuarterlyReports() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-purple-100 text-purple-600 rounded-lg">
+              <div className="p-3 bg-muted text-foreground rounded-lg">
                 <Users size={24} />
               </div>
               <div className={`flex items-center gap-1 text-sm font-semibold ${
@@ -366,16 +366,16 @@ export default function QuarterlyReports() {
                 {comparisonMode === 'qoq' ? quarterlyStats.customers.growth : quarterlyStats.customers.yoyGrowth}%
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Total Customers</h3>
-            <p className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-sm text-muted-foreground mb-1">Total Customers</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground mb-3">
               {(quarterlyStats.customers.current / 1000).toFixed(1)}K
             </p>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500">Target: {(quarterlyStats.customers.target / 1000).toFixed(0)}K</span>
+                <span className="text-muted-foreground">Target: {(quarterlyStats.customers.target / 1000).toFixed(0)}K</span>
                 <span className="font-semibold">{calculateProgress(quarterlyStats.customers.current, quarterlyStats.customers.target).toFixed(1)}%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-500"
                   style={{ width: `${calculateProgress(quarterlyStats.customers.current, quarterlyStats.customers.target)}%` }}
@@ -384,9 +384,9 @@ export default function QuarterlyReports() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-orange-100 text-orange-600 rounded-lg">
+              <div className="p-3 bg-muted text-foreground rounded-lg">
                 <Target size={24} />
               </div>
               <div className={`flex items-center gap-1 text-sm font-semibold ${
@@ -398,16 +398,16 @@ export default function QuarterlyReports() {
                 {comparisonMode === 'qoq' ? quarterlyStats.retention.growth : quarterlyStats.retention.yoyGrowth}%
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Retention Rate</h3>
-            <p className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-sm text-muted-foreground mb-1">Retention Rate</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground mb-3">
               {quarterlyStats.retention.current}%
             </p>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500">Target: {quarterlyStats.retention.target}%</span>
+                <span className="text-muted-foreground">Target: {quarterlyStats.retention.target}%</span>
                 <span className="font-semibold">{calculateProgress(quarterlyStats.retention.current, quarterlyStats.retention.target).toFixed(1)}%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full bg-gradient-to-r from-orange-500 to-orange-600 rounded-full transition-all duration-500"
                   style={{ width: `${calculateProgress(quarterlyStats.retention.current, quarterlyStats.retention.target)}%` }}
@@ -418,20 +418,20 @@ export default function QuarterlyReports() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <div className="lg:col-span-2 bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Key Highlights</h2>
+          <div className="lg:col-span-2 bg-card border border-border rounded-lg shadow-card p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Key Highlights</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {keyHighlights.map((highlight, index) => {
                 const Icon = highlight.icon;
                 return (
                   <div key={index} className={`p-4 border rounded-lg ${getHighlightStyle(highlight.type)}`}>
                     <div className="flex items-start gap-3">
-                      <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <div className="p-2 bg-card rounded-lg shadow-sm">
                         <Icon size={20} className={getRatingColor(highlight.type === 'success' ? 'excellent' : highlight.type === 'warning' ? 'average' : 'good')} />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 mb-1">{highlight.title}</h3>
-                        <p className="text-sm text-gray-600">{highlight.description}</p>
+                        <h3 className="font-semibold text-foreground mb-1">{highlight.title}</h3>
+                        <p className="text-sm text-muted-foreground">{highlight.description}</p>
                       </div>
                     </div>
                   </div>
@@ -440,13 +440,13 @@ export default function QuarterlyReports() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Monthly Breakdown</h2>
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Monthly Breakdown</h2>
             <div className="space-y-4">
               {monthlyBreakdown.map((month, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                <div key={index} className="p-4 bg-muted rounded-lg">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-gray-900">{month.month}</h3>
+                    <h3 className="font-semibold text-foreground">{month.month}</h3>
                     <div className={`flex items-center gap-1 text-sm font-semibold ${
                       month.growth > 0 ? 'text-green-600' : 'text-red-600'
                     }`}>
@@ -456,15 +456,15 @@ export default function QuarterlyReports() {
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Revenue</span>
+                      <span className="text-muted-foreground">Revenue</span>
                       <span className="font-semibold">${(month.revenue / 1000).toFixed(1)}K</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Orders</span>
+                      <span className="text-muted-foreground">Orders</span>
                       <span className="font-semibold">{month.orders.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Customers</span>
+                      <span className="text-muted-foreground">Customers</span>
                       <span className="font-semibold">{(month.customers / 1000).toFixed(1)}K</span>
                     </div>
                   </div>
@@ -475,30 +475,30 @@ export default function QuarterlyReports() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Quarterly Goals</h2>
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Quarterly Goals</h2>
             <div className="space-y-4">
               {quarterlyGoals.map((goal, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                <div key={index} className="p-4 bg-muted rounded-lg">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-medium text-gray-900">{goal.goal}</h3>
+                    <h3 className="font-medium text-foreground">{goal.goal}</h3>
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getStatusColor(goal.status)}`}>
                       {goal.status.toUpperCase().replace('-', ' ')}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-600">Achieved: {goal.achieved}</span>
-                    <span className="text-gray-600">Target: {goal.target}</span>
+                    <span className="text-muted-foreground">Achieved: {goal.achieved}</span>
+                    <span className="text-muted-foreground">Target: {goal.target}</span>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-gray-500">Progress</span>
+                      <span className="text-muted-foreground">Progress</span>
                       <span className="font-semibold">{goal.percentage}%</span>
                     </div>
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
-                          goal.status === 'on-track' ? 'bg-green-500' : goal.status === 'at-risk' ? 'bg-orange-500' : 'bg-red-500'
+                          goal.status === 'on-track' ? 'bg-muted0' : goal.status === 'at-risk' ? 'bg-muted0' : 'bg-muted0'
                         }`}
                         style={{ width: `${goal.percentage}%` }}
                       ></div>
@@ -509,18 +509,18 @@ export default function QuarterlyReports() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Department Performance</h2>
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Department Performance</h2>
             <div className="space-y-4">
               {departmentPerformance.map((dept, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                <div key={index} className="p-4 bg-muted rounded-lg">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <h3 className="font-semibold text-gray-900">{dept.name}</h3>
-                      <p className="text-sm text-gray-600">Achievement: {dept.achievement}%</p>
+                      <h3 className="font-semibold text-foreground">{dept.name}</h3>
+                      <p className="text-sm text-muted-foreground">Achievement: {dept.achievement}%</p>
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                      <span className={`text-2xl font-bold ${getRatingColor(dept.rating)}`}>
+                      <span className={`text-lg font-semibold tracking-tight ${getRatingColor(dept.rating)}`}>
                         {dept.rating === 'excellent' ? '⭐' : dept.rating === 'good' ? '✓' : '○'}
                       </span>
                       <div className="flex items-center gap-1 text-sm font-semibold text-green-600">
@@ -529,10 +529,10 @@ export default function QuarterlyReports() {
                       </div>
                     </div>
                   </div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${
-                        dept.rating === 'excellent' ? 'bg-green-500' : 'bg-blue-500'
+                        dept.rating === 'excellent' ? 'bg-muted0' : 'bg-muted0'
                       }`}
                       style={{ width: `${dept.achievement}%` }}
                     ></div>
@@ -543,17 +543,17 @@ export default function QuarterlyReports() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Regional Performance</h2>
+        <div className="bg-card border border-border rounded-lg shadow-card p-6">
+          <h2 className="text-xl font-semibold text-foreground mb-6">Regional Performance</h2>
           <div className="space-y-4">
             {regionalPerformance.map((region, index) => (
               <div key={index} className="flex items-center gap-4">
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-gray-900">{region.region}</h3>
+                    <h3 className="font-semibold text-foreground">{region.region}</h3>
                     <div className="flex items-center gap-4">
-                      <span className="text-sm text-gray-600">{region.orders.toLocaleString()} orders</span>
-                      <span className="font-bold text-gray-900">${(region.revenue / 1000).toFixed(0)}K</span>
+                      <span className="text-sm text-muted-foreground">{region.orders.toLocaleString()} orders</span>
+                      <span className="font-bold text-foreground">${(region.revenue / 1000).toFixed(0)}K</span>
                       <div className="flex items-center gap-1 text-sm font-semibold text-green-600">
                         <TrendingUp size={14} />
                         {region.growth}%
@@ -561,13 +561,13 @@ export default function QuarterlyReports() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="flex-1 h-3 bg-muted rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
                         style={{ width: `${region.percentage}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm font-semibold text-gray-900 w-12 text-right">
+                    <span className="text-sm font-semibold text-foreground w-12 text-right">
                       {region.percentage}%
                     </span>
                   </div>

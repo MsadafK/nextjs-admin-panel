@@ -1,10 +1,11 @@
 'use client';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useState, useEffect } from 'react';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { useLanguage } from '../../../contexts/LanguageContext';
+
+
 import { Bell, BellOff, Calendar, Clock, Filter, Search, Plus, X, Edit3, Trash2, CheckCircle, AlertCircle, MoreVertical, RotateCcw, Volume2, VolumeX } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+
 
 const mockReminders = [
   {
@@ -19,7 +20,7 @@ const mockReminders = [
     active: true,
     sound: true,
     createdAt: '2024-01-10',
-    color: 'bg-blue-500'
+    color: 'bg-muted0'
   },
   {
     id: 2,
@@ -33,7 +34,7 @@ const mockReminders = [
     active: true,
     sound: true,
     createdAt: '2024-01-08',
-    color: 'bg-green-500'
+    color: 'bg-muted0'
   },
   {
     id: 3,
@@ -47,7 +48,7 @@ const mockReminders = [
     active: true,
     sound: false,
     createdAt: '2024-01-05',
-    color: 'bg-red-500'
+    color: 'bg-muted0'
   },
   {
     id: 4,
@@ -61,7 +62,7 @@ const mockReminders = [
     active: true,
     sound: true,
     createdAt: '2024-01-12',
-    color: 'bg-purple-500'
+    color: 'bg-muted0'
   },
   {
     id: 5,
@@ -75,7 +76,7 @@ const mockReminders = [
     active: true,
     sound: false,
     createdAt: '2024-01-09',
-    color: 'bg-yellow-500'
+    color: 'bg-muted0'
   }
 ];
 
@@ -83,9 +84,8 @@ const priorityOptions = ['all', 'high', 'medium', 'low'];
 const categoryOptions = ['all', 'work', 'personal', 'health', 'shopping'];
 
 export default function ActiveReminders() {
-  const { isDark } = useTheme();
-  const { t } = useLanguage();
-  const [reminders, setReminders] = useState(mockReminders);
+    const t = () => null;
+const [reminders, setReminders] = useState(mockReminders);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPriority, setFilterPriority] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -161,11 +161,11 @@ export default function ActiveReminders() {
 
   const getCategoryColor = (category) => {
     switch (category) {
-      case 'work': return 'bg-blue-500';
-      case 'personal': return 'bg-green-500';
-      case 'health': return 'bg-purple-500';
-      case 'shopping': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
+      case 'work': return 'bg-muted0';
+      case 'personal': return 'bg-muted0';
+      case 'health': return 'bg-muted0';
+      case 'shopping': return 'bg-muted0';
+      default: return 'bg-muted0';
     }
   };
 
@@ -174,7 +174,7 @@ export default function ActiveReminders() {
       case 'high': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
       case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300';
       case 'low': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+      default: return 'bg-muted text-foreground  dark:text-muted-foreground';
     }
   };
 
@@ -201,24 +201,24 @@ export default function ActiveReminders() {
   const upcomingCount = reminders.filter(r => r.active && isUpcoming(r.date)).length;
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 to-gray-800 text-white' : 'bg-gradient-to-br from-blue-50 to-gray-100 text-gray-900'}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 text-foreground`}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+      <div className="p-6 border-b border-border dark:border-border bg-card/80 /80 backdrop-blur-sm">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-2xl ${isDark ? 'bg-blue-600' : 'bg-blue-500'} shadow-lg`}>
-              <Bell className="w-8 h-8 text-white" />
+            <div className={`p-3 rounded-lg bg-muted0 shadow-card`}>
+              <Bell className="w-8 h-8 text-background" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-lg sm:text-xl font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {t('active_reminders') || 'Active Reminders'}
               </h1>
-              <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} flex items-center gap-2 mt-1`}>
+              <p className={`text-muted-foreground flex items-center gap-2 mt-1`}>
                 <span className="flex items-center gap-1">
                   <CheckCircle className="w-4 h-4 text-green-500" />
                   {activeCount} active
                 </span>
-                • 
+                Ã¢â‚¬Â¢ 
                 <span className="flex items-center gap-1">
                   <Calendar className="w-4 h-4 text-blue-500" />
                   {upcomingCount} upcoming
@@ -228,7 +228,7 @@ export default function ActiveReminders() {
           </div>
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-background rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-card hover:shadow-dropdown transform hover:scale-105"
           >
             <Plus className="w-5 h-5" />
             {t('add_reminder') || 'Add Reminder'}
@@ -242,12 +242,12 @@ export default function ActiveReminders() {
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className={`p-6 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-lg border-l-4 border-blue-500`}
+            className={`p-6 rounded-lg bg-card shadow-card border-l-2 border-blue-500`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Total Active</p>
-                <p className="text-3xl font-bold text-blue-500">{activeCount}</p>
+                <p className={`text-sm text-muted-foreground`}>Total Active</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-blue-500">{activeCount}</p>
               </div>
               <Bell className="w-8 h-8 text-blue-500" />
             </div>
@@ -257,12 +257,12 @@ export default function ActiveReminders() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className={`p-6 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-lg border-l-4 border-green-500`}
+            className={`p-6 rounded-lg bg-card shadow-card border-l-2 border-green-500`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Upcoming</p>
-                <p className="text-3xl font-bold text-green-500">{upcomingCount}</p>
+                <p className={`text-sm text-muted-foreground`}>Upcoming</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-green-500">{upcomingCount}</p>
               </div>
               <Calendar className="w-8 h-8 text-green-500" />
             </div>
@@ -272,12 +272,12 @@ export default function ActiveReminders() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className={`p-6 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-lg border-l-4 border-purple-500`}
+            className={`p-6 rounded-lg bg-card shadow-card border-l-2 border-purple-500`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>High Priority</p>
-                <p className="text-3xl font-bold text-purple-500">
+                <p className={`text-sm text-muted-foreground`}>High Priority</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-purple-500">
                   {reminders.filter(r => r.active && r.priority === 'high').length}
                 </p>
               </div>
@@ -290,24 +290,24 @@ export default function ActiveReminders() {
         <div className="flex flex-col lg:flex-row gap-4 mb-8">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+            <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground`} />
             <input
               type="text"
               placeholder={t('search_reminders') || 'Search reminders...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-12 pr-4 py-4 rounded-xl border-2 ${isDark ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'} focus:outline-none focus:border-blue-500 transition-colors`}
+              className={`w-full pl-12 pr-4 py-4 rounded-xl border-2 bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500 transition-colors`}
             />
           </div>
 
           {/* Filters */}
           <div className="flex gap-4">
             <div className="flex items-center gap-2">
-              <Filter className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+              <Filter className={`w-5 h-5 text-muted-foreground`} />
               <select
                 value={filterPriority}
                 onChange={(e) => setFilterPriority(e.target.value)}
-                className={`px-4 py-4 rounded-xl border-2 ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200 text-gray-900'} focus:outline-none focus:border-blue-500 transition-colors`}
+                className={`px-4 py-4 rounded-xl border-2 bg-card border-border text-foreground focus:outline-none focus:border-blue-500 transition-colors`}
               >
                 <option value="all">All Priorities</option>
                 {priorityOptions.slice(1).map(priority => (
@@ -321,7 +321,7 @@ export default function ActiveReminders() {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className={`px-4 py-4 rounded-xl border-2 ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-200 text-gray-900'} focus:outline-none focus:border-blue-500 transition-colors`}
+              className={`px-4 py-4 rounded-xl border-2 bg-card border-border text-foreground focus:outline-none focus:border-blue-500 transition-colors`}
             >
               <option value="all">All Categories</option>
               {categoryOptions.slice(1).map(category => (
@@ -349,14 +349,14 @@ export default function ActiveReminders() {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.02 }}
-                  className={`p-6 rounded-2xl shadow-lg backdrop-blur-sm ${
-                    isDark 
-                      ? 'bg-gradient-to-br from-gray-800 to-gray-700 border border-gray-600' 
-                      : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200'
-                  } transition-all duration-300 hover:shadow-xl relative overflow-hidden`}
+                  className={`p-6 rounded-lg shadow-card backdrop-blur-sm ${
+                    false 
+                      ? 'bg-gradient-to-br from-gray-800 to-gray-700 border border-border' 
+                      : 'bg-gradient-to-br from-white to-gray-50 border border-border'
+                  } transition-all duration-300 hover:shadow-dropdown relative overflow-hidden`}
                 >
                   {/* Priority Indicator */}
-                  <div className={`absolute top-0 left-0 w-2 h-full ${reminder.priority === 'high' ? 'bg-red-500' : reminder.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'}`} />
+                  <div className={`absolute top-0 left-0 w-2 h-full ${reminder.priority === 'high' ? 'bg-muted0' : reminder.priority === 'medium' ? 'bg-muted0' : 'bg-muted0'}`} />
 
                   <div className="ml-3">
                     {/* Header */}
@@ -370,7 +370,7 @@ export default function ActiveReminders() {
                       <div className="relative">
                         <button
                           onClick={() => setActiveDropdown(activeDropdown === reminder.id ? null : reminder.id)}
-                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                          className="p-2 hover:bg-muted  rounded-lg transition-colors"
                         >
                           <MoreVertical className="w-4 h-4" />
                         </button>
@@ -381,27 +381,27 @@ export default function ActiveReminders() {
                               initial={{ opacity: 0, scale: 0.95 }}
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.95 }}
-                              className={`absolute right-0 top-10 w-48 rounded-xl shadow-lg border ${
-                                isDark ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'
+                              className={`absolute right-0 top-10 w-48 rounded-xl shadow-card border ${
+                                'bg-card border-border'
                               } z-10`}
                             >
                               <button
                                 onClick={() => toggleSound(reminder.id)}
-                                className="flex items-center gap-3 w-full px-4 py-3 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors first:rounded-t-xl last:rounded-b-xl"
+                                className="flex items-center gap-3 w-full px-4 py-3 text-sm hover:bg-muted  transition-colors first:rounded-t-xl last:rounded-b-xl"
                               >
                                 {reminder.sound ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                                 {reminder.sound ? 'Mute Sound' : 'Enable Sound'}
                               </button>
                               <button
                                 onClick={() => toggleReminderStatus(reminder.id)}
-                                className="flex items-center gap-3 w-full px-4 py-3 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                                className="flex items-center gap-3 w-full px-4 py-3 text-sm hover:bg-muted  transition-colors"
                               >
                                 <BellOff className="w-4 h-4" />
                                 Deactivate
                               </button>
                               <button
                                 onClick={() => deleteReminder(reminder.id)}
-                                className="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                className="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-600 hover:bg-muted dark:hover:bg-red-900/20 transition-colors"
                               >
                                 <Trash2 className="w-4 h-4" />
                                 Delete
@@ -413,7 +413,7 @@ export default function ActiveReminders() {
                     </div>
 
                     {/* Description */}
-                    <p className={`mb-4 line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <p className={`mb-4 line-clamp-2 text-muted-foreground`}>
                       {reminder.description}
                     </p>
 
@@ -421,13 +421,13 @@ export default function ActiveReminders() {
                     <div className="flex items-center gap-4 mb-4">
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-blue-500" />
-                        <span className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <span className={`text-sm font-medium text-foreground`}>
                           {formatDate(reminder.date)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-green-500" />
-                        <span className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <span className={`text-sm font-medium text-foreground`}>
                           {reminder.time}
                         </span>
                       </div>
@@ -438,7 +438,7 @@ export default function ActiveReminders() {
                       <span className={`px-3 py-1 text-xs font-medium rounded-full ${getPriorityColor(reminder.priority)} capitalize`}>
                         {reminder.priority} priority
                       </span>
-                      <span className={`px-3 py-1 text-xs font-medium rounded-full ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'} capitalize`}>
+                      <span className={`px-3 py-1 text-xs font-medium rounded-full bg-muted text-muted-foreground capitalize`}>
                         {reminder.category}
                       </span>
                       {reminder.recurring && (
@@ -453,7 +453,7 @@ export default function ActiveReminders() {
                           sound on
                         </span>
                       ) : (
-                        <span className="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 flex items-center gap-1">
+                        <span className="px-3 py-1 text-xs font-medium rounded-full bg-muted text-muted-foreground  dark:text-muted-foreground flex items-center gap-1">
                           <VolumeX className="w-3 h-3" />
                           muted
                         </span>
@@ -467,18 +467,18 @@ export default function ActiveReminders() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className={`p-12 text-center rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white'} border-2 border-dashed ${isDark ? 'border-gray-700' : 'border-gray-300'}`}
+              className={`p-12 text-center rounded-lg bg-card border-2 border-dashed border-border`}
             >
-              <Bell className={`w-16 h-16 mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+              <Bell className={`w-16 h-16 mx-auto mb-4 text-muted-foreground`} />
               <h3 className="text-xl font-semibold mb-2">{t('no_reminders_found') || 'No reminders found'}</h3>
-              <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'} mb-6`}>
+              <p className={`text-muted-foreground mb-6`}>
                 {searchTerm || filterPriority !== 'all' || filterCategory !== 'all' 
                   ? 'Try adjusting your search or filters' 
                   : 'Create your first reminder to get started'}
               </p>
               <button
                 onClick={() => setShowForm(true)}
-                className="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
+                className="px-6 py-3 bg-muted0 text-background rounded-xl hover:bg-blue-600 transition-colors"
               >
                 <Plus className="w-5 h-5 inline mr-2" />
                 Add Reminder
@@ -501,15 +501,15 @@ export default function ActiveReminders() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className={`w-full max-w-md p-6 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-2xl`}
+              className={`w-full max-w-md p-6 rounded-lg bg-card shadow-card`}
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+                <h2 className="text-lg font-semibold tracking-tight bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
                   {t('add_reminder') || 'Add New Reminder'}
                 </h2>
                 <button 
                   onClick={() => setShowForm(false)}
-                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-muted  rounded-lg transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -518,7 +518,7 @@ export default function ActiveReminders() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Title */}
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`block text-sm font-medium mb-2 text-foreground`}>
                     Title *
                   </label>
                   <input
@@ -527,13 +527,13 @@ export default function ActiveReminders() {
                     value={formData.title}
                     onChange={handleFormChange}
                     placeholder="Enter reminder title"
-                    className={`w-full px-4 py-3 rounded-xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'} focus:outline-none focus:border-blue-500 transition-colors`}
+                    className={`w-full px-4 py-3 rounded-xl border-2 bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                   />
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label className={`block text-sm font-medium mb-2 text-foreground`}>
                     Description
                   </label>
                   <textarea
@@ -542,14 +542,14 @@ export default function ActiveReminders() {
                     onChange={handleFormChange}
                     rows={3}
                     placeholder="Add details about this reminder..."
-                    className={`w-full px-4 py-3 rounded-xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'} focus:outline-none focus:border-blue-500 transition-colors`}
+                    className={`w-full px-4 py-3 rounded-xl border-2 bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                   />
                 </div>
 
                 {/* Date and Time */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label className={`block text-sm font-medium mb-2 text-foreground`}>
                       Date *
                     </label>
                     <input
@@ -557,11 +557,11 @@ export default function ActiveReminders() {
                       name="date"
                       value={formData.date}
                       onChange={handleFormChange}
-                      className={`w-full px-4 py-3 rounded-xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-900'} focus:outline-none focus:border-blue-500 transition-colors`}
+                      className={`w-full px-4 py-3 rounded-xl border-2 bg-card border-border text-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                     />
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label className={`block text-sm font-medium mb-2 text-foreground`}>
                       Time *
                     </label>
                     <input
@@ -569,7 +569,7 @@ export default function ActiveReminders() {
                       name="time"
                       value={formData.time}
                       onChange={handleFormChange}
-                      className={`w-full px-4 py-3 rounded-xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-900'} focus:outline-none focus:border-blue-500 transition-colors`}
+                      className={`w-full px-4 py-3 rounded-xl border-2 bg-card border-border text-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                     />
                   </div>
                 </div>
@@ -577,14 +577,14 @@ export default function ActiveReminders() {
                 {/* Priority and Category */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label className={`block text-sm font-medium mb-2 text-foreground`}>
                       Priority
                     </label>
                     <select
                       name="priority"
                       value={formData.priority}
                       onChange={handleFormChange}
-                      className={`w-full px-4 py-3 rounded-xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-900'} focus:outline-none focus:border-blue-500 transition-colors`}
+                      className={`w-full px-4 py-3 rounded-xl border-2 bg-card border-border text-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -592,14 +592,14 @@ export default function ActiveReminders() {
                     </select>
                   </div>
                   <div>
-                    <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                    <label className={`block text-sm font-medium mb-2 text-foreground`}>
                       Category
                     </label>
                     <select
                       name="category"
                       value={formData.category}
                       onChange={handleFormChange}
-                      className={`w-full px-4 py-3 rounded-xl border-2 ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-900'} focus:outline-none focus:border-blue-500 transition-colors`}
+                      className={`w-full px-4 py-3 rounded-xl border-2 bg-card border-border text-foreground focus:outline-none focus:border-blue-500 transition-colors`}
                     >
                       <option value="personal">Personal</option>
                       <option value="work">Work</option>
@@ -617,9 +617,9 @@ export default function ActiveReminders() {
                       name="recurring"
                       checked={formData.recurring}
                       onChange={handleFormChange}
-                      className="w-4 h-4 text-blue-500 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-blue-500 rounded focus:ring-ring"
                     />
-                    <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>Recurring reminder</span>
+                    <span className={'text-foreground'}>Recurring reminder</span>
                   </label>
                   <label className="flex items-center gap-3">
                     <input
@@ -627,15 +627,15 @@ export default function ActiveReminders() {
                       name="sound"
                       checked={formData.sound}
                       onChange={handleFormChange}
-                      className="w-4 h-4 text-blue-500 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-blue-500 rounded focus:ring-ring"
                     />
-                    <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>Enable sound notification</span>
+                    <span className={'text-foreground'}>Enable sound notification</span>
                   </label>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                  className="w-full py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-background rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 shadow-card"
                 >
                   Create Reminder
                 </button>

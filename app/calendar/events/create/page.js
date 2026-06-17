@@ -1,15 +1,14 @@
 'use client';
 import { CheckCircle, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { useLanguage } from '../../../contexts/LanguageContext';
+
+
 import { Calendar, Clock, MapPin, Users, FileText, Save, X, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function CreateEvent() {
-  const { isDark } = useTheme();
-  const { t } = useLanguage();
-  const [formData, setFormData] = useState({
+    const t = () => null;
+const [formData, setFormData] = useState({
     title: '',
     date: '',
     startTime: '',
@@ -71,16 +70,16 @@ export default function CreateEvent() {
   };
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`min-h-screen bg-muted text-foreground`}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-6 border-b border-border dark:border-border">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className={`text-3xl font-bold flex items-center gap-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h1 className={`text-lg sm:text-xl font-semibold tracking-tight flex items-center gap-3 text-foreground`}>
               <Plus className="w-8 h-8" />
               {t('create_event') || 'Create Event'}
             </h1>
-            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`text-muted-foreground`}>
               Schedule new events and invite your team. All fields are optional except marked ones.
             </p>
           </div>
@@ -94,22 +93,22 @@ export default function CreateEvent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           onSubmit={handleSubmit}
-          className={`p-8 rounded-xl shadow-xl ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'}`}
+          className={`p-8 rounded-xl shadow-xl bg-card border border-border`}
         >
           {/* Title */}
           <div className="mb-6">
-            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-medium mb-2 text-foreground`}>
               {t('event_title') || 'Event Title'} *
             </label>
             <div className="relative">
-              <Calendar className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+              <Calendar className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground`} />
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
                 placeholder={t('enter_title') || 'Enter event title'}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                className={`w-full pl-10 pr-4 py-3 rounded-lg border bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
               />
             </div>
           </div>
@@ -117,7 +116,7 @@ export default function CreateEvent() {
           {/* Date and Time */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div>
-              <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              <label className={`block text-sm font-medium mb-2 text-foreground`}>
                 {t('date') || 'Date'} *
               </label>
               <input
@@ -125,36 +124,36 @@ export default function CreateEvent() {
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 rounded-lg border ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                className={`w-full px-4 py-3 rounded-lg border bg-card border-border text-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
               />
             </div>
             <div>
-              <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              <label className={`block text-sm font-medium mb-2 text-foreground`}>
                 {t('start_time') || 'Start Time'} *
               </label>
               <div className="relative">
-                <Clock className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+                <Clock className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground`} />
                 <input
                   type="time"
                   name="startTime"
                   value={formData.startTime}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg border bg-card border-border text-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
                 />
               </div>
             </div>
             <div>
-              <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              <label className={`block text-sm font-medium mb-2 text-foreground`}>
                 {t('end_time') || 'End Time'}
               </label>
               <div className="relative">
-                <Clock className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+                <Clock className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground`} />
                 <input
                   type="time"
                   name="endTime"
                   value={formData.endTime}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  className={`w-full pl-10 pr-4 py-3 rounded-lg border bg-card border-border text-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
                 />
               </div>
             </div>
@@ -162,36 +161,36 @@ export default function CreateEvent() {
 
           {/* Location */}
           <div className="mb-6">
-            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-medium mb-2 text-foreground`}>
               {t('location') || 'Location'}
             </label>
             <div className="relative">
-              <MapPin className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+              <MapPin className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground`} />
               <input
                 type="text"
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
                 placeholder={t('enter_location') || 'Enter location or online link'}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                className={`w-full pl-10 pr-4 py-3 rounded-lg border bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
               />
             </div>
           </div>
 
           {/* Participants */}
           <div className="mb-6">
-            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-medium mb-2 text-foreground`}>
               {t('participants') || 'Participants'}
             </label>
             <div className="relative">
-              <Users className={`absolute left-3 top-3 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+              <Users className={`absolute left-3 top-3 w-5 h-5 text-muted-foreground`} />
               <input
                 type="text"
                 value={participantInput}
                 onChange={(e) => setParticipantInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addParticipant()}
                 placeholder={t('add_participant') || 'Add email or name and press Enter'}
-                className={`w-full pl-10 pr-12 py-3 rounded-lg border ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                className={`w-full pl-10 pr-12 py-3 rounded-lg border bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
               />
               <button
                 type="button"
@@ -204,7 +203,7 @@ export default function CreateEvent() {
             {formData.participants.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {formData.participants.map((part, index) => (
-                  <span key={index} className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm ${isDark ? 'bg-gray-600 text-gray-200' : 'bg-gray-100 text-gray-800'}`}>
+                  <span key={index} className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-muted text-foreground`}>
                     {part}
                     <button onClick={() => removeParticipant(index)} className="text-red-500 hover:text-red-600">
                       <X className="w-4 h-4" />
@@ -217,32 +216,32 @@ export default function CreateEvent() {
 
           {/* Description */}
           <div className="mb-6">
-            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-medium mb-2 text-foreground`}>
               {t('description') || 'Description'}
             </label>
             <div className="relative">
-              <FileText className={`absolute left-3 top-3 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+              <FileText className={`absolute left-3 top-3 w-5 h-5 text-muted-foreground`} />
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 placeholder={t('enter_description') || 'Provide event details...'}
                 rows={4}
-                className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDark ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                className={`w-full pl-10 pr-4 py-3 rounded-lg border bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
               />
             </div>
           </div>
 
           {/* Category */}
           <div className="mb-6">
-            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-medium mb-2 text-foreground`}>
               {t('category') || 'Category'}
             </label>
             <select
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className={`w-full px-4 py-3 rounded-lg border ${isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className={`w-full px-4 py-3 rounded-lg border bg-card border-border text-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
             >
               <option value="">{t('select_category') || 'Select category'}</option>
               <option value="Meeting">Meeting</option>
@@ -278,7 +277,7 @@ export default function CreateEvent() {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-foreground text-background font-medium hover:opacity-90 transition-colors focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring focus:ring-offset-2"
           >
             <Save className="w-5 h-5" />
             {t('create_event') || 'Create Event'}

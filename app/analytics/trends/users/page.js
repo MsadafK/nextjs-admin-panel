@@ -108,20 +108,20 @@ export default function UserTrends() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="page-container space-y-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">User Trends</h1>
-              <p className="text-gray-600">Monitor user behavior and engagement patterns</p>
+              <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">User Trends</h1>
+              <p className="text-muted-foreground">Monitor user behavior and engagement patterns</p>
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors">
                 <Filter size={20} />
                 Filter
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-background rounded-lg hover:bg-blue-700 transition-colors">
                 <Download size={20} />
                 Export
               </button>
@@ -133,14 +133,14 @@ export default function UserTrends() {
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             const colorClasses = {
-              blue: 'bg-blue-100 text-blue-600',
-              green: 'bg-green-100 text-green-600',
-              purple: 'bg-purple-100 text-purple-600',
-              orange: 'bg-orange-100 text-orange-600',
+              blue: 'bg-muted text-foreground',
+              green: 'bg-muted text-foreground',
+              purple: 'bg-muted text-foreground',
+              orange: 'bg-muted text-foreground',
             };
             
             return (
-              <div key={index} className="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+              <div key={index} className="bg-card rounded-lg shadow border border-border p-6 hover:shadow-dropdown transition-shadow">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-3 rounded-lg ${colorClasses[stat.color]}`}>
                     <Icon size={24} />
@@ -152,17 +152,17 @@ export default function UserTrends() {
                     {stat.change}
                   </div>
                 </div>
-                <h3 className="text-sm text-gray-600 mb-1">{stat.title}</h3>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</p>
-                <p className="text-xs text-gray-500">{stat.description}</p>
+                <h3 className="text-sm text-muted-foreground mb-1">{stat.title}</h3>
+                <p className="text-lg font-semibold tracking-tight text-foreground mb-1">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.description}</p>
               </div>
             );
           })}
         </div>
 
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-6 mb-6">
+        <div className="bg-card rounded-lg shadow border border-border p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">User Growth Trends</h2>
+            <h2 className="text-xl font-semibold text-foreground">User Growth Trends</h2>
             <div className="flex gap-3">
               <div className="flex gap-2">
                 {timeRanges.map((range) => (
@@ -171,8 +171,8 @@ export default function UserTrends() {
                     onClick={() => setTimeRange(range.value)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       timeRange === range.value
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-blue-600 text-background'
+                        : 'bg-muted text-foreground hover:bg-muted'
                     }`}
                   >
                     {range.label}
@@ -189,8 +189,8 @@ export default function UserTrends() {
                 onClick={() => setSelectedMetric(metric.value)}
                 className={`flex items-center gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
                   selectedMetric === metric.value
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-blue-500 bg-muted text-blue-700'
+                    : 'border-border hover:border-border'
                 }`}
               >
                 <div className={`w-3 h-3 rounded-full bg-${metric.color}-500`}></div>
@@ -200,14 +200,14 @@ export default function UserTrends() {
           </div>
 
           <div className="h-80 relative">
-            <div className="absolute left-0 top-0 bottom-8 w-16 flex flex-col justify-between text-xs text-gray-500">
+            <div className="absolute left-0 top-0 bottom-8 w-16 flex flex-col justify-between text-xs text-muted-foreground">
               <span>{(maxValue * 1.2).toFixed(0)}</span>
               <span>{(maxValue * 0.8).toFixed(0)}</span>
               <span>{(maxValue * 0.4).toFixed(0)}</span>
               <span>0</span>
             </div>
 
-            <div className="ml-16 h-full flex items-end gap-2 pb-8 border-l-2 border-b-2 border-gray-200">
+            <div className="ml-16 h-full flex items-end gap-2 pb-8 border-l-2 border-b-2 border-border">
               {currentData.map((data, index) => {
                 const height = (data[selectedMetric] / maxValue) * 100;
                 
@@ -219,7 +219,7 @@ export default function UserTrends() {
                           className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white shadow-lg hover:scale-125 transition-transform cursor-pointer group"
                           style={{ bottom: `${height}%` }}
                         >
-                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-foreground text-background text-xs px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                             {data[selectedMetric].toLocaleString()}
                           </div>
                         </div>
@@ -238,7 +238,7 @@ export default function UserTrends() {
                       </div>
                     </div>
                     
-                    <span className="text-xs text-gray-600 font-medium">{data.date}</span>
+                    <span className="text-xs text-muted-foreground font-medium">{data.date}</span>
                   </div>
                 );
               })}
@@ -247,20 +247,20 @@ export default function UserTrends() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">User Behavior Metrics</h2>
+          <div className="bg-card rounded-lg shadow border border-border p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">User Behavior Metrics</h2>
             <div className="space-y-4">
               {userBehavior.map((item, index) => {
                 const Icon = item.icon;
                 return (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div key={index} className="flex items-center justify-between p-4 bg-muted rounded-lg hover:bg-muted transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+                      <div className="p-3 bg-muted text-foreground rounded-lg">
                         <Icon size={20} />
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">{item.metric}</p>
-                        <p className="text-xl font-bold text-gray-900">{item.value}</p>
+                        <p className="text-sm text-muted-foreground">{item.metric}</p>
+                        <p className="text-base font-semibold text-foreground">{item.value}</p>
                       </div>
                     </div>
                     <div className={`flex items-center gap-1 text-sm font-semibold ${
@@ -275,30 +275,30 @@ export default function UserTrends() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Device Distribution</h2>
+          <div className="bg-card rounded-lg shadow border border-border p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Device Distribution</h2>
             <div className="space-y-6">
               {deviceStats.map((device, index) => {
                 const Icon = device.icon;
                 const colorClasses = {
-                  blue: 'bg-blue-500',
-                  green: 'bg-green-500',
-                  purple: 'bg-purple-500',
+                  blue: 'bg-muted0',
+                  green: 'bg-muted0',
+                  purple: 'bg-muted0',
                 };
                 
                 return (
                   <div key={index}>
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <Icon size={20} className="text-gray-600" />
-                        <span className="font-medium text-gray-900">{device.name}</span>
+                        <Icon size={20} className="text-muted-foreground" />
+                        <span className="font-medium text-foreground">{device.name}</span>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-gray-900">{device.users.toLocaleString()}</p>
-                        <p className="text-xs text-gray-500">{device.percentage}% of total</p>
+                        <p className="text-lg font-bold text-foreground">{device.users.toLocaleString()}</p>
+                        <p className="text-xs text-muted-foreground">{device.percentage}% of total</p>
                       </div>
                     </div>
-                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-3 bg-muted rounded-full overflow-hidden">
                       <div
                         className={`h-full ${colorClasses[device.color]} transition-all duration-500`}
                         style={{ width: `${device.percentage}%` }}
@@ -309,10 +309,10 @@ export default function UserTrends() {
               })}
             </div>
 
-            <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="mt-6 pt-6 border-t border-border">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-gray-900">Total Active Devices</span>
-                <span className="text-xl font-bold text-gray-900">
+                <span className="font-semibold text-foreground">Total Active Devices</span>
+                <span className="text-base font-semibold text-foreground">
                   {deviceStats.reduce((sum, device) => sum + device.users, 0).toLocaleString()}
                 </span>
               </div>
@@ -320,8 +320,8 @@ export default function UserTrends() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Users by Location</h2>
+        <div className="bg-card rounded-lg shadow border border-border p-6">
+          <h2 className="text-xl font-semibold text-foreground mb-6">Users by Location</h2>
           <div className="space-y-4">
             {topCountries.map((country, index) => (
               <div key={index} className="flex items-center gap-4">
@@ -330,9 +330,9 @@ export default function UserTrends() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-gray-900">{country.name}</span>
+                    <span className="font-medium text-foreground">{country.name}</span>
                     <div className="flex items-center gap-4">
-                      <span className="text-sm text-gray-600">{country.users.toLocaleString()} users</span>
+                      <span className="text-sm text-muted-foreground">{country.users.toLocaleString()} users</span>
                       <div className={`flex items-center gap-1 text-sm font-semibold ${
                         country.growth > 0 ? 'text-green-600' : 'text-red-600'
                       }`}>
@@ -342,13 +342,13 @@ export default function UserTrends() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500"
                         style={{ width: `${country.percentage}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm font-semibold text-gray-900 w-12 text-right">
+                    <span className="text-sm font-semibold text-foreground w-12 text-right">
                       {country.percentage}%
                     </span>
                   </div>

@@ -115,11 +115,11 @@ export default function RoleManagement() {
 
   const getColorClasses = (color) => {
     const colors = {
-      red: { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200', badge: 'bg-red-500' },
-      purple: { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-200', badge: 'bg-purple-500' },
-      blue: { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200', badge: 'bg-blue-500' },
-      green: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200', badge: 'bg-green-500' },
-      gray: { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-200', badge: 'bg-gray-500' }
+      red: { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200', badge: 'bg-muted0' },
+      purple: { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-200', badge: 'bg-muted0' },
+      blue: { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200', badge: 'bg-muted0' },
+      green: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200', badge: 'bg-muted0' },
+      gray: { bg: 'bg-muted', text: 'text-foreground', border: 'border-border', badge: 'bg-muted0' }
     };
     return colors[color] || colors.gray;
   };
@@ -149,17 +149,17 @@ export default function RoleManagement() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Role Management</h1>
-              <p className="text-gray-600">Define and manage user roles and permissions</p>
+              <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Role Management</h1>
+              <p className="text-muted-foreground">Define and manage user roles and permissions</p>
             </div>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors"
             >
               <Plus size={20} />
               Create Role
@@ -168,72 +168,72 @@ export default function RoleManagement() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-blue-100 rounded-lg">
                 <Shield size={24} className="text-blue-600" />
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Total Roles</h3>
-            <p className="text-2xl font-bold text-gray-900">{roles.length}</p>
-            <p className="text-xs text-gray-500 mt-1">{roles.filter(r => r.isSystem).length} system roles</p>
+            <h3 className="text-sm text-muted-foreground mb-1">Total Roles</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground">{roles.length}</p>
+            <p className="text-xs text-muted-foreground mt-1">{roles.filter(r => r.isSystem).length} system roles</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-green-100 rounded-lg">
                 <Users size={24} className="text-green-600" />
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Total Users</h3>
-            <p className="text-2xl font-bold text-gray-900">
+            <h3 className="text-sm text-muted-foreground mb-1">Total Users</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground">
               {roles.reduce((sum, role) => sum + role.users, 0)}
             </p>
-            <p className="text-xs text-gray-500 mt-1">Across all roles</p>
+            <p className="text-xs text-muted-foreground mt-1">Across all roles</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-purple-100 rounded-lg">
                 <Key size={24} className="text-purple-600" />
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Custom Roles</h3>
-            <p className="text-2xl font-bold text-gray-900">
+            <h3 className="text-sm text-muted-foreground mb-1">Custom Roles</h3>
+            <p className="text-lg font-semibold tracking-tight text-foreground">
               {roles.filter(r => !r.isSystem).length}
             </p>
-            <p className="text-xs text-gray-500 mt-1">User created</p>
+            <p className="text-xs text-muted-foreground mt-1">User created</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
+          <div className="bg-card border border-border rounded-lg shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-orange-100 rounded-lg">
                 <Lock size={24} className="text-orange-600" />
               </div>
             </div>
-            <h3 className="text-sm text-gray-600 mb-1">Most Used</h3>
-            <p className="text-xl font-bold text-gray-900">
+            <h3 className="text-sm text-muted-foreground mb-1">Most Used</h3>
+            <p className="text-base font-semibold text-foreground">
               {roles.reduce((max, role) => role.users > max.users ? role : max, roles[0])?.name}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {roles.reduce((max, role) => role.users > max.users ? role : max, roles[0])?.users} users
             </p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow border border-gray-200 p-4 mb-6">
+        <div className="bg-card border border-border rounded-lg shadow-card p-4 mb-6">
           <div className="flex items-center gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
               <input
                 type="text"
                 placeholder="Search roles..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
               />
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors">
               <Filter size={20} />
               Filter
             </button>
@@ -250,8 +250,8 @@ export default function RoleManagement() {
               return (
                 <div
                   key={role.id}
-                  className={`bg-white rounded-lg shadow border-2 transition-all ${
-                    selectedRole?.id === role.id ? 'border-blue-500' : 'border-gray-200'
+                  className={`bg-card rounded-lg shadow border-2 transition-all ${
+                    selectedRole?.id === role.id ? 'border-blue-500' : 'border-border'
                   }`}
                 >
                   <div className="p-6">
@@ -264,32 +264,32 @@ export default function RoleManagement() {
                         <div className="flex items-start justify-between mb-2">
                           <div>
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-xl font-bold text-gray-900">{role.name}</h3>
+                              <h3 className="text-base font-semibold text-foreground">{role.name}</h3>
                               {role.isSystem && (
-                                <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full border border-gray-300">
+                                <span className="px-2 py-0.5 bg-muted text-foreground text-xs font-semibold rounded-full border border-border">
                                   System Role
                                 </span>
                               )}
                             </div>
-                            <p className="text-sm text-gray-600">{role.description}</p>
+                            <p className="text-sm text-muted-foreground">{role.description}</p>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-4 mb-4">
                           <div className="flex items-center gap-2">
-                            <Users size={16} className="text-gray-500" />
-                            <span className="text-sm text-gray-700">
+                            <Users size={16} className="text-muted-foreground" />
+                            <span className="text-sm text-foreground">
                               <span className="font-semibold">{role.users}</span> users
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Key size={16} className="text-gray-500" />
-                            <span className="text-sm text-gray-700">
+                            <Key size={16} className="text-muted-foreground" />
+                            <span className="text-sm text-foreground">
                               <span className="font-semibold">{permissionScore}%</span> permissions
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-muted-foreground">
                               Created: {new Date(role.createdAt).toLocaleDateString()}
                             </span>
                           </div>
@@ -298,7 +298,7 @@ export default function RoleManagement() {
                         <div className="flex items-center justify-between">
                           <button
                             onClick={() => toggleRoleExpand(role.id)}
-                            className="flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:bg-muted rounded-lg transition-colors"
                           >
                             {isExpanded ? (
                               <>
@@ -316,20 +316,20 @@ export default function RoleManagement() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => setSelectedRole(role)}
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              className="p-2 text-blue-600 hover:bg-muted rounded-lg transition-colors"
                               title="Edit Role"
                             >
                               <Edit2 size={18} />
                             </button>
                             <button
-                              className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                              className="p-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors"
                               title="Duplicate Role"
                             >
                               <Copy size={18} />
                             </button>
                             {!role.isSystem && (
                               <button
-                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                className="p-2 text-red-600 hover:bg-muted rounded-lg transition-colors"
                                 title="Delete Role"
                               >
                                 <Trash2 size={18} />
@@ -341,20 +341,20 @@ export default function RoleManagement() {
                     </div>
 
                     {isExpanded && (
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <h4 className="font-semibold text-gray-900 mb-4">Role Permissions</h4>
+                      <div className="mt-6 pt-6 border-t border-border">
+                        <h4 className="font-semibold text-foreground mb-4">Role Permissions</h4>
                         <div className="space-y-4">
                           {permissionCategories.map((category) => {
                             const CategoryIcon = category.icon;
                             const categoryPerms = role.permissions[category.id];
 
                             return (
-                              <div key={category.id} className="p-4 bg-gray-50 rounded-lg">
+                              <div key={category.id} className="p-4 bg-muted rounded-lg">
                                 <div className="flex items-center gap-3 mb-3">
-                                  <CategoryIcon size={20} className="text-gray-600" />
+                                  <CategoryIcon size={20} className="text-muted-foreground" />
                                   <div className="flex-1">
-                                    <h5 className="font-semibold text-gray-900">{category.name}</h5>
-                                    <p className="text-xs text-gray-600">{category.description}</p>
+                                    <h5 className="font-semibold text-foreground">{category.name}</h5>
+                                    <p className="text-xs text-muted-foreground">{category.description}</p>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-4 gap-2">
@@ -367,17 +367,17 @@ export default function RoleManagement() {
                                         key={action.id}
                                         className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${
                                           hasPermission
-                                            ? 'bg-green-50 border-green-200'
-                                            : 'bg-white border-gray-200'
+                                            ? 'bg-muted border-green-200'
+                                            : 'bg-card border-border'
                                         }`}
                                       >
                                         {hasPermission ? (
                                           <CheckCircle size={16} className="text-green-600" />
                                         ) : (
-                                          <X size={16} className="text-gray-400" />
+                                          <X size={16} className="text-muted-foreground" />
                                         )}
                                         <span className={`text-sm font-medium ${
-                                          hasPermission ? 'text-green-900' : 'text-gray-500'
+                                          hasPermission ? 'text-green-900' : 'text-muted-foreground'
                                         }`}>
                                           {action.name}
                                         </span>
@@ -398,25 +398,25 @@ export default function RoleManagement() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
+            <div className="bg-card border border-border rounded-lg shadow-card p-6">
+              <h3 className="font-semibold text-foreground mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                <button className="w-full flex items-center gap-3 px-4 py-3 bg-muted text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
                   <Plus size={20} />
                   <span className="font-medium">Create New Role</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
+                <button className="w-full flex items-center gap-3 px-4 py-3 bg-muted text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
                   <Copy size={20} />
                   <span className="font-medium">Duplicate Role</span>
                 </button>
-                <button className="w-full flex items-center gap-3 px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                <button className="w-full flex items-center gap-3 px-4 py-3 bg-muted text-green-700 rounded-lg hover:bg-green-100 transition-colors">
                   <Users size={20} />
                   <span className="font-medium">Assign Users</span>
                 </button>
               </div>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <div className="bg-muted border border-blue-200 rounded-lg p-6">
               <div className="flex items-start gap-3 mb-4">
                 <AlertCircle size={20} className="text-blue-600 mt-0.5" />
                 <div>
@@ -432,17 +432,17 @@ export default function RoleManagement() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Permission Categories</h3>
+            <div className="bg-card border border-border rounded-lg shadow-card p-6">
+              <h3 className="font-semibold text-foreground mb-4">Permission Categories</h3>
               <div className="space-y-3">
                 {permissionCategories.map((category) => {
                   const CategoryIcon = category.icon;
                   return (
-                    <div key={category.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <CategoryIcon size={18} className="text-gray-600" />
+                    <div key={category.id} className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+                      <CategoryIcon size={18} className="text-muted-foreground" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900">{category.name}</p>
-                        <p className="text-xs text-gray-600 truncate">{category.description}</p>
+                        <p className="text-sm font-medium text-foreground">{category.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{category.description}</p>
                       </div>
                     </div>
                   );

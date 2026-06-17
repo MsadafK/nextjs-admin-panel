@@ -70,19 +70,19 @@ const SalesForecast = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Sales Forecast</h1>
-            <p className="text-slate-600">AI-powered predictive analytics and trend forecasting</p>
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Sales Forecast</h1>
+            <p className="text-muted-foreground">AI-powered predictive analytics and trend forecasting</p>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-slate-700">
+            <button className="px-4 py-2 bg-card border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-foreground">
               <RefreshCw className="w-4 h-4" />
               Refresh
             </button>
-            <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2">
+            <button className="px-4 py-2 bg-indigo-600 text-background rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2">
               <Download className="w-4 h-4" />
               Export Report
             </button>
@@ -90,14 +90,14 @@ const SalesForecast = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-4">
           <div className="flex items-center gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-700 mb-2">Forecast Period</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Forecast Period</label>
               <select 
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="3months">Next 3 Months</option>
                 <option value="6months">Next 6 Months</option>
@@ -105,11 +105,11 @@ const SalesForecast = () => {
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-700 mb-2">Forecast Model</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Forecast Model</label>
               <select 
                 value={forecastModel}
                 onChange={(e) => setForecastModel(e.target.value)}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="basic">Basic Trend</option>
                 <option value="advanced">Advanced ML</option>
@@ -117,8 +117,8 @@ const SalesForecast = () => {
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-slate-700 mb-2">Confidence Level</label>
-              <select className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+              <label className="block text-sm font-medium text-foreground mb-2">Confidence Level</label>
+              <select className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                 <option>80% Confidence</option>
                 <option>90% Confidence</option>
                 <option>95% Confidence</option>
@@ -130,35 +130,35 @@ const SalesForecast = () => {
         {/* Confidence Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {confidenceMetrics.map((metric, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+            <div key={index} className="bg-card rounded-xl shadow-sm border border-border p-5">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-slate-600">{metric.metric}</span>
+                <span className="text-sm text-muted-foreground">{metric.metric}</span>
                 {metric.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
               </div>
-              <div className={`text-2xl font-bold ${metric.color}`}>{metric.value}</div>
+              <div className={`text-lg font-semibold tracking-tight ${metric.color}`}>{metric.value}</div>
             </div>
           ))}
         </div>
 
         {/* Main Forecast Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-slate-800">Sales Forecast with Confidence Intervals</h2>
-              <p className="text-sm text-slate-600 mt-1">Historical data vs predicted future sales</p>
+              <h2 className="text-xl font-semibold text-foreground">Sales Forecast with Confidence Intervals</h2>
+              <p className="text-sm text-muted-foreground mt-1">Historical data vs predicted future sales</p>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-indigo-600 rounded-full"></div>
-                <span className="text-slate-600">Actual</span>
+                <span className="text-muted-foreground">Actual</span>
               </div>
               <div className="flex items-center gap-2 ml-4">
-                <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-                <span className="text-slate-600">Forecast</span>
+                <div className="w-3 h-3 bg-muted0 rounded-full"></div>
+                <span className="text-muted-foreground">Forecast</span>
               </div>
               <div className="flex items-center gap-2 ml-4">
-                <div className="w-3 h-3 bg-slate-300 rounded-full"></div>
-                <span className="text-slate-600">Confidence Range</span>
+                <div className="w-3 h-3 bg-muted rounded-full"></div>
+                <span className="text-muted-foreground">Confidence Range</span>
               </div>
             </div>
           </div>
@@ -249,13 +249,13 @@ const SalesForecast = () => {
         {/* Category Forecast and Insights */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Category Forecast */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h2 className="text-xl font-semibold text-slate-800 mb-6">Category Forecast</h2>
+          <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-6">Category Forecast</h2>
             <div className="space-y-5">
               {categoryForecast.map((cat, index) => (
                 <div key={index}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-slate-700">{cat.category}</span>
+                    <span className="text-sm font-medium text-foreground">{cat.category}</span>
                     <span className="text-sm font-semibold text-emerald-600">+{cat.growth}%</span>
                   </div>
                   <div className="flex gap-2 items-end h-12">
@@ -266,52 +266,52 @@ const SalesForecast = () => {
                     </div>
                     <div className="flex-1 relative">
                       <div className="absolute bottom-0 w-full bg-emerald-200 rounded-t" style={{ height: `${(cat.forecast / maxCategory) * 100}%` }}>
-                        <div className="absolute inset-0 bg-emerald-500 rounded-t opacity-70"></div>
+                        <div className="absolute inset-0 bg-muted0 rounded-t opacity-70"></div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-between mt-2 text-xs text-slate-600">
+                  <div className="flex justify-between mt-2 text-xs text-muted-foreground">
                     <span>${(cat.current / 1000).toFixed(0)}K</span>
                     <span>${(cat.forecast / 1000).toFixed(0)}K</span>
                   </div>
                 </div>
               ))}
-              <div className="flex gap-4 pt-4 border-t border-slate-200 text-sm">
+              <div className="flex gap-4 pt-4 border-t border-border text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-indigo-600 rounded"></div>
-                  <span className="text-slate-600">Current Sales</span>
+                  <span className="text-muted-foreground">Current Sales</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-emerald-500 rounded"></div>
-                  <span className="text-slate-600">Forecasted Sales</span>
+                  <div className="w-3 h-3 bg-muted0 rounded"></div>
+                  <span className="text-muted-foreground">Forecasted Sales</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Key Insights */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h2 className="text-xl font-semibold text-slate-800 mb-4">Key Insights</h2>
+          <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+            <h2 className="text-xl font-semibold text-foreground mb-4">Key Insights</h2>
             <div className="space-y-4">
               {insights.map((insight, index) => (
-                <div key={index} className="border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div key={index} className="border border-border rounded-lg p-4 hover:shadow-card transition-shadow">
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-slate-800">{insight.title}</h3>
+                    <h3 className="font-semibold text-foreground">{insight.title}</h3>
                     <span className={`px-2 py-1 rounded text-xs font-medium ${
                       insight.impact === 'high' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
                     }`}>
                       {insight.impact.toUpperCase()}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-600 mb-3">{insight.description}</p>
+                  <p className="text-sm text-muted-foreground mb-3">{insight.description}</p>
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-slate-200 rounded-full h-2">
+                    <div className="flex-1 bg-muted rounded-full h-2">
                       <div 
                         className="bg-indigo-600 h-2 rounded-full transition-all" 
                         style={{ width: `${insight.probability}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm font-medium text-slate-700">{insight.probability}%</span>
+                    <span className="text-sm font-medium text-foreground">{insight.probability}%</span>
                   </div>
                 </div>
               ))}
@@ -320,31 +320,31 @@ const SalesForecast = () => {
         </div>
 
         {/* Growth Projections */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-card p-6 text-background">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <DollarSign className="w-5 h-5" />
-                <span className="text-indigo-100">Projected Revenue</span>
+                <span className="text-background/70">Projected Revenue</span>
               </div>
-              <div className="text-3xl font-bold">$1.2M</div>
-              <div className="text-indigo-100 text-sm mt-1">Next 6 months</div>
+              <div className="text-lg sm:text-xl font-semibold tracking-tight">$1.2M</div>
+              <div className="text-background/70 text-sm mt-1">Next 6 months</div>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp className="w-5 h-5" />
-                <span className="text-indigo-100">Growth Rate</span>
+                <span className="text-background/70">Growth Rate</span>
               </div>
-              <div className="text-3xl font-bold">+24.5%</div>
-              <div className="text-indigo-100 text-sm mt-1">Year over year</div>
+              <div className="text-lg sm:text-xl font-semibold tracking-tight">+24.5%</div>
+              <div className="text-background/70 text-sm mt-1">Year over year</div>
             </div>
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Package className="w-5 h-5" />
-                <span className="text-indigo-100">Units Forecast</span>
+                <span className="text-background/70">Units Forecast</span>
               </div>
-              <div className="text-3xl font-bold">15.4K</div>
-              <div className="text-indigo-100 text-sm mt-1">Total units projected</div>
+              <div className="text-lg sm:text-xl font-semibold tracking-tight">15.4K</div>
+              <div className="text-background/70 text-sm mt-1">Total units projected</div>
             </div>
           </div>
         </div>

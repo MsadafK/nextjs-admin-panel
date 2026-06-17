@@ -2,13 +2,15 @@
 
 import { useState, useRef } from 'react';
 import { Upload, Download, FileSpreadsheet, AlertCircle, CheckCircle2, X, Users, FileText, Eye, Trash2, RefreshCw, Check, AlertTriangle, Info } from 'lucide-react';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { useLanguage } from '../../../contexts/LanguageContext';
+
+
 
 export default function BulkImportUsers() {
-  const { isDark, getThemeColors } = useTheme();
-  const { t } = useLanguage();
-  const colors = getThemeColors();
+  const colors = {
+    primary: 'bg-foreground',
+    primaryBg: 'bg-muted',
+    primaryText: 'text-foreground',
+  };
   const fileInputRef = useRef(null);
   
   const [dragActive, setDragActive] = useState(false);
@@ -215,11 +217,11 @@ export default function BulkImportUsers() {
   };
 
   const StatCard = ({ icon: Icon, label, value, color }) => (
-    <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg border p-4`}>
+    <div className={`bg-card border-border rounded-lg border p-4`}>
       <div className="flex items-center justify-between">
         <div>
-          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{label}</p>
-          <p className={`text-2xl font-bold mt-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>{value}</p>
+          <p className={`text-sm text-muted-foreground`}>{label}</p>
+          <p className={`text-lg font-semibold tracking-tight mt-1 text-foreground`}>{value}</p>
         </div>
         <div className={`p-3 ${color} bg-opacity-10 rounded-lg`}>
           <Icon size={24} className={color} />
@@ -232,20 +234,20 @@ export default function BulkImportUsers() {
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
+        <h1 className={`text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2`}>
           Bulk Import Users
         </h1>
-        <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+        <p className={`text-muted-foreground`}>
           Import multiple users at once using CSV or Excel files
         </p>
       </div>
 
       {/* Success/Error Messages */}
       {importStatus === 'success' && (
-        <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+        <div className="mb-6 p-4 bg-muted dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
           <div className="flex items-start space-x-3">
-            <div className="p-2 bg-green-500 rounded-full flex-shrink-0">
-              <CheckCircle2 size={20} className="text-white" />
+            <div className="p-2 bg-muted0 rounded-full flex-shrink-0">
+              <CheckCircle2 size={20} className="text-background" />
             </div>
             <div className="flex-1">
               <h4 className="font-semibold text-green-800 dark:text-green-300">Import Successful!</h4>
@@ -261,10 +263,10 @@ export default function BulkImportUsers() {
       )}
 
       {importStatus === 'partial' && (
-        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+        <div className="mb-6 p-4 bg-muted dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
           <div className="flex items-start space-x-3">
-            <div className="p-2 bg-yellow-500 rounded-full flex-shrink-0">
-              <AlertTriangle size={20} className="text-white" />
+            <div className="p-2 bg-muted0 rounded-full flex-shrink-0">
+              <AlertTriangle size={20} className="text-background" />
             </div>
             <div className="flex-1">
               <h4 className="font-semibold text-yellow-800 dark:text-yellow-300">Partial Import</h4>
@@ -281,78 +283,78 @@ export default function BulkImportUsers() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         {/* Instructions Card */}
-        <div className={`lg:col-span-2 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl border p-6`}>
+        <div className={`lg:col-span-2 bg-card border-border rounded-xl border p-6`}>
           <div className="flex items-center space-x-3 mb-4">
             <div className={`p-2 ${colors.primaryBg} rounded-lg`}>
               <Info size={20} className={colors.primaryText} />
             </div>
-            <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className={`text-lg font-semibold text-foreground`}>
               How to Import Users
             </h3>
           </div>
           
           <div className="space-y-3">
             <div className="flex items-start space-x-3">
-              <div className={`mt-0.5 w-6 h-6 rounded-full ${colors.primary} flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>1</div>
+              <div className={`mt-0.5 w-6 h-6 rounded-full ${colors.primary} flex items-center justify-center text-background/80 text-sm font-bold flex-shrink-0`}>1</div>
               <div>
-                <p className={`font-medium ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Download Template</p>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <p className={`font-medium text-foreground`}>Download Template</p>
+                <p className={`text-sm text-muted-foreground`}>
                   Click the "Download Template" button to get the CSV format with sample data
                 </p>
               </div>
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className={`mt-0.5 w-6 h-6 rounded-full ${colors.primary} flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>2</div>
+              <div className={`mt-0.5 w-6 h-6 rounded-full ${colors.primary} flex items-center justify-center text-background/80 text-sm font-bold flex-shrink-0`}>2</div>
               <div>
-                <p className={`font-medium ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Fill User Data</p>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <p className={`font-medium text-foreground`}>Fill User Data</p>
+                <p className={`text-sm text-muted-foreground`}>
                   Add user information in the template. Fields marked with * are required
                 </p>
               </div>
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className={`mt-0.5 w-6 h-6 rounded-full ${colors.primary} flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>3</div>
+              <div className={`mt-0.5 w-6 h-6 rounded-full ${colors.primary} flex items-center justify-center text-background/80 text-sm font-bold flex-shrink-0`}>3</div>
               <div>
-                <p className={`font-medium ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Upload & Import</p>
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <p className={`font-medium text-foreground`}>Upload & Import</p>
+                <p className={`text-sm text-muted-foreground`}>
                   Upload your file and review the data before importing
                 </p>
               </div>
             </div>
           </div>
 
-          <div className={`mt-6 p-4 rounded-lg ${isDark ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
-            <p className={`text-sm ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>
+          <div className={`mt-6 p-4 rounded-lg bg-muted border border-blue-200`}>
+            <p className={`text-sm text-blue-800`}>
               <strong>Required Fields:</strong> First Name, Last Name, Email, Phone, Department, Position, Role
             </p>
-            <p className={`text-sm ${isDark ? 'text-blue-300' : 'text-blue-800'} mt-1`}>
+            <p className={`text-sm text-blue-800 mt-1`}>
               <strong>Supported Formats:</strong> CSV, XLS, XLSX (Max 10MB)
             </p>
           </div>
         </div>
 
         {/* Template Download Card */}
-        <div className={`${isDark ? 'bg-gradient-to-br from-blue-900/40 to-purple-900/40 border-blue-700' : 'bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200'} rounded-xl border p-6`}>
+        <div className={`bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200 rounded-xl border p-6`}>
           <div className="text-center">
             <div className={`inline-flex p-4 ${colors.primary} rounded-full mb-4`}>
-              <Download size={32} className="text-white" />
+              <Download size={32} className="text-background" />
             </div>
-            <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
+            <h3 className={`text-lg font-semibold text-foreground mb-2`}>
               CSV Template
             </h3>
-            <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
+            <p className={`text-sm text-muted-foreground mb-6`}>
               Download the sample template with correct format and example data
             </p>
             <button
               onClick={downloadTemplate}
-              className={`w-full ${colors.primary} text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center space-x-2`}
+              className={`w-full ${colors.primary} text-background px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center space-x-2`}
             >
               <Download size={18} />
               <span>Download Template</span>
             </button>
-            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'} mt-3`}>
+            <p className={`text-xs text-muted-foreground mt-3`}>
               Includes sample data for reference
             </p>
           </div>
@@ -365,7 +367,7 @@ export default function BulkImportUsers() {
           className={`relative border-2 border-dashed rounded-xl p-12 text-center transition-all ${
             dragActive
               ? `${colors.primary.replace('bg-', 'border-')} bg-opacity-5`
-              : `${isDark ? 'border-gray-700 hover:border-gray-600' : 'border-gray-300 hover:border-gray-400'}`
+              : `border-border hover:border-border`
           }`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
@@ -382,28 +384,28 @@ export default function BulkImportUsers() {
           />
           
           <div className="space-y-4">
-            <div className={`inline-flex p-6 ${isDark ? 'bg-gray-800' : 'bg-gray-100'} rounded-full`}>
-              <Upload size={48} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
+            <div className={`inline-flex p-6 bg-muted rounded-full`}>
+              <Upload size={48} className={'text-muted-foreground'} />
             </div>
             
             <div>
-              <h3 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
+              <h3 className={`text-xl font-semibold text-foreground mb-2`}>
                 {dragActive ? 'Drop your file here' : 'Upload User Data File'}
               </h3>
-              <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
+              <p className={`text-muted-foreground mb-4`}>
                 Drag and drop your CSV or Excel file here, or click to browse
               </p>
             </div>
             
             <label
               htmlFor="file-upload"
-              className={`inline-flex items-center px-6 py-3 ${colors.primary} text-white rounded-lg font-medium hover:opacity-90 transition-opacity cursor-pointer`}
+              className={`inline-flex items-center px-6 py-3 ${colors.primary} text-background rounded-lg font-medium hover:opacity-90 transition-opacity cursor-pointer`}
             >
               <FileSpreadsheet size={18} className="mr-2" />
               Choose File
             </label>
             
-            <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+            <p className={`text-sm text-muted-foreground`}>
               Supported formats: CSV, XLS, XLSX (Max 10MB)
             </p>
           </div>
@@ -411,24 +413,24 @@ export default function BulkImportUsers() {
       ) : (
         <div className="space-y-6">
           {/* File Info */}
-          <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl border p-6`}>
+          <div className={`bg-card border-border rounded-xl border p-6`}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <div className={`p-3 ${colors.primaryBg} rounded-lg`}>
                   <FileText size={24} className={colors.primaryText} />
                 </div>
                 <div>
-                  <h4 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  <h4 className={`font-semibold text-foreground`}>
                     {uploadedFile.name}
                   </h4>
-                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <p className={`text-sm text-muted-foreground`}>
                     {(uploadedFile.size / 1024).toFixed(2)} KB
                   </p>
                 </div>
               </div>
               <button
                 onClick={resetUpload}
-                className={`p-2 rounded-lg ${isDark ? 'hover:bg-gray-700 text-gray-400' : 'hover:bg-gray-100 text-gray-600'} transition-colors`}
+                className={`p-2 rounded-lg hover:bg-muted text-muted-foreground transition-colors`}
               >
                 <Trash2 size={20} />
               </button>
@@ -462,14 +464,14 @@ export default function BulkImportUsers() {
                 <button
                   onClick={handleImport}
                   disabled={parsedData.length === 0}
-                  className={`flex-1 ${colors.primary} text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2`}
+                  className={`flex-1 ${colors.primary} text-background px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2`}
                 >
                   <Upload size={18} />
                   <span>Import {parsedData.length} Users</span>
                 </button>
                 <button
                   onClick={() => setShowPreview(!showPreview)}
-                  className={`px-6 py-3 rounded-lg border ${isDark ? 'border-gray-600 hover:bg-gray-700' : 'border-gray-300 hover:bg-gray-50'} transition-colors flex items-center space-x-2`}
+                  className={`px-6 py-3 rounded-lg border border-border hover:bg-muted transition-colors flex items-center space-x-2`}
                 >
                   <Eye size={18} />
                   <span>{showPreview ? 'Hide' : 'Preview'}</span>
@@ -481,14 +483,14 @@ export default function BulkImportUsers() {
             {isProcessing && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>
+                  <span className={'text-foreground'}>
                     Importing users...
                   </span>
-                  <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+                  <span className={'text-muted-foreground'}>
                     {uploadProgress}%
                   </span>
                 </div>
-                <div className={`h-2 ${isDark ? 'bg-gray-700' : 'bg-gray-200'} rounded-full overflow-hidden`}>
+                <div className={`h-2 bg-muted rounded-full overflow-hidden`}>
                   <div
                     className={`h-full ${colors.primary} transition-all duration-300 rounded-full`}
                     style={{ width: `${uploadProgress}%` }}
@@ -500,10 +502,10 @@ export default function BulkImportUsers() {
 
           {/* Errors Display */}
           {errors.length > 0 && (
-            <div className={`${isDark ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'} rounded-xl border p-6`}>
+            <div className={`bg-muted border-red-200 rounded-xl border p-6`}>
               <div className="flex items-center space-x-3 mb-4">
                 <AlertCircle size={20} className="text-red-500" />
-                <h3 className={`font-semibold ${isDark ? 'text-red-300' : 'text-red-800'}`}>
+                <h3 className={`font-semibold text-red-800`}>
                   {errors.length} Validation Error{errors.length > 1 ? 's' : ''} Found
                 </h3>
               </div>
@@ -511,20 +513,20 @@ export default function BulkImportUsers() {
                 {errors.slice(0, 10).map((error, index) => (
                   <div
                     key={index}
-                    className={`p-3 rounded-lg ${isDark ? 'bg-red-900/30' : 'bg-red-100'}`}
+                    className={`p-3 rounded-lg bg-red-100`}
                   >
-                    <p className={`text-sm font-medium ${isDark ? 'text-red-300' : 'text-red-800'} mb-1`}>
+                    <p className={`text-sm font-medium text-red-800 mb-1`}>
                       Row {error.row}: {error.errors.join(', ')}
                     </p>
                     {error.data.email && (
-                      <p className={`text-xs ${isDark ? 'text-red-400' : 'text-red-600'}`}>
+                      <p className={`text-xs text-red-600`}>
                         Email: {error.data.email}
                       </p>
                     )}
                   </div>
                 ))}
                 {errors.length > 10 && (
-                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} text-center py-2`}>
+                  <p className={`text-sm text-muted-foreground text-center py-2`}>
                     ... and {errors.length - 10} more errors
                   </p>
                 )}
@@ -534,37 +536,37 @@ export default function BulkImportUsers() {
 
           {/* Data Preview */}
           {showPreview && parsedData.length > 0 && (
-            <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-xl border p-6`}>
-              <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-4`}>
+            <div className={`bg-card border-border rounded-xl border p-6`}>
+              <h3 className={`font-semibold text-foreground mb-4`}>
                 Data Preview ({parsedData.length} records)
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className={`border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-                      <th className={`text-left py-3 px-4 font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Name</th>
-                      <th className={`text-left py-3 px-4 font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Email</th>
-                      <th className={`text-left py-3 px-4 font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Phone</th>
-                      <th className={`text-left py-3 px-4 font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Department</th>
-                      <th className={`text-left py-3 px-4 font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Position</th>
-                      <th className={`text-left py-3 px-4 font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Role</th>
+                    <tr className={`border-b border-border`}>
+                      <th className={`text-left py-3 px-4 font-medium text-foreground`}>Name</th>
+                      <th className={`text-left py-3 px-4 font-medium text-foreground`}>Email</th>
+                      <th className={`text-left py-3 px-4 font-medium text-foreground`}>Phone</th>
+                      <th className={`text-left py-3 px-4 font-medium text-foreground`}>Department</th>
+                      <th className={`text-left py-3 px-4 font-medium text-foreground`}>Position</th>
+                      <th className={`text-left py-3 px-4 font-medium text-foreground`}>Role</th>
                     </tr>
                   </thead>
                   <tbody>
                     {parsedData.slice(0, 5).map((row, index) => (
-                      <tr key={index} className={`border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-                        <td className={`py-3 px-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      <tr key={index} className={`border-b border-border`}>
+                        <td className={`py-3 px-4 text-foreground`}>
                           {row.firstname} {row.lastname}
                         </td>
-                        <td className={`py-3 px-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{row.email}</td>
-                        <td className={`py-3 px-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{row.phone}</td>
-                        <td className={`py-3 px-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{row.department}</td>
-                        <td className={`py-3 px-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{row.position}</td>
-                        <td className={`py-3 px-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <td className={`py-3 px-4 text-foreground`}>{row.email}</td>
+                        <td className={`py-3 px-4 text-foreground`}>{row.phone}</td>
+                        <td className={`py-3 px-4 text-foreground`}>{row.department}</td>
+                        <td className={`py-3 px-4 text-foreground`}>{row.position}</td>
+                        <td className={`py-3 px-4 text-foreground`}>
                           <span className={`px-2 py-1 rounded text-xs ${
                             row.role === 'admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' :
                             row.role === 'manager' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
-                            'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                            'bg-muted text-foreground  dark:text-muted-foreground'
                           }`}>
                             {row.role}
                           </span>
@@ -574,7 +576,7 @@ export default function BulkImportUsers() {
                   </tbody>
                 </table>
                 {parsedData.length > 5 && (
-                  <p className={`text-center py-3 text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <p className={`text-center py-3 text-sm text-muted-foreground`}>
                     ... and {parsedData.length - 5} more records
                   </p>
                 )}

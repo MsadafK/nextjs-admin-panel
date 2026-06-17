@@ -1,10 +1,11 @@
 'use client';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useState, useEffect } from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
-import { useLanguage } from '../../contexts/LanguageContext';
+
+
 import { TrendingUp, Search, Filter, Star, User, Clock, MessageSquare, Eye, Edit2, Trash2, Award } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+
 
 const mockReviews = [
   { id: 1, employee: { name: 'Alice Johnson', avatar: 'AJ', role: 'Developer' }, rating: 4.8, reviewDate: '2024-03-15', reviewer: 'Manager', comments: 'Outstanding performance on the dashboard project. Innovative solutions and timely delivery.', strengths: ['Innovation', 'Timeliness'], areas: ['Delegation'], overallScore: 92 },
@@ -23,9 +24,8 @@ const ratingColors = {
 };
 
 export default function PerformanceReviews() {
-  const { isDark } = useTheme();
-  const { t } = useLanguage();
-  const [reviews, setReviews] = useState(mockReviews);
+    const t = () => null;
+const [reviews, setReviews] = useState(mockReviews);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRating, setFilterRating] = useState('all');
   const [reviewCount, setReviewCount] = useState(0);
@@ -58,21 +58,21 @@ export default function PerformanceReviews() {
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, i) => (
-      <Star key={i} className={`w-4 h-4 ${i < rating ? 'fill-current text-yellow-400' : 'text-gray-300'}`} />
+      <Star key={i} className={`w-4 h-4 ${i < rating ? 'fill-current text-yellow-400' : 'text-muted-foreground'}`} />
     ));
   };
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`min-h-screen bg-muted text-foreground`}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-6 border-b border-border dark:border-border">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className={`text-3xl font-bold flex items-center gap-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h1 className={`text-lg sm:text-xl font-semibold tracking-tight flex items-center gap-3 text-foreground`}>
               <TrendingUp className="w-8 h-8" />
               {t('performance_reviews') || 'Performance Reviews'}
             </h1>
-            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`text-muted-foreground`}>
               {reviewCount} recent reviews. Track growth and feedback.
             </p>
           </div>
@@ -92,23 +92,23 @@ export default function PerformanceReviews() {
         <div className="flex flex-col lg:flex-row gap-4 mb-6">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground`} />
             <input
               type="text"
               placeholder={t('search_reviews') || 'Search by employee or comments...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-10 pr-4 py-3 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'} focus:outline-none focus:ring-2 focus:ring-purple-500`}
+              className={`w-full pl-10 pr-4 py-3 rounded-lg border bg-card border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
             />
           </div>
 
           {/* Filter */}
           <div className="flex items-center gap-2">
-            <Filter className={`w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+            <Filter className={`w-5 h-5 text-muted-foreground`} />
             <select
               value={filterRating}
               onChange={(e) => setFilterRating(e.target.value)}
-              className={`px-4 py-3 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'} focus:outline-none focus:ring-2 focus:ring-purple-500`}
+              className={`px-4 py-3 rounded-lg border bg-card border-border text-foreground focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring`}
             >
               <option value="all">All Ratings</option>
               <option value="4">4+ Stars</option>
@@ -133,34 +133,34 @@ export default function PerformanceReviews() {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: index * 0.05 }}
                   whileHover={{ y: -4, scale: 1.02 }}
-                  className={`p-6 rounded-xl shadow-lg ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'} transition-all duration-300 hover:shadow-xl`}
+                  className={`p-6 rounded-xl shadow-card bg-card border border-border transition-all duration-300 hover:shadow-dropdown`}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="relative">
-                        <div className={`w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-semibold text-lg`}>
+                        <div className={`w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-background font-semibold text-lg`}>
                           {review.employee.avatar}
                         </div>
-                        <div className="absolute -bottom-1 -right-1 bg-green-500 p-1 rounded-full">
-                          <User className="w-3 h-3 text-white" />
+                        <div className="absolute -bottom-1 -right-1 bg-muted0 p-1 rounded-full">
+                          <User className="w-3 h-3 text-background" />
                         </div>
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg">{review.employee.name}</h3>
-                        <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{review.employee.role}</p>
+                        <p className={`text-muted-foreground text-sm`}>{review.employee.role}</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="flex items-center gap-1 mb-1">
                         {renderStars(review.rating)}
                       </div>
-                      <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'} text-xs`}>{review.overallScore}% Overall</p>
+                      <p className={`text-muted-foreground text-xs`}>{review.overallScore}% Overall</p>
                     </div>
                   </div>
                   <div className="mb-4">
-                    <p className={`${isDark ? 'text-gray-300' : 'text-gray-700'} text-sm line-clamp-3`}>{review.comments}</p>
+                    <p className={`text-foreground text-sm line-clamp-3`}>{review.comments}</p>
                   </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-600">
+                  <div className="flex items-center justify-between pt-4 border-t border-border dark:border-border">
                     <div className="flex flex-wrap gap-2">
                       {review.strengths.map((strength, sIndex) => (
                         <span key={sIndex} className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 text-xs rounded-full">
@@ -174,18 +174,18 @@ export default function PerformanceReviews() {
                       ))}
                     </div>
                     <div className="flex items-center space-x-2">
-                      <button className="p-1 text-gray-500 hover:text-purple-500 transition-colors">
+                      <button className="p-1 text-muted-foreground hover:text-purple-500 transition-colors">
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-gray-500 hover:text-blue-500 transition-colors">
+                      <button className="p-1 text-muted-foreground hover:text-blue-500 transition-colors">
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button className="p-1 text-gray-500 hover:text-red-500 transition-colors">
+                      <button className="p-1 text-muted-foreground hover:text-red-500 transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-                  <p className={`text-xs mt-2 flex items-center gap-1 ${isDark ? 'text-gray-500' : 'text-gray-500'}`}>
+                  <p className={`text-xs mt-2 flex items-center gap-1 text-muted-foreground`}>
                     <Clock className="w-3 h-3" />
                     {review.reviewDate} by {review.reviewer}
                   </p>
@@ -196,11 +196,11 @@ export default function PerformanceReviews() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className={`p-12 text-center rounded-xl ${isDark ? 'bg-gray-800' : 'bg-white'} border border-dashed ${isDark ? 'border-gray-700' : 'border-gray-300'}`}
+              className={`p-12 text-center rounded-xl bg-card border border-dashed border-border`}
             >
-              <TrendingUp className={`w-16 h-16 mx-auto mb-4 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+              <TrendingUp className={`w-16 h-16 mx-auto mb-4 text-muted-foreground`} />
               <h3 className="text-lg font-semibold mb-2">{t('no_reviews_found') || 'No reviews found'}</h3>
-              <p className={`${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Try adjusting your search or filter criteria.</p>
+              <p className={`text-muted-foreground`}>Try adjusting your search or filter criteria.</p>
             </motion.div>
           )}
         </AnimatePresence>

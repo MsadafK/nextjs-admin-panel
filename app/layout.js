@@ -177,6 +177,11 @@ function LayoutContent({ children }) {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <title>NexAdmin — Admin Dashboard</title>
+        <meta name="description" content="A modern, full-featured admin dashboard built with Next.js. Manage users, products, analytics, messages, and more." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body
         className="min-h-screen font-sans antialiased bg-background text-foreground"
         suppressHydrationWarning

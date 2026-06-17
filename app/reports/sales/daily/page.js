@@ -144,7 +144,7 @@ export default function DailySalesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -152,25 +152,25 @@ export default function DailySalesPage() {
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent flex items-center gap-3">
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground flex items-center gap-3">
               <Calendar size={32} />
               Daily Sales Report
             </h1>
-            <p className="text-slate-600 mt-1 flex items-center gap-2">
+            <p className="text-muted-foreground mt-1 flex items-center gap-2">
               <TimeIcon size={16} />
               {formatDate(selectedDate)}
             </p>
           </div>
 
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-all flex items-center gap-2 text-slate-700 hover:shadow-md">
+            <button className="px-4 py-2 bg-card rounded-lg border border-border hover:border-border transition-all flex items-center gap-2 text-foreground hover:shadow-card">
               <Filter size={18} />
               <span>Filter</span>
             </button>
-            <button className="px-4 py-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-all flex items-center gap-2 text-slate-700 hover:shadow-md">
+            <button className="px-4 py-2 bg-card rounded-lg border border-border hover:border-border transition-all flex items-center gap-2 text-foreground hover:shadow-card">
               <RefreshCw size={18} />
             </button>
-            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2">
+            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-background rounded-lg hover:shadow-card transition-all flex items-center gap-2">
               <Download size={18} />
               <span>Export</span>
             </button>
@@ -182,19 +182,19 @@ export default function DailySalesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center justify-between"
+          className="bg-card rounded-xl p-4 shadow-sm border border-border flex items-center justify-between"
         >
-          <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-            <ChevronLeft size={20} className="text-slate-600" />
+          <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+            <ChevronLeft size={20} className="text-muted-foreground" />
           </button>
           <div className="flex items-center gap-2">
             <Calendar size={18} className="text-blue-600" />
-            <span className="font-semibold text-slate-800">
+            <span className="font-semibold text-foreground">
               {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
             </span>
           </div>
-          <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-            <ChevronRight size={20} className="text-slate-600" />
+          <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+            <ChevronRight size={20} className="text-muted-foreground" />
           </button>
         </motion.div>
 
@@ -206,14 +206,14 @@ export default function DailySalesPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.05 }}
-              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all border border-slate-100 group relative overflow-hidden"
+              className="bg-card rounded-xl p-6 shadow-sm hover:shadow-card transition-all border border-border group relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity" style={{ backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))` }} />
               
               <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} group-hover:scale-110 transition-transform shadow-lg`}>
-                    <stat.icon className="text-white" size={24} />
+                  <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} group-hover:scale-110 transition-transform shadow-card`}>
+                    <stat.icon className="text-background" size={24} />
                   </div>
                   <div className={`flex items-center gap-1 text-sm font-bold px-2.5 py-1 rounded-full ${
                     stat.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
@@ -223,15 +223,15 @@ export default function DailySalesPage() {
                   </div>
                 </div>
                 
-                <h3 className="text-3xl font-bold text-slate-800 mb-1">{stat.value}</h3>
-                <p className="text-slate-600 text-sm mb-3">{stat.title}</p>
+                <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-1">{stat.value}</h3>
+                <p className="text-muted-foreground text-sm mb-3">{stat.title}</p>
                 
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs text-slate-500">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>{stat.subtitle}</span>
                     <span className="font-semibold">{stat.target}%</span>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${stat.target}%` }}
@@ -250,21 +250,21 @@ export default function DailySalesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-6 shadow-sm border border-border"
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <BarChart3 size={20} className="text-blue-600" />
-              <h2 className="text-xl font-bold text-slate-800">Hourly Sales Performance</h2>
+              <h2 className="text-base font-semibold text-foreground">Hourly Sales Performance</h2>
             </div>
             <div className="flex gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500" />
-                <span className="text-slate-600">Sales</span>
+                <span className="text-muted-foreground">Sales</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-gradient-to-r from-green-500 to-emerald-500" />
-                <span className="text-slate-600">Orders</span>
+                <span className="text-muted-foreground">Orders</span>
               </div>
             </div>
           </div>
@@ -276,27 +276,27 @@ export default function DailySalesPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + index * 0.02 }}
-                className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg transition-colors"
+                className="flex items-center gap-3 p-2 hover:bg-muted rounded-lg transition-colors"
               >
-                <div className="w-14 text-sm font-medium text-slate-600 flex items-center gap-1">
+                <div className="w-14 text-sm font-medium text-muted-foreground flex items-center gap-1">
                   <Clock size={12} />
                   {data.hour}
                 </div>
                 
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 h-8 bg-slate-100 rounded-lg overflow-hidden relative">
+                    <div className="flex-1 h-8 bg-muted rounded-lg overflow-hidden relative">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${(data.sales / maxSales) * 100}%` }}
                         transition={{ delay: 0.5 + index * 0.02, duration: 0.5 }}
                         className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-end pr-2"
                       >
-                        <span className="text-xs font-semibold text-white">${data.sales}</span>
+                        <span className="text-xs font-semibold text-background">${data.sales}</span>
                       </motion.div>
                     </div>
                     <div className="w-20 text-right">
-                      <span className="text-xs font-semibold text-slate-700">{data.orders} orders</span>
+                      <span className="text-xs font-semibold text-foreground">{data.orders} orders</span>
                     </div>
                   </div>
                 </div>
@@ -311,28 +311,28 @@ export default function DailySalesPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+            className="bg-card rounded-xl p-6 shadow-sm border border-border"
           >
             <div className="flex items-center gap-2 mb-6">
               <Star size={20} className="text-yellow-500 fill-yellow-500" />
-              <h2 className="text-xl font-bold text-slate-800">Top Products Today</h2>
+              <h2 className="text-base font-semibold text-foreground">Top Products Today</h2>
             </div>
 
             <div className="space-y-3">
               {topProducts.map((product, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-cyan-600 text-white font-bold text-sm">
+                <div key={index} className="flex items-center gap-3 p-3 bg-muted rounded-lg hover:bg-muted transition-colors">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-cyan-600 text-background font-bold text-sm">
                     {index + 1}
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-slate-800 text-sm mb-1">{product.name}</p>
-                    <div className="flex items-center gap-3 text-xs text-slate-600">
+                    <p className="font-semibold text-foreground text-sm mb-1">{product.name}</p>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <span>{product.sales} sold</span>
                       <span className="text-green-600 font-semibold">+{product.growth}%</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-slate-800">{product.revenue}</p>
+                    <p className="font-bold text-foreground">{product.revenue}</p>
                   </div>
                 </div>
               ))}
@@ -344,24 +344,24 @@ export default function DailySalesPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+            className="bg-card rounded-xl p-6 shadow-sm border border-border"
           >
             <div className="flex items-center gap-2 mb-6">
               <CreditCard size={20} className="text-blue-600" />
-              <h2 className="text-xl font-bold text-slate-800">Payment Methods</h2>
+              <h2 className="text-base font-semibold text-foreground">Payment Methods</h2>
             </div>
 
             <div className="space-y-4">
               {paymentMethods.map((payment, index) => (
                 <div key={index} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-800">{payment.method}</span>
+                    <span className="font-semibold text-foreground">{payment.method}</span>
                     <div className="text-right">
-                      <p className="font-bold text-slate-800">{payment.amount}</p>
-                      <p className="text-xs text-slate-500">{payment.count} transactions</p>
+                      <p className="font-bold text-foreground">{payment.amount}</p>
+                      <p className="text-xs text-muted-foreground">{payment.count} transactions</p>
                     </div>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${payment.percentage}%` }}
@@ -369,7 +369,7 @@ export default function DailySalesPage() {
                       className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"
                     />
                   </div>
-                  <p className="text-xs text-slate-500">{payment.percentage}% of total</p>
+                  <p className="text-xs text-muted-foreground">{payment.percentage}% of total</p>
                 </div>
               ))}
             </div>
@@ -381,50 +381,50 @@ export default function DailySalesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden"
+          className="bg-card rounded-xl shadow-sm border border-border overflow-hidden"
         >
-          <div className="p-6 border-b border-slate-100">
+          <div className="p-6 border-b border-border">
             <div className="flex items-center gap-2">
               <Package size={20} className="text-blue-600" />
-              <h2 className="text-xl font-bold text-slate-800">Recent Orders</h2>
+              <h2 className="text-base font-semibold text-foreground">Recent Orders</h2>
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="bg-muted border-b border-border">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Order ID</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Time</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Customer</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Items</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Amount</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Order ID</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Time</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Customer</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Items</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Amount</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {recentOrders.map((order, index) => (
                   <motion.tr
                     key={order.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.7 + index * 0.05 }}
-                    className="hover:bg-slate-50 transition-colors"
+                    className="hover:bg-muted transition-colors"
                   >
                     <td className="px-6 py-4">
                       <span className="font-semibold text-blue-600">{order.id}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-slate-600 text-sm">{order.time}</span>
+                      <span className="text-muted-foreground text-sm">{order.time}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-slate-800 font-medium">{order.customer}</span>
+                      <span className="text-foreground font-medium">{order.customer}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-slate-600">{order.items}</span>
+                      <span className="text-muted-foreground">{order.items}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-semibold text-slate-800">{order.amount}</span>
+                      <span className="font-semibold text-foreground">{order.amount}</span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
@@ -447,24 +447,24 @@ export default function DailySalesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl p-6 text-white shadow-lg"
+          className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl p-6 text-background shadow-card"
         >
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-white/20 rounded-lg">
+            <div className="p-3 bg-card/20 rounded-lg">
               <Zap size={24} />
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold mb-2">Today's Insights</h3>
+              <h3 className="text-base font-semibold mb-2">Today's Insights</h3>
               <div className="grid md:grid-cols-3 gap-4 text-sm">
-                <div className="bg-white/10 rounded-lg p-3">
+                <div className="bg-card/10 rounded-lg p-3">
                   <p className="text-blue-200 mb-1">Peak Hour</p>
                   <p className="font-semibold">12:00 PM with $4,560 in sales</p>
                 </div>
-                <div className="bg-white/10 rounded-lg p-3">
+                <div className="bg-card/10 rounded-lg p-3">
                   <p className="text-blue-200 mb-1">Top Payment</p>
                   <p className="font-semibold">Credit Cards lead with 58% share</p>
                 </div>
-                <div className="bg-white/10 rounded-lg p-3">
+                <div className="bg-card/10 rounded-lg p-3">
                   <p className="text-blue-200 mb-1">Trending</p>
                   <p className="font-semibold">Wireless Headphones (+23% growth)</p>
                 </div>

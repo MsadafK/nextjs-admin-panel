@@ -168,7 +168,7 @@ const ActionItems = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: 'text-slate-500',
+      pending: 'text-muted-foreground',
       'in-progress': 'text-blue-600',
       completed: 'text-green-600'
     };
@@ -176,7 +176,7 @@ const ActionItems = () => {
   };
 
   const ActionCard = ({ item }) => (
-    <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-md transition-all">
+    <div className="bg-card rounded-lg border border-border p-4 hover:shadow-card transition-all">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start gap-3 flex-1">
           <button className={`mt-1 ${getStatusColor(item.status)}`}>
@@ -187,11 +187,11 @@ const ActionItems = () => {
             )}
           </button>
           <div className="flex-1">
-            <h3 className="font-semibold text-slate-800 mb-1">{item.title}</h3>
-            <p className="text-sm text-slate-600 line-clamp-2">{item.description}</p>
+            <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
+            <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
           </div>
         </div>
-        <button className="text-slate-400 hover:text-slate-600">
+        <button className="text-muted-foreground hover:text-muted-foreground">
           <MoreVertical className="w-4 h-4" />
         </button>
       </div>
@@ -210,11 +210,11 @@ const ActionItems = () => {
 
       {item.status === 'in-progress' && (
         <div className="mb-3">
-          <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
+          <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
             <span>Progress</span>
             <span className="font-medium">{item.progress}%</span>
           </div>
-          <div className="w-full bg-slate-200 rounded-full h-2">
+          <div className="w-full bg-muted rounded-full h-2">
             <div 
               className="bg-blue-600 h-2 rounded-full transition-all" 
               style={{ width: `${item.progress}%` }}
@@ -223,7 +223,7 @@ const ActionItems = () => {
         </div>
       )}
 
-      <div className="flex items-center justify-between text-xs text-slate-500 mb-3 pb-3 border-b border-slate-100">
+      <div className="flex items-center justify-between text-xs text-muted-foreground mb-3 pb-3 border-b border-border">
         <div className="flex items-center gap-1">
           <Calendar className="w-3 h-3" />
           {item.dueDate}
@@ -246,16 +246,16 @@ const ActionItems = () => {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-xs font-medium">
+          <div className="w-6 h-6 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-background text-xs font-medium">
             {item.assignedTo.split(' ').map(n => n[0]).join('')}
           </div>
-          <span className="text-xs text-slate-600">{item.assignedTo}</span>
+          <span className="text-xs text-muted-foreground">{item.assignedTo}</span>
         </div>
         <div className="flex gap-1">
-          <button className="p-1.5 hover:bg-slate-100 rounded transition-colors">
-            <Edit3 className="w-3.5 h-3.5 text-slate-600" />
+          <button className="p-1.5 hover:bg-muted rounded transition-colors">
+            <Edit3 className="w-3.5 h-3.5 text-muted-foreground" />
           </button>
-          <button className="p-1.5 hover:bg-slate-100 rounded transition-colors">
+          <button className="p-1.5 hover:bg-muted rounded transition-colors">
             <Trash2 className="w-3.5 h-3.5 text-red-600" />
           </button>
         </div>
@@ -265,16 +265,16 @@ const ActionItems = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Action Items</h1>
-            <p className="text-slate-600">Track and manage meeting action items and tasks</p>
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Action Items</h1>
+            <p className="text-muted-foreground">Track and manage meeting action items and tasks</p>
           </div>
           <button 
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 font-medium"
+            className="px-4 py-2 bg-purple-600 text-background rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 font-medium"
           >
             <Plus className="w-4 h-4" />
             New Action Item
@@ -283,65 +283,65 @@ const ActionItems = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Total Items</span>
+              <span className="text-sm text-muted-foreground">Total Items</span>
               <TrendingUp className="w-5 h-5 text-purple-600" />
             </div>
-            <div className="text-3xl font-bold text-slate-800">{stats.total}</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{stats.total}</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Pending</span>
-              <Circle className="w-5 h-5 text-slate-500" />
+              <span className="text-sm text-muted-foreground">Pending</span>
+              <Circle className="w-5 h-5 text-muted-foreground" />
             </div>
-            <div className="text-3xl font-bold text-slate-600">{stats.pending}</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-muted-foreground">{stats.pending}</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">In Progress</span>
+              <span className="text-sm text-muted-foreground">In Progress</span>
               <Clock className="w-5 h-5 text-blue-600" />
             </div>
-            <div className="text-3xl font-bold text-blue-600">{stats.inProgress}</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-blue-600">{stats.inProgress}</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Completed</span>
+              <span className="text-sm text-muted-foreground">Completed</span>
               <CheckCircle2 className="w-5 h-5 text-green-600" />
             </div>
-            <div className="text-3xl font-bold text-green-600">{stats.completed}</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-green-600">{stats.completed}</div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-600">Overdue</span>
+              <span className="text-sm text-muted-foreground">Overdue</span>
               <AlertCircle className="w-5 h-5 text-red-600" />
             </div>
-            <div className="text-3xl font-bold text-red-600">{stats.overdue}</div>
+            <div className="text-lg sm:text-xl font-semibold tracking-tight text-red-600">{stats.overdue}</div>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search action items..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
               />
             </div>
             <div className="flex gap-2">
               <select 
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
@@ -351,7 +351,7 @@ const ActionItems = () => {
               <select 
                 value={priorityFilter}
                 onChange={(e) => setPriorityFilter(e.target.value)}
-                className="px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
               >
                 <option value="all">All Priority</option>
                 <option value="critical">Critical</option>
@@ -359,16 +359,16 @@ const ActionItems = () => {
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
               </select>
-              <div className="flex gap-1 border border-slate-300 rounded-lg p-1">
+              <div className="flex gap-1 border border-border rounded-lg p-1">
                 <button 
                   onClick={() => setViewMode('board')}
-                  className={`px-3 py-1.5 rounded transition-colors text-sm ${viewMode === 'board' ? 'bg-purple-100 text-purple-700' : 'text-slate-600 hover:bg-slate-100'}`}
+                  className={`px-3 py-1.5 rounded transition-colors text-sm ${viewMode === 'board' ? 'bg-purple-100 text-purple-700' : 'text-muted-foreground hover:bg-muted'}`}
                 >
                   Board
                 </button>
                 <button 
                   onClick={() => setViewMode('list')}
-                  className={`px-3 py-1.5 rounded transition-colors text-sm ${viewMode === 'list' ? 'bg-purple-100 text-purple-700' : 'text-slate-600 hover:bg-slate-100'}`}
+                  className={`px-3 py-1.5 rounded transition-colors text-sm ${viewMode === 'list' ? 'bg-purple-100 text-purple-700' : 'text-muted-foreground hover:bg-muted'}`}
                 >
                   List
                 </button>
@@ -381,12 +381,12 @@ const ActionItems = () => {
         {viewMode === 'board' ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Pending Column */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Circle className="w-5 h-5 text-slate-500" />
-                  <h3 className="font-semibold text-slate-800">Pending</h3>
-                  <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-full">
+                  <Circle className="w-5 h-5 text-muted-foreground" />
+                  <h3 className="font-semibold text-foreground">Pending</h3>
+                  <span className="px-2 py-0.5 bg-muted text-muted-foreground text-xs rounded-full">
                     {groupedItems.pending.length}
                   </span>
                 </div>
@@ -399,12 +399,12 @@ const ActionItems = () => {
             </div>
 
             {/* In Progress Column */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5 text-blue-600" />
-                  <h3 className="font-semibold text-slate-800">In Progress</h3>
-                  <span className="px-2 py-0.5 bg-blue-100 text-blue-600 text-xs rounded-full">
+                  <h3 className="font-semibold text-foreground">In Progress</h3>
+                  <span className="px-2 py-0.5 bg-muted text-foreground text-xs rounded-full">
                     {groupedItems['in-progress'].length}
                   </span>
                 </div>
@@ -417,12 +417,12 @@ const ActionItems = () => {
             </div>
 
             {/* Completed Column */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-4">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  <h3 className="font-semibold text-slate-800">Completed</h3>
-                  <span className="px-2 py-0.5 bg-green-100 text-green-600 text-xs rounded-full">
+                  <h3 className="font-semibold text-foreground">Completed</h3>
+                  <span className="px-2 py-0.5 bg-muted text-foreground text-xs rounded-full">
                     {groupedItems.completed.length}
                   </span>
                 </div>
@@ -436,9 +436,9 @@ const ActionItems = () => {
           </div>
         ) : (
           /* List View */
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-3">
+          <div className="bg-card rounded-xl shadow-sm border border-border p-6 space-y-3">
             {filteredItems.map(item => (
-              <div key={item.id} className="p-4 border border-slate-200 rounded-lg hover:shadow-md transition-all">
+              <div key={item.id} className="p-4 border border-border rounded-lg hover:shadow-card transition-all">
                 <div className="flex items-start gap-4">
                   <button className={`mt-1 ${getStatusColor(item.status)}`}>
                     {item.status === 'completed' ? (
@@ -450,12 +450,12 @@ const ActionItems = () => {
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-slate-800 mb-1">{item.title}</h3>
-                        <p className="text-sm text-slate-600">{item.description}</p>
+                        <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
                       </div>
                       {getPriorityBadge(item.priority)}
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <User className="w-3 h-3" />
                         {item.assignedTo}
@@ -477,7 +477,7 @@ const ActionItems = () => {
                     </div>
                     {item.status === 'in-progress' && (
                       <div className="mt-3 max-w-xs">
-                        <div className="w-full bg-slate-200 rounded-full h-2">
+                        <div className="w-full bg-muted rounded-full h-2">
                           <div 
                             className="bg-blue-600 h-2 rounded-full transition-all" 
                             style={{ width: `${item.progress}%` }}
@@ -496,31 +496,31 @@ const ActionItems = () => {
       {/* Add Action Item Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full">
-            <div className="p-6 border-b border-slate-200">
-              <h3 className="text-xl font-semibold text-slate-800">New Action Item</h3>
+          <div className="bg-card rounded-xl shadow-card max-w-2xl w-full">
+            <div className="p-6 border-b border-border">
+              <h3 className="text-xl font-semibold text-foreground">New Action Item</h3>
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Title</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Title</label>
                 <input
                   type="text"
                   placeholder="Enter action item title..."
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Description</label>
                 <textarea
                   placeholder="Describe the action item..."
                   rows="3"
-                  className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Priority</label>
-                  <select className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                  <label className="block text-sm font-medium text-foreground mb-2">Priority</label>
+                  <select className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring">
                     <option>Low</option>
                     <option>Medium</option>
                     <option>High</option>
@@ -528,16 +528,16 @@ const ActionItems = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Due Date</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">Due Date</label>
                   <input
                     type="date"
-                    className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Assign To</label>
-                <select className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                <label className="block text-sm font-medium text-foreground mb-2">Assign To</label>
+                <select className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring">
                   <option>John Doe</option>
                   <option>Sarah Smith</option>
                   <option>Mike Johnson</option>
@@ -545,16 +545,16 @@ const ActionItems = () => {
                 </select>
               </div>
             </div>
-            <div className="p-6 border-t border-slate-200 flex gap-3 justify-end">
+            <div className="p-6 border-t border-border flex gap-3 justify-end">
               <button 
                 onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+                className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                className="px-4 py-2 bg-purple-600 text-background rounded-lg hover:bg-purple-700 transition-colors"
               >
                 Create Action Item
               </button>

@@ -22,7 +22,7 @@ export default function KeyUsagePage() {
       trend: 'up',
       icon: Activity, 
       color: 'from-blue-500 to-indigo-600', 
-      bgColor: 'bg-blue-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-blue-600' 
     },
     { 
@@ -32,7 +32,7 @@ export default function KeyUsagePage() {
       trend: 'up',
       icon: CheckCircle, 
       color: 'from-emerald-500 to-teal-600', 
-      bgColor: 'bg-emerald-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-emerald-600' 
     },
     { 
@@ -42,7 +42,7 @@ export default function KeyUsagePage() {
       trend: 'down',
       icon: AlertCircle, 
       color: 'from-orange-500 to-red-600', 
-      bgColor: 'bg-orange-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-orange-600' 
     },
     { 
@@ -52,7 +52,7 @@ export default function KeyUsagePage() {
       trend: 'down',
       icon: Zap, 
       color: 'from-purple-500 to-pink-600', 
-      bgColor: 'bg-purple-50', 
+      bgColor: 'bg-muted', 
       textColor: 'text-purple-600' 
     },
   ];
@@ -158,7 +158,7 @@ export default function KeyUsagePage() {
         color: 'orange'
       },
       'inactive': {
-        badge: 'bg-slate-100 text-slate-700',
+        badge: 'bg-muted text-foreground',
         icon: Lock,
         text: 'Inactive',
         color: 'slate'
@@ -177,34 +177,34 @@ export default function KeyUsagePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
                 API Key Usage
               </h1>
               <Shield className="w-8 h-8 text-indigo-600" />
             </div>
-            <p className="text-slate-600">Monitor and analyze API key performance</p>
+            <p className="text-muted-foreground">Monitor and analyze API key performance</p>
           </div>
           <div className="flex items-center gap-3">
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors bg-white cursor-pointer font-semibold"
+              className="px-4 py-3 border-2 border-border rounded-xl focus:border-indigo-500 focus:outline-none transition-colors bg-card cursor-pointer font-semibold"
             >
               {periods.map(period => (
                 <option key={period.value} value={period.value}>{period.label}</option>
               ))}
             </select>
-            <button className="flex items-center gap-2 bg-white text-slate-700 px-4 py-3 rounded-xl hover:shadow-lg transition-all duration-300 border border-slate-200">
+            <button className="flex items-center gap-2 bg-card text-foreground px-4 py-3 rounded-xl hover:shadow-card transition-all duration-300 border border-border">
               <Download className="w-5 h-5" />
               <span className="hidden sm:inline">Export</span>
             </button>
-            <button className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-background px-6 py-3 rounded-xl hover:shadow-card transition-all duration-300">
               <RefreshCw className="w-5 h-5" />
               <span>Refresh</span>
             </button>
@@ -217,7 +217,7 @@ export default function KeyUsagePage() {
             const Icon = stat.icon;
             const TrendIcon = stat.trend === 'up' ? TrendingUp : TrendingDown;
             return (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card hover:shadow-dropdown transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`${stat.bgColor} w-12 h-12 rounded-xl flex items-center justify-center`}>
                     <Icon className={`w-6 h-6 ${stat.textColor}`} />
@@ -229,8 +229,8 @@ export default function KeyUsagePage() {
                     {stat.change}
                   </span>
                 </div>
-                <p className="text-slate-600 text-sm mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-slate-800">{stat.value}</p>
+                <p className="text-muted-foreground text-sm mb-1">{stat.label}</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{stat.value}</p>
               </div>
             );
           })}
@@ -246,7 +246,7 @@ export default function KeyUsagePage() {
             return (
               <div 
                 key={apiKey.id}
-                className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-300"
+                className="bg-card border border-border rounded-lg shadow-card overflow-hidden hover:shadow-dropdown transition-all duration-300"
               >
                 <div className="p-6">
                   {/* Header */}
@@ -257,8 +257,8 @@ export default function KeyUsagePage() {
                           <Key className="w-6 h-6 text-indigo-600" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-slate-800">{apiKey.name}</h3>
-                          <p className="text-sm text-slate-500">Created: {apiKey.created}</p>
+                          <h3 className="text-base font-semibold text-foreground">{apiKey.name}</h3>
+                          <p className="text-sm text-muted-foreground">Created: {apiKey.created}</p>
                         </div>
                         <span className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${statusConfig.badge}`}>
                           <StatusIcon className="w-4 h-4" />
@@ -267,30 +267,30 @@ export default function KeyUsagePage() {
                       </div>
 
                       {/* API Key Display */}
-                      <div className="bg-slate-50 rounded-xl p-4 mb-4">
+                      <div className="bg-muted rounded-xl p-4 mb-4">
                         <div className="flex items-center justify-between">
-                          <code className="text-sm font-mono text-slate-700 flex-1">
+                          <code className="text-sm font-mono text-foreground flex-1">
                             {showKey[apiKey.id] ? apiKey.key : '•'.repeat(40)}
                           </code>
                           <div className="flex items-center gap-2 ml-4">
                             <button 
                               onClick={() => toggleKeyVisibility(apiKey.id)}
-                              className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
+                              className="p-2 hover:bg-muted rounded-lg transition-colors"
                             >
                               {showKey[apiKey.id] ? (
-                                <EyeOff className="w-4 h-4 text-slate-600" />
+                                <EyeOff className="w-4 h-4 text-muted-foreground" />
                               ) : (
-                                <Eye className="w-4 h-4 text-slate-600" />
+                                <Eye className="w-4 h-4 text-muted-foreground" />
                               )}
                             </button>
                             <button 
                               onClick={() => copyToClipboard(apiKey.key)}
-                              className="p-2 hover:bg-slate-200 rounded-lg transition-colors"
+                              className="p-2 hover:bg-muted rounded-lg transition-colors"
                             >
-                              <Copy className="w-4 h-4 text-slate-600" />
+                              <Copy className="w-4 h-4 text-muted-foreground" />
                             </button>
-                            <button className="p-2 hover:bg-slate-200 rounded-lg transition-colors">
-                              <RotateCw className="w-4 h-4 text-slate-600" />
+                            <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                              <RotateCw className="w-4 h-4 text-muted-foreground" />
                             </button>
                           </div>
                         </div>
@@ -298,20 +298,20 @@ export default function KeyUsagePage() {
 
                       {/* Quick Metrics */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                        <div className="bg-blue-50 rounded-lg p-3">
-                          <p className="text-xs text-slate-600 mb-1">Total Calls</p>
-                          <p className="text-lg font-bold text-slate-800">{apiKey.totalCalls.toLocaleString()}</p>
+                        <div className="bg-muted rounded-lg p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Total Calls</p>
+                          <p className="text-lg font-bold text-foreground">{apiKey.totalCalls.toLocaleString()}</p>
                         </div>
-                        <div className="bg-emerald-50 rounded-lg p-3">
-                          <p className="text-xs text-slate-600 mb-1">Success Rate</p>
+                        <div className="bg-muted rounded-lg p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Success Rate</p>
                           <p className="text-lg font-bold text-emerald-600">{apiKey.successRate}%</p>
                         </div>
-                        <div className="bg-orange-50 rounded-lg p-3">
-                          <p className="text-xs text-slate-600 mb-1">Failed Calls</p>
+                        <div className="bg-muted rounded-lg p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Failed Calls</p>
                           <p className="text-lg font-bold text-orange-600">{apiKey.failedCalls.toLocaleString()}</p>
                         </div>
-                        <div className="bg-purple-50 rounded-lg p-3">
-                          <p className="text-xs text-slate-600 mb-1">Avg Response</p>
+                        <div className="bg-muted rounded-lg p-3">
+                          <p className="text-xs text-muted-foreground mb-1">Avg Response</p>
                           <p className="text-lg font-bold text-purple-600">{apiKey.avgResponseTime}ms</p>
                         </div>
                       </div>
@@ -319,12 +319,12 @@ export default function KeyUsagePage() {
                       {/* Rate Limit Progress */}
                       <div className="mb-4">
                         <div className="flex justify-between text-sm mb-2">
-                          <span className="text-slate-600">Rate Limit Usage</span>
-                          <span className="font-semibold text-slate-800">
+                          <span className="text-muted-foreground">Rate Limit Usage</span>
+                          <span className="font-semibold text-foreground">
                             {apiKey.currentUsage.toLocaleString()} / {apiKey.rateLimit}
                           </span>
                         </div>
-                        <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                        <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
                           <div 
                             className={`h-full rounded-full transition-all duration-500 ${
                               usagePercentage >= 90 ? 'bg-gradient-to-r from-red-500 to-orange-500' :
@@ -334,7 +334,7 @@ export default function KeyUsagePage() {
                             style={{ width: `${usagePercentage}%` }}
                           ></div>
                         </div>
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           {usagePercentage.toFixed(1)}% of hourly limit used
                         </p>
                       </div>
@@ -345,7 +345,7 @@ export default function KeyUsagePage() {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Top Endpoints */}
                     <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4">
-                      <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                      <h4 className="font-bold text-foreground mb-3 flex items-center gap-2">
                         <Server className="w-5 h-5 text-blue-600" />
                         Top Endpoints
                       </h4>
@@ -353,10 +353,10 @@ export default function KeyUsagePage() {
                         {apiKey.topEndpoints.map((endpoint, idx) => (
                           <div key={idx}>
                             <div className="flex justify-between text-sm mb-1">
-                              <code className="text-slate-700 font-mono text-xs">{endpoint.endpoint}</code>
-                              <span className="font-semibold text-slate-800">{endpoint.calls.toLocaleString()}</span>
+                              <code className="text-foreground font-mono text-xs">{endpoint.endpoint}</code>
+                              <span className="font-semibold text-foreground">{endpoint.calls.toLocaleString()}</span>
                             </div>
-                            <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                            <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                               <div 
                                 className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full"
                                 style={{ width: `${endpoint.percentage}%` }}
@@ -369,7 +369,7 @@ export default function KeyUsagePage() {
 
                     {/* Geographic Usage */}
                     <div className="bg-gradient-to-br from-slate-50 to-purple-50 rounded-xl p-4">
-                      <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                      <h4 className="font-bold text-foreground mb-3 flex items-center gap-2">
                         <Globe className="w-5 h-5 text-purple-600" />
                         Geographic Distribution
                       </h4>
@@ -378,7 +378,7 @@ export default function KeyUsagePage() {
                           <div key={idx} className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               <span className="text-2xl">{geo.flag}</span>
-                              <span className="font-semibold text-slate-800">{geo.country}</span>
+                              <span className="font-semibold text-foreground">{geo.country}</span>
                             </div>
                             <span className="text-sm font-bold text-purple-600">{geo.calls.toLocaleString()}</span>
                           </div>
@@ -393,9 +393,9 @@ export default function KeyUsagePage() {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-          <div className="p-6 border-b border-slate-200">
-            <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+        <div className="bg-card border border-border rounded-lg shadow-card overflow-hidden">
+          <div className="p-6 border-b border-border">
+            <h2 className="text-lg font-semibold tracking-tight text-foreground flex items-center gap-2">
               <Activity className="w-7 h-7 text-indigo-600" />
               Recent API Activity
             </h2>
@@ -403,20 +403,20 @@ export default function KeyUsagePage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b-2 border-slate-200">
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Endpoint</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Method</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Status</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Response Time</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">IP Address</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Time</th>
+                <tr className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b-2 border-border">
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Endpoint</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Method</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Status</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Response Time</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">IP Address</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Time</th>
                 </tr>
               </thead>
               <tbody>
                 {recentActivity.map((activity, index) => (
-                  <tr key={index} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                  <tr key={index} className="border-b border-border hover:bg-muted transition-colors">
                     <td className="py-4 px-6">
-                      <code className="text-sm font-mono text-slate-700">{activity.endpoint}</code>
+                      <code className="text-sm font-mono text-foreground">{activity.endpoint}</code>
                     </td>
                     <td className="py-4 px-6">
                       <span className={`px-3 py-1 rounded-full text-xs font-bold ${
@@ -449,8 +449,8 @@ export default function KeyUsagePage() {
                         {activity.responseTime}ms
                       </span>
                     </td>
-                    <td className="py-4 px-6 font-mono text-sm text-slate-600">{activity.ip}</td>
-                    <td className="py-4 px-6 text-slate-600">{activity.timestamp}</td>
+                    <td className="py-4 px-6 font-mono text-sm text-muted-foreground">{activity.ip}</td>
+                    <td className="py-4 px-6 text-muted-foreground">{activity.timestamp}</td>
                   </tr>
                 ))}
               </tbody>

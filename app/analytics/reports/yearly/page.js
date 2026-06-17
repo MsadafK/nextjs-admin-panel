@@ -22,7 +22,7 @@ export default function YearlyReportsPage() {
       trend: 'up',
       icon: DollarSign,
       color: 'from-emerald-500 to-teal-600',
-      bgColor: 'bg-emerald-50',
+      bgColor: 'bg-muted',
       textColor: 'text-emerald-600'
     },
     {
@@ -32,7 +32,7 @@ export default function YearlyReportsPage() {
       trend: 'up',
       icon: Users,
       color: 'from-blue-500 to-indigo-600',
-      bgColor: 'bg-blue-50',
+      bgColor: 'bg-muted',
       textColor: 'text-blue-600'
     },
     {
@@ -42,7 +42,7 @@ export default function YearlyReportsPage() {
       trend: 'up',
       icon: ShoppingCart,
       color: 'from-purple-500 to-pink-600',
-      bgColor: 'bg-purple-50',
+      bgColor: 'bg-muted',
       textColor: 'text-purple-600'
     },
     {
@@ -52,7 +52,7 @@ export default function YearlyReportsPage() {
       trend: 'down',
       icon: Package,
       color: 'from-orange-500 to-red-600',
-      bgColor: 'bg-orange-50',
+      bgColor: 'bg-muted',
       textColor: 'text-orange-600'
     }
   ];
@@ -78,12 +78,12 @@ export default function YearlyReportsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               Yearly Reports
             </h1>
-            <p className="text-slate-600 mt-2">Comprehensive annual performance overview</p>
+            <p className="text-muted-foreground mt-2">Comprehensive annual performance overview</p>
           </div>
-          <button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+          <button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-background px-6 py-3 rounded-xl hover:shadow-card transition-all duration-300 hover:-translate-y-0.5">
             <Download className="w-5 h-5" />
             <span>Export Report</span>
           </button>
@@ -92,11 +92,11 @@ export default function YearlyReportsPage() {
         {/* Filters */}
         <div className="flex flex-wrap gap-4">
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="pl-10 pr-8 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors appearance-none cursor-pointer"
+              className="pl-10 pr-8 py-3 bg-card border-2 border-border rounded-xl focus:border-blue-500 focus:outline-none transition-colors appearance-none cursor-pointer"
             >
               {years.map(year => (
                 <option key={year} value={year}>{year}</option>
@@ -104,11 +104,11 @@ export default function YearlyReportsPage() {
             </select>
           </div>
           <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <select
               value={selectedMetric}
               onChange={(e) => setSelectedMetric(e.target.value)}
-              className="pl-10 pr-8 py-3 bg-white border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors appearance-none cursor-pointer"
+              className="pl-10 pr-8 py-3 bg-card border-2 border-border rounded-xl focus:border-blue-500 focus:outline-none transition-colors appearance-none cursor-pointer"
             >
               {metrics.map(metric => (
                 <option key={metric.value} value={metric.value}>{metric.label}</option>
@@ -125,7 +125,7 @@ export default function YearlyReportsPage() {
             return (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-slate-100"
+                className="bg-card rounded-lg p-6 shadow-card hover:shadow-dropdown transition-all duration-300 hover:-translate-y-1 border border-border"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className={`${stat.bgColor} p-3 rounded-xl`}>
@@ -140,37 +140,37 @@ export default function YearlyReportsPage() {
                     {stat.change}
                   </span>
                 </div>
-                <h3 className="text-slate-600 text-sm font-medium mb-1">{stat.title}</h3>
-                <p className="text-3xl font-bold text-slate-800">{stat.value}</p>
+                <h3 className="text-muted-foreground text-sm font-medium mb-1">{stat.title}</h3>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{stat.value}</p>
               </div>
             );
           })}
         </div>
 
         {/* Monthly Breakdown */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-          <h2 className="text-2xl font-bold text-slate-800 mb-6">Monthly Breakdown - {selectedYear}</h2>
+        <div className="bg-card border border-border rounded-lg shadow-card">
+          <h2 className="text-lg font-semibold tracking-tight text-foreground mb-6">Monthly Breakdown - {selectedYear}</h2>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b-2 border-slate-200">
-                  <th className="text-left py-4 px-4 text-slate-600 font-semibold">Month</th>
-                  <th className="text-left py-4 px-4 text-slate-600 font-semibold">Revenue</th>
-                  <th className="text-left py-4 px-4 text-slate-600 font-semibold">Orders</th>
-                  <th className="text-left py-4 px-4 text-slate-600 font-semibold">New Users</th>
-                  <th className="text-left py-4 px-4 text-slate-600 font-semibold">Growth</th>
+                <tr className="border-b-2 border-border">
+                  <th className="text-left py-4 px-4 text-muted-foreground font-semibold">Month</th>
+                  <th className="text-left py-4 px-4 text-muted-foreground font-semibold">Revenue</th>
+                  <th className="text-left py-4 px-4 text-muted-foreground font-semibold">Orders</th>
+                  <th className="text-left py-4 px-4 text-muted-foreground font-semibold">New Users</th>
+                  <th className="text-left py-4 px-4 text-muted-foreground font-semibold">Growth</th>
                 </tr>
               </thead>
               <tbody>
                 {monthlyBreakdown.map((month, index) => (
                   <tr 
                     key={index} 
-                    className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+                    className="border-b border-border hover:bg-muted transition-colors"
                   >
-                    <td className="py-4 px-4 font-medium text-slate-800">{month.month}</td>
-                    <td className="py-4 px-4 text-slate-700">{month.revenue}</td>
-                    <td className="py-4 px-4 text-slate-700">{month.orders.toLocaleString()}</td>
-                    <td className="py-4 px-4 text-slate-700">{month.users.toLocaleString()}</td>
+                    <td className="py-4 px-4 font-medium text-foreground">{month.month}</td>
+                    <td className="py-4 px-4 text-foreground">{month.revenue}</td>
+                    <td className="py-4 px-4 text-foreground">{month.orders.toLocaleString()}</td>
+                    <td className="py-4 px-4 text-foreground">{month.users.toLocaleString()}</td>
                     <td className="py-4 px-4">
                       <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-sm font-semibold">
                         <TrendingUp className="w-4 h-4" />
@@ -185,20 +185,20 @@ export default function YearlyReportsPage() {
         </div>
 
         {/* Summary Card */}
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-8 text-white shadow-xl">
-          <h2 className="text-2xl font-bold mb-4">Year {selectedYear} Summary</h2>
+        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg p-8 text-background shadow-xl">
+          <h2 className="text-lg font-semibold tracking-tight mb-4">Year {selectedYear} Summary</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <p className="text-blue-100 mb-2">Best Performing Month</p>
-              <p className="text-3xl font-bold">December</p>
+              <p className="text-background/70 mb-2">Best Performing Month</p>
+              <p className="text-lg sm:text-xl font-semibold tracking-tight">December</p>
             </div>
             <div>
-              <p className="text-blue-100 mb-2">Average Monthly Revenue</p>
-              <p className="text-3xl font-bold">₹10,38,066</p>
+              <p className="text-background/70 mb-2">Average Monthly Revenue</p>
+              <p className="text-lg sm:text-xl font-semibold tracking-tight">₹10,38,066</p>
             </div>
             <div>
-              <p className="text-blue-100 mb-2">Year-over-Year Growth</p>
-              <p className="text-3xl font-bold">+23.5%</p>
+              <p className="text-background/70 mb-2">Year-over-Year Growth</p>
+              <p className="text-lg sm:text-xl font-semibold tracking-tight">+23.5%</p>
             </div>
           </div>
         </div>

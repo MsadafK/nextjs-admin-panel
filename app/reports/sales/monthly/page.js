@@ -148,7 +148,7 @@ export default function MonthlySalesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50 to-purple-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -156,19 +156,19 @@ export default function MonthlySalesPage() {
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground flex items-center gap-3">
               <Calendar size={32} />
               Monthly Sales Report
             </h1>
-            <p className="text-slate-600 mt-1">Comprehensive monthly performance overview</p>
+            <p className="text-muted-foreground mt-1">Comprehensive monthly performance overview</p>
           </div>
 
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-all flex items-center gap-2 text-slate-700 hover:shadow-md">
+            <button className="px-4 py-2 bg-card rounded-lg border border-border hover:border-border transition-all flex items-center gap-2 text-foreground hover:shadow-card">
               <Filter size={18} />
               <span>Filter</span>
             </button>
-            <button className="px-4 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2">
+            <button className="px-4 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-background rounded-lg hover:shadow-card transition-all flex items-center gap-2">
               <Download size={18} />
               <span>Export Report</span>
             </button>
@@ -180,20 +180,20 @@ export default function MonthlySalesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-4 shadow-sm border border-border"
         >
           <div className="flex items-center justify-between">
-            <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-              <ChevronLeft size={20} className="text-slate-600" />
+            <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+              <ChevronLeft size={20} className="text-muted-foreground" />
             </button>
             <div className="flex items-center gap-3">
               <Calendar size={20} className="text-violet-600" />
-              <span className="text-xl font-bold text-slate-800">
+              <span className="text-base font-semibold text-foreground">
                 {currentMonth} {currentYear}
               </span>
             </div>
-            <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-              <ChevronRight size={20} className="text-slate-600" />
+            <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+              <ChevronRight size={20} className="text-muted-foreground" />
             </button>
           </div>
         </motion.div>
@@ -206,12 +206,12 @@ export default function MonthlySalesPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.05 }}
-              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all border border-slate-100 group relative overflow-hidden"
+              className="bg-card rounded-xl p-6 shadow-sm hover:shadow-card transition-all border border-border group relative overflow-hidden"
             >
               <div className="relative z-10">
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} group-hover:scale-110 transition-transform shadow-lg`}>
-                    <stat.icon className="text-white" size={24} />
+                  <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} group-hover:scale-110 transition-transform shadow-card`}>
+                    <stat.icon className="text-background" size={24} />
                   </div>
                   <div className={`flex items-center gap-1 text-sm font-bold px-2.5 py-1 rounded-full ${
                     stat.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
@@ -221,16 +221,16 @@ export default function MonthlySalesPage() {
                   </div>
                 </div>
                 
-                <h3 className="text-3xl font-bold text-slate-800 mb-1">{stat.value}</h3>
-                <p className="text-slate-600 text-sm mb-1">{stat.title}</p>
-                <p className="text-xs text-slate-500 mb-3">{stat.subtitle}</p>
+                <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-1">{stat.value}</h3>
+                <p className="text-muted-foreground text-sm mb-1">{stat.title}</p>
+                <p className="text-xs text-muted-foreground mb-3">{stat.subtitle}</p>
                 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-500">vs {stat.lastMonth}</span>
-                    <span className="font-semibold text-slate-700">{stat.target}% of goal</span>
+                    <span className="text-muted-foreground">vs {stat.lastMonth}</span>
+                    <span className="font-semibold text-foreground">{stat.target}% of goal</span>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${stat.target}%` }}
@@ -249,17 +249,17 @@ export default function MonthlySalesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-6 shadow-sm border border-border"
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <LineChart size={20} className="text-violet-600" />
-              <h2 className="text-xl font-bold text-slate-800">Daily Sales Trend</h2>
+              <h2 className="text-base font-semibold text-foreground">Daily Sales Trend</h2>
             </div>
             <div className="flex gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-gradient-to-r from-violet-500 to-purple-500" />
-                <span className="text-slate-600">Revenue</span>
+                <span className="text-muted-foreground">Revenue</span>
               </div>
             </div>
           </div>
@@ -279,10 +279,10 @@ export default function MonthlySalesPage() {
                     style={{ height: `${(data.sales / maxSales) * 100}%` }}
                   />
                 </div>
-                <p className="text-xs text-center text-slate-600 mt-1 font-medium">{data.day}</p>
+                <p className="text-xs text-center text-muted-foreground mt-1 font-medium">{data.day}</p>
                 
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                  <div className="bg-slate-900 text-white text-xs rounded-lg p-2 whitespace-nowrap shadow-lg">
+                  <div className="bg-foreground text-background text-xs rounded-lg p-2 whitespace-nowrap shadow-card">
                     <p className="font-semibold">Day {data.day}</p>
                     <p>${(data.sales / 1000).toFixed(1)}K</p>
                     <p>{data.orders} orders</p>
@@ -298,11 +298,11 @@ export default function MonthlySalesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-6 shadow-sm border border-border"
         >
           <div className="flex items-center gap-2 mb-6">
             <BarChart3 size={20} className="text-violet-600" />
-            <h2 className="text-xl font-bold text-slate-800">Weekly Performance Comparison</h2>
+            <h2 className="text-base font-semibold text-foreground">Weekly Performance Comparison</h2>
           </div>
 
           <div className="space-y-4">
@@ -312,27 +312,27 @@ export default function MonthlySalesPage() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + index * 0.1 }}
-                className="p-4 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+                className="p-4 bg-muted rounded-lg hover:bg-muted transition-colors"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 text-white font-bold">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 text-background font-bold">
                       {index + 1}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-800">{week.week}</h3>
-                      <p className="text-xs text-slate-500">${week.avg.toLocaleString()} avg/day</p>
+                      <h3 className="font-semibold text-foreground">{week.week}</h3>
+                      <p className="text-xs text-muted-foreground">${week.avg.toLocaleString()} avg/day</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-slate-800">${(week.sales / 1000).toFixed(1)}K</p>
-                    <p className="text-sm text-slate-600">{week.orders} orders</p>
+                    <p className="text-lg font-semibold tracking-tight text-foreground">${(week.sales / 1000).toFixed(1)}K</p>
+                    <p className="text-sm text-muted-foreground">{week.orders} orders</p>
                   </div>
                   <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
                     +{week.growth}%
                   </span>
                 </div>
-                <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
+                <div className="h-3 bg-muted rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${(week.sales / maxWeeklySales) * 100}%` }}
@@ -351,11 +351,11 @@ export default function MonthlySalesPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+            className="bg-card rounded-xl p-6 shadow-sm border border-border"
           >
             <div className="flex items-center gap-2 mb-6">
               <PieChart size={20} className="text-violet-600" />
-              <h2 className="text-xl font-bold text-slate-800">Category Performance</h2>
+              <h2 className="text-base font-semibold text-foreground">Category Performance</h2>
             </div>
 
             <div className="space-y-4">
@@ -363,18 +363,18 @@ export default function MonthlySalesPage() {
                 <div key={category.name} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <p className="font-semibold text-slate-800">{category.name}</p>
-                      <div className="flex items-center gap-3 text-xs text-slate-500 mt-1">
+                      <p className="font-semibold text-foreground">{category.name}</p>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                         <span>{category.orders} orders</span>
                         <span className="text-green-600 font-semibold">+{category.growth}%</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-slate-800">{category.revenue}</p>
-                      <p className="text-xs text-slate-500">{category.percentage}%</p>
+                      <p className="font-bold text-foreground">{category.revenue}</p>
+                      <p className="text-xs text-muted-foreground">{category.percentage}%</p>
                     </div>
                   </div>
-                  <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-3 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${category.percentage}%` }}
@@ -392,22 +392,22 @@ export default function MonthlySalesPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+            className="bg-card rounded-xl p-6 shadow-sm border border-border"
           >
             <div className="flex items-center gap-2 mb-6">
               <Award size={20} className="text-yellow-500" />
-              <h2 className="text-xl font-bold text-slate-800">Top Performers</h2>
+              <h2 className="text-base font-semibold text-foreground">Top Performers</h2>
             </div>
 
             <div className="space-y-3">
               {topPerformers.map((product, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 text-white font-bold text-sm">
+                <div key={index} className="flex items-center gap-3 p-3 bg-muted rounded-lg hover:bg-muted transition-colors">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-purple-600 text-background font-bold text-sm">
                     {index + 1}
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-slate-800 text-sm">{product.name}</p>
-                    <div className="flex items-center gap-3 text-xs text-slate-600 mt-1">
+                    <p className="font-semibold text-foreground text-sm">{product.name}</p>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                       <span>{product.category}</span>
                       <span>•</span>
                       <span>{product.sales} sold</span>
@@ -415,7 +415,7 @@ export default function MonthlySalesPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-slate-800">{product.revenue}</p>
+                    <p className="font-bold text-foreground">{product.revenue}</p>
                   </div>
                 </div>
               ))}
@@ -429,24 +429,24 @@ export default function MonthlySalesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+            className="bg-card rounded-xl p-6 shadow-sm border border-border"
           >
             <div className="flex items-center gap-2 mb-6">
               <Users size={20} className="text-violet-600" />
-              <h2 className="text-xl font-bold text-slate-800">Customer Analytics</h2>
+              <h2 className="text-base font-semibold text-foreground">Customer Analytics</h2>
             </div>
 
             <div className="space-y-6">
               {customerMetrics.map((metric, index) => (
                 <div key={metric.metric}>
                   <div className="flex items-center justify-between mb-3">
-                    <p className="font-semibold text-slate-800">{metric.metric}</p>
+                    <p className="font-semibold text-foreground">{metric.metric}</p>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-slate-800">{metric.value.toLocaleString()}</p>
-                      <p className="text-xs text-slate-500">{metric.percentage}% of total</p>
+                      <p className="text-lg font-semibold tracking-tight text-foreground">{metric.value.toLocaleString()}</p>
+                      <p className="text-xs text-muted-foreground">{metric.percentage}% of total</p>
                     </div>
                   </div>
-                  <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-3 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${metric.percentage}%` }}
@@ -457,15 +457,15 @@ export default function MonthlySalesPage() {
                 </div>
               ))}
 
-              <div className="pt-4 border-t border-slate-100">
+              <div className="pt-4 border-t border-border">
                 <div className="grid grid-cols-2 gap-4 text-center">
-                  <div className="p-3 bg-violet-50 rounded-lg">
-                    <p className="text-xs text-slate-600 mb-1">Customer Retention</p>
-                    <p className="text-2xl font-bold text-violet-600">48%</p>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <p className="text-xs text-muted-foreground mb-1">Customer Retention</p>
+                    <p className="text-lg font-semibold tracking-tight text-violet-600">48%</p>
                   </div>
-                  <div className="p-3 bg-green-50 rounded-lg">
-                    <p className="text-xs text-slate-600 mb-1">Repeat Rate</p>
-                    <p className="text-2xl font-bold text-green-600">32%</p>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <p className="text-xs text-muted-foreground mb-1">Repeat Rate</p>
+                    <p className="text-lg font-semibold tracking-tight text-green-600">32%</p>
                   </div>
                 </div>
               </div>
@@ -477,11 +477,11 @@ export default function MonthlySalesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+            className="bg-card rounded-xl p-6 shadow-sm border border-border"
           >
             <div className="flex items-center gap-2 mb-6">
               <CreditCard size={20} className="text-violet-600" />
-              <h2 className="text-xl font-bold text-slate-800">Payment Methods</h2>
+              <h2 className="text-base font-semibold text-foreground">Payment Methods</h2>
             </div>
 
             <div className="space-y-4">
@@ -489,15 +489,15 @@ export default function MonthlySalesPage() {
                 <div key={payment.method} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-slate-800">{payment.method}</p>
-                      <p className="text-xs text-slate-500">{payment.transactions.toLocaleString()} transactions</p>
+                      <p className="font-semibold text-foreground">{payment.method}</p>
+                      <p className="text-xs text-muted-foreground">{payment.transactions.toLocaleString()} transactions</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-slate-800">{payment.amount}</p>
-                      <p className="text-xs text-slate-500">{payment.percentage}%</p>
+                      <p className="font-bold text-foreground">{payment.amount}</p>
+                      <p className="text-xs text-muted-foreground">{payment.percentage}%</p>
                     </div>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${payment.percentage}%` }}
@@ -516,28 +516,28 @@ export default function MonthlySalesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-gradient-to-br from-violet-600 to-purple-600 rounded-xl p-6 text-white shadow-lg"
+          className="bg-gradient-to-br from-violet-600 to-purple-600 rounded-xl p-6 text-background shadow-card"
         >
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-white/20 rounded-lg">
+            <div className="p-3 bg-card/20 rounded-lg">
               <Zap size={24} />
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold mb-2">Monthly Insights & Highlights</h3>
+              <h3 className="text-base font-semibold mb-2">Monthly Insights & Highlights</h3>
               <div className="grid md:grid-cols-4 gap-4 text-sm">
-                <div className="bg-white/10 rounded-lg p-3">
+                <div className="bg-card/10 rounded-lg p-3">
                   <p className="text-violet-200 mb-1">Best Week</p>
                   <p className="font-semibold">Week 3 with $134.9K revenue</p>
                 </div>
-                <div className="bg-white/10 rounded-lg p-3">
+                <div className="bg-card/10 rounded-lg p-3">
                   <p className="text-violet-200 mb-1">Top Category</p>
                   <p className="font-semibold">Electronics leads with 29.4%</p>
                 </div>
-                <div className="bg-white/10 rounded-lg p-3">
+                <div className="bg-card/10 rounded-lg p-3">
                   <p className="text-violet-200 mb-1">Growth Leader</p>
                   <p className="font-semibold">Headphones Pro +34.2% growth</p>
                 </div>
-                <div className="bg-white/10 rounded-lg p-3">
+                <div className="bg-card/10 rounded-lg p-3">
                   <p className="text-violet-200 mb-1">Customer Acquisition</p>
                   <p className="font-semibold">1,248 new customers joined</p>
                 </div>

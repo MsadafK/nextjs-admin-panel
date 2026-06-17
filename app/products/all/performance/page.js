@@ -22,10 +22,10 @@ export default function ProductPerformancePage() {
   ];
 
   const overallMetrics = [
-    { label: 'Avg Conversion Rate', value: '3.8%', change: '+0.4%', trend: 'up', icon: Target, color: 'from-emerald-500 to-teal-600', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600' },
-    { label: 'Avg Views per Product', value: '1,247', change: '+12%', trend: 'up', icon: Eye, color: 'from-blue-500 to-indigo-600', bgColor: 'bg-blue-50', textColor: 'text-blue-600' },
-    { label: 'Total Revenue', value: '₹67.8L', change: '+18%', trend: 'up', icon: DollarSign, color: 'from-purple-500 to-pink-600', bgColor: 'bg-purple-50', textColor: 'text-purple-600' },
-    { label: 'Return Rate', value: '2.3%', change: '-0.5%', trend: 'down', icon: AlertCircle, color: 'from-orange-500 to-red-600', bgColor: 'bg-orange-50', textColor: 'text-orange-600' },
+    { label: 'Avg Conversion Rate', value: '3.8%', change: '+0.4%', trend: 'up', icon: Target, color: 'from-emerald-500 to-teal-600', bgColor: 'bg-muted', textColor: 'text-emerald-600' },
+    { label: 'Avg Views per Product', value: '1,247', change: '+12%', trend: 'up', icon: Eye, color: 'from-blue-500 to-indigo-600', bgColor: 'bg-muted', textColor: 'text-blue-600' },
+    { label: 'Total Revenue', value: '₹67.8L', change: '+18%', trend: 'up', icon: DollarSign, color: 'from-purple-500 to-pink-600', bgColor: 'bg-muted', textColor: 'text-purple-600' },
+    { label: 'Return Rate', value: '2.3%', change: '-0.5%', trend: 'down', icon: AlertCircle, color: 'from-orange-500 to-red-600', bgColor: 'bg-muted', textColor: 'text-orange-600' },
   ];
 
   const products = [
@@ -173,22 +173,22 @@ export default function ProductPerformancePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-2">
               Product Performance
             </h1>
-            <p className="text-slate-600">Detailed analytics and performance metrics</p>
+            <p className="text-muted-foreground">Detailed analytics and performance metrics</p>
           </div>
           <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-slate-400" />
+            <Calendar className="w-5 h-5 text-muted-foreground" />
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors bg-white cursor-pointer font-semibold"
+              className="px-4 py-3 border-2 border-border rounded-xl focus:border-indigo-500 focus:outline-none transition-colors bg-card cursor-pointer font-semibold"
             >
               {periods.map(period => (
                 <option key={period.value} value={period.value}>{period.label}</option>
@@ -203,7 +203,7 @@ export default function ProductPerformancePage() {
             const Icon = metric.icon;
             const TrendIcon = metric.trend === 'up' ? ArrowUpRight : ArrowDownRight;
             return (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card hover:shadow-dropdown transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`${metric.bgColor} w-12 h-12 rounded-xl flex items-center justify-center`}>
                     <Icon className={`w-6 h-6 ${metric.textColor}`} />
@@ -215,8 +215,8 @@ export default function ProductPerformancePage() {
                     {metric.change}
                   </span>
                 </div>
-                <p className="text-slate-600 text-sm mb-1">{metric.label}</p>
-                <p className="text-3xl font-bold text-slate-800">{metric.value}</p>
+                <p className="text-muted-foreground text-sm mb-1">{metric.label}</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{metric.value}</p>
               </div>
             );
           })}
@@ -227,27 +227,27 @@ export default function ProductPerformancePage() {
           {performanceCategories.map((category, index) => {
             const Icon = category.icon;
             return (
-              <div key={index} className={`bg-white rounded-2xl p-6 shadow-lg border-2 border-${category.color}-200 hover:shadow-xl transition-all duration-300`}>
+              <div key={index} className={`bg-card rounded-lg p-6 shadow-card border-2 border-${category.color}-200 hover:shadow-dropdown transition-all duration-300`}>
                 <div className={`bg-${category.color}-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4`}>
                   <Icon className={`w-6 h-6 text-${category.color}-600`} />
                 </div>
-                <h3 className="font-bold text-slate-800 text-lg mb-1">{category.name}</h3>
-                <p className="text-3xl font-bold text-slate-800 mb-2">{category.count}</p>
-                <p className="text-sm text-slate-500">{category.description}</p>
+                <h3 className="font-bold text-foreground text-lg mb-1">{category.name}</h3>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">{category.count}</p>
+                <p className="text-sm text-muted-foreground">{category.description}</p>
               </div>
             );
           })}
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+        <div className="bg-card border border-border rounded-lg shadow-card">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <select
                 value={performanceFilter}
                 onChange={(e) => setPerformanceFilter(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors bg-white cursor-pointer"
+                className="w-full pl-10 pr-4 py-3 border-2 border-border rounded-xl focus:border-indigo-500 focus:outline-none transition-colors bg-card cursor-pointer"
               >
                 {performanceFilters.map(filter => (
                   <option key={filter.value} value={filter.value}>{filter.label}</option>
@@ -255,11 +255,11 @@ export default function ProductPerformancePage() {
               </select>
             </div>
             <div className="relative">
-              <Package className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Package className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="pl-10 pr-8 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors bg-white cursor-pointer min-w-[200px]"
+                className="pl-10 pr-8 py-3 border-2 border-border rounded-xl focus:border-indigo-500 focus:outline-none transition-colors bg-card cursor-pointer min-w-[200px]"
               >
                 <option value="all">All Categories</option>
                 <option value="electronics">Electronics</option>
@@ -271,9 +271,9 @@ export default function ProductPerformancePage() {
         </div>
 
         {/* Performance Table */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-          <div className="p-6 border-b border-slate-200">
-            <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+        <div className="bg-card border border-border rounded-lg shadow-card overflow-hidden">
+          <div className="p-6 border-b border-border">
+            <h2 className="text-lg font-semibold tracking-tight text-foreground flex items-center gap-2">
               <BarChart3 className="w-7 h-7 text-indigo-600" />
               Detailed Performance Metrics
             </h2>
@@ -281,54 +281,54 @@ export default function ProductPerformancePage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b-2 border-slate-200">
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Product</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Views</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Cart Adds</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Purchases</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Conv. Rate</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Revenue</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Rating</th>
-                  <th className="text-left py-4 px-6 text-slate-700 font-semibold">Performance</th>
+                <tr className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b-2 border-border">
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Product</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Views</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Cart Adds</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Purchases</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Conv. Rate</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Revenue</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Rating</th>
+                  <th className="text-left py-4 px-6 text-foreground font-semibold">Performance</th>
                 </tr>
               </thead>
               <tbody>
                 {products.map((product) => {
                   const TrendIcon = product.trend === 'up' ? TrendingUp : product.trend === 'down' ? TrendingDown : TrendingUp;
                   return (
-                    <tr key={product.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <tr key={product.id} className="border-b border-border hover:bg-muted transition-colors">
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-4">
                           <div className="w-14 h-14 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center text-3xl">
                             {product.image}
                           </div>
                           <div>
-                            <p className="font-bold text-slate-800">{product.name}</p>
-                            <p className="text-sm text-slate-500">{product.category}</p>
+                            <p className="font-bold text-foreground">{product.name}</p>
+                            <p className="text-sm text-muted-foreground">{product.category}</p>
                           </div>
                         </div>
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2">
-                          <Eye className="w-4 h-4 text-slate-400" />
-                          <span className="font-semibold text-slate-800">{product.views.toLocaleString()}</span>
+                          <Eye className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-semibold text-foreground">{product.views.toLocaleString()}</span>
                         </div>
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2">
-                          <ShoppingCart className="w-4 h-4 text-slate-400" />
-                          <span className="font-semibold text-slate-800">{product.addToCart.toLocaleString()}</span>
+                          <ShoppingCart className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-semibold text-foreground">{product.addToCart.toLocaleString()}</span>
                         </div>
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2">
-                          <Package className="w-4 h-4 text-slate-400" />
-                          <span className="font-semibold text-slate-800">{product.purchases}</span>
+                          <Package className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-semibold text-foreground">{product.purchases}</span>
                         </div>
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2">
-                          <Percent className="w-4 h-4 text-slate-400" />
+                          <Percent className="w-4 h-4 text-muted-foreground" />
                           <span className="font-bold text-indigo-600">{product.conversionRate}%</span>
                         </div>
                       </td>
@@ -336,8 +336,8 @@ export default function ProductPerformancePage() {
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-1">
                           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="font-semibold text-slate-800">{product.rating}</span>
-                          <span className="text-xs text-slate-500">({product.reviews})</span>
+                          <span className="font-semibold text-foreground">{product.rating}</span>
+                          <span className="text-xs text-muted-foreground">({product.reviews})</span>
                         </div>
                       </td>
                       <td className="py-4 px-6">
@@ -348,7 +348,7 @@ export default function ProductPerformancePage() {
                           <TrendIcon className={`w-4 h-4 ${
                             product.trend === 'up' ? 'text-emerald-600' : 
                             product.trend === 'down' ? 'text-red-600' : 
-                            'text-slate-400'
+                            'text-muted-foreground'
                           }`} />
                         </div>
                       </td>
@@ -363,15 +363,15 @@ export default function ProductPerformancePage() {
         {/* Detailed Cards View */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {products.slice(0, 2).map((product) => (
-            <div key={product.id} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+            <div key={product.id} className="bg-card border border-border rounded-lg shadow-card">
               <div className="flex items-start justify-between mb-6">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center text-4xl">
                     {product.image}
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-800 text-lg">{product.name}</h3>
-                    <p className="text-sm text-slate-500">{product.category}</p>
+                    <h3 className="font-bold text-foreground text-lg">{product.name}</h3>
+                    <p className="text-sm text-muted-foreground">{product.category}</p>
                   </div>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getPerformanceBadge(product.performance)}`}>
@@ -383,10 +383,10 @@ export default function ProductPerformancePage() {
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="text-slate-600">Views to Cart</span>
-                    <span className="font-semibold text-slate-800">{((product.addToCart / product.views) * 100).toFixed(1)}%</span>
+                    <span className="text-muted-foreground">Views to Cart</span>
+                    <span className="font-semibold text-foreground">{((product.addToCart / product.views) * 100).toFixed(1)}%</span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                  <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full"
                       style={{ width: `${(product.addToCart / product.views) * 100}%` }}
@@ -396,10 +396,10 @@ export default function ProductPerformancePage() {
 
                 <div>
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="text-slate-600">Cart to Purchase</span>
-                    <span className="font-semibold text-slate-800">{((product.purchases / product.addToCart) * 100).toFixed(1)}%</span>
+                    <span className="text-muted-foreground">Cart to Purchase</span>
+                    <span className="font-semibold text-foreground">{((product.purchases / product.addToCart) * 100).toFixed(1)}%</span>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                  <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-purple-500 to-pink-600 rounded-full"
                       style={{ width: `${(product.purchases / product.addToCart) * 100}%` }}
@@ -409,23 +409,23 @@ export default function ProductPerformancePage() {
               </div>
 
               {/* Quick Stats Grid */}
-              <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-slate-200">
+              <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-border">
                 <div className="text-center">
-                  <p className="text-slate-500 text-xs mb-1">Wishlist</p>
+                  <p className="text-muted-foreground text-xs mb-1">Wishlist</p>
                   <div className="flex items-center justify-center gap-1">
                     <Heart className="w-4 h-4 text-pink-500" />
-                    <p className="font-bold text-slate-800">{product.wishlist}</p>
+                    <p className="font-bold text-foreground">{product.wishlist}</p>
                   </div>
                 </div>
                 <div className="text-center">
-                  <p className="text-slate-500 text-xs mb-1">Return Rate</p>
-                  <p className="font-bold text-slate-800">{product.returnRate}%</p>
+                  <p className="text-muted-foreground text-xs mb-1">Return Rate</p>
+                  <p className="font-bold text-foreground">{product.returnRate}%</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-slate-500 text-xs mb-1">Growth</p>
+                  <p className="text-muted-foreground text-xs mb-1">Growth</p>
                   <div className="flex items-center justify-center gap-1">
                     <TrendingUp className={`w-4 h-4 ${product.growthRate > 0 ? 'text-emerald-600' : 'text-red-600'}`} />
-                    <p className="font-bold text-slate-800">{product.growthRate}%</p>
+                    <p className="font-bold text-foreground">{product.growthRate}%</p>
                   </div>
                 </div>
               </div>

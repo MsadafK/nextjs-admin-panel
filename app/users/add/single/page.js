@@ -2,13 +2,15 @@
 
 import { useState } from 'react';
 import { User, Mail, Phone, MapPin, Briefcase, Calendar, Upload, X, Check, AlertCircle, Eye, EyeOff, Shield, Building, Globe, Lock } from 'lucide-react';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { useLanguage } from '../../../contexts/LanguageContext';
+
+
 
 export default function AddSingleUser() {
-  const { isDark, getThemeColors } = useTheme();
-  const { t } = useLanguage();
-  const colors = getThemeColors();
+  const colors = {
+    primary: 'bg-foreground',
+    primaryBg: 'bg-muted',
+    primaryText: 'text-foreground',
+  };
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -142,12 +144,12 @@ export default function AddSingleUser() {
   };
 
   const FormSection = ({ title, icon: Icon, children }) => (
-    <div className={`${isDark ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-sm border ${isDark ? 'border-gray-700' : 'border-gray-200'} p-6`}>
+    <div className={`bg-card rounded-xl shadow-sm border border-border p-6`}>
       <div className="flex items-center space-x-3 mb-6">
         <div className={`p-2 ${colors.primaryBg} rounded-lg`}>
           <Icon size={20} className={colors.primaryText} />
         </div>
-        <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
+        <h3 className={`text-lg font-semibold text-foreground`}>{title}</h3>
       </div>
       <div className="space-y-4">
         {children}
@@ -157,13 +159,13 @@ export default function AddSingleUser() {
 
   const InputField = ({ label, name, type = 'text', placeholder, icon: Icon, required = false, error, ...props }) => (
     <div className="space-y-1.5">
-      <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+      <label className={`block text-sm font-medium text-foreground`}>
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
         {Icon && (
           <div className="absolute left-3 top-1/2 -translate-y-1/2">
-            <Icon size={18} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
+            <Icon size={18} className={'text-muted-foreground'} />
           </div>
         )}
         <input
@@ -175,7 +177,7 @@ export default function AddSingleUser() {
           className={`w-full ${Icon ? 'pl-10' : 'pl-4'} pr-4 py-2.5 rounded-lg border ${
             error 
               ? 'border-red-500 focus:ring-red-500' 
-              : `${isDark ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500' : 'border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500'}`
+              : `border-border bg-card text-foreground placeholder:text-muted-foreground focus:border-blue-500`
           } focus:ring-2 focus:ring-opacity-50 outline-none transition-all`}
           {...props}
         />
@@ -191,7 +193,7 @@ export default function AddSingleUser() {
 
   const SelectField = ({ label, name, options, required = false, error }) => (
     <div className="space-y-1.5">
-      <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+      <label className={`block text-sm font-medium text-foreground`}>
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <select
@@ -201,7 +203,7 @@ export default function AddSingleUser() {
         className={`w-full px-4 py-2.5 rounded-lg border ${
           error 
             ? 'border-red-500 focus:ring-red-500' 
-            : `${isDark ? 'border-gray-600 bg-gray-700 text-white focus:border-blue-500' : 'border-gray-300 bg-white text-gray-900 focus:border-blue-500'}`
+            : `border-border bg-card text-foreground focus:border-blue-500`
         } focus:ring-2 focus:ring-opacity-50 outline-none transition-all`}
       >
         <option value="">Select {label}</option>
@@ -220,12 +222,12 @@ export default function AddSingleUser() {
 
   const PasswordField = ({ label, name, placeholder, showPassword, onToggle, required = false, error }) => (
     <div className="space-y-1.5">
-      <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+      <label className={`block text-sm font-medium text-foreground`}>
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
         <div className="absolute left-3 top-1/2 -translate-y-1/2">
-          <Lock size={18} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
+          <Lock size={18} className={'text-muted-foreground'} />
         </div>
         <input
           type={showPassword ? 'text' : 'password'}
@@ -236,13 +238,13 @@ export default function AddSingleUser() {
           className={`w-full pl-10 pr-12 py-2.5 rounded-lg border ${
             error 
               ? 'border-red-500 focus:ring-red-500' 
-              : `${isDark ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:border-blue-500' : 'border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500'}`
+              : `border-border bg-card text-foreground placeholder:text-muted-foreground focus:border-blue-500`
           } focus:ring-2 focus:ring-opacity-50 outline-none transition-all`}
         />
         <button
           type="button"
           onClick={onToggle}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
         >
           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
@@ -260,19 +262,19 @@ export default function AddSingleUser() {
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
+        <h1 className={`text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2`}>
           Add New User
         </h1>
-        <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+        <p className={`text-muted-foreground`}>
           Create a new user account by filling out the form below
         </p>
       </div>
 
       {/* Success Message */}
       {submitSuccess && (
-        <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center space-x-3">
-          <div className="p-2 bg-green-500 rounded-full">
-            <Check size={20} className="text-white" />
+        <div className="mb-6 p-4 bg-muted dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center space-x-3">
+          <div className="p-2 bg-muted0 rounded-full">
+            <Check size={20} className="text-background" />
           </div>
           <div>
             <h4 className="font-semibold text-green-800 dark:text-green-300">Success!</h4>
@@ -291,24 +293,24 @@ export default function AddSingleUser() {
                   <img 
                     src={imagePreview} 
                     alt="Profile preview" 
-                    className="w-32 h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-600"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-border dark:border-border"
                   />
                   <button
                     type="button"
                     onClick={removeImage}
-                    className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg"
+                    className="absolute -top-2 -right-2 p-1.5 bg-muted0 text-background rounded-full hover:bg-red-600 transition-colors shadow-card"
                   >
                     <X size={16} />
                   </button>
                 </div>
               ) : (
-                <div className={`w-32 h-32 rounded-full ${isDark ? 'bg-gray-700' : 'bg-gray-100'} flex items-center justify-center border-2 border-dashed ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
-                  <User size={48} className={isDark ? 'text-gray-500' : 'text-gray-400'} />
+                <div className={`w-32 h-32 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-border`}>
+                  <User size={48} className={'text-muted-foreground'} />
                 </div>
               )}
             </div>
             <div className="flex-1">
-              <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
+              <label className={`block text-sm font-medium text-foreground mb-2`}>
                 Upload Profile Picture
               </label>
               <input
@@ -320,12 +322,12 @@ export default function AddSingleUser() {
               />
               <label
                 htmlFor="profile-upload"
-                className={`inline-flex items-center px-4 py-2 rounded-lg border ${isDark ? 'border-gray-600 bg-gray-700 hover:bg-gray-600' : 'border-gray-300 bg-white hover:bg-gray-50'} cursor-pointer transition-colors`}
+                className={`inline-flex items-center px-4 py-2 rounded-lg border border-border bg-card hover:bg-muted cursor-pointer transition-colors`}
               >
                 <Upload size={18} className="mr-2" />
                 Choose Image
               </label>
-              <p className={`mt-2 text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className={`mt-2 text-xs text-muted-foreground`}>
                 Recommended: Square image, at least 400x400px. Max size: 5MB
               </p>
               {errors.profileImage && (
@@ -500,25 +502,25 @@ export default function AddSingleUser() {
               error={errors.confirmPassword}
             />
           </div>
-          <div className={`p-4 rounded-lg ${isDark ? 'bg-blue-900/20 border border-blue-800' : 'bg-blue-50 border border-blue-200'}`}>
-            <p className={`text-sm ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>
+          <div className={`p-4 rounded-lg bg-muted border border-blue-200`}>
+            <p className={`text-sm text-blue-800`}>
               <strong>Password Requirements:</strong> Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number, and one special character
             </p>
           </div>
         </FormSection>
 
         {/* Form Actions */}
-        <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-end space-x-4 pt-6 border-t border-border dark:border-border">
           <button
             type="button"
-            className={`px-6 py-2.5 rounded-lg border ${isDark ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-50'} transition-colors font-medium`}
+            className={`px-6 py-2.5 rounded-lg border border-border text-foreground hover:bg-muted transition-colors font-medium`}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`px-6 py-2.5 rounded-lg ${colors.primary} text-white font-medium hover:opacity-90 transition-opacity flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+            className={`px-6 py-2.5 rounded-lg ${colors.primary} text-background font-medium hover:opacity-90 transition-opacity flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {isSubmitting ? (
               <>

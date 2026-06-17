@@ -135,15 +135,15 @@ const ExportExcel = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Export to Excel</h1>
-            <p className="text-slate-600">Create comprehensive Excel workbooks with multiple sheets and advanced features</p>
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Export to Excel</h1>
+            <p className="text-muted-foreground">Create comprehensive Excel workbooks with multiple sheets and advanced features</p>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-slate-700">
+            <button className="px-4 py-2 bg-card border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-foreground">
               <Settings className="w-4 h-4" />
               Advanced Settings
             </button>
@@ -154,11 +154,11 @@ const ExportExcel = () => {
           {/* Main Configuration */}
           <div className="lg:col-span-2 space-y-6">
             {/* Sheet Selection */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Layers className="w-5 h-5 text-emerald-600" />
-                  <h2 className="text-lg font-semibold text-slate-800">Select Sheets to Include</h2>
+                  <h2 className="text-lg font-semibold text-foreground">Select Sheets to Include</h2>
                 </div>
                 <div className="flex gap-2">
                   <button 
@@ -167,10 +167,10 @@ const ExportExcel = () => {
                   >
                     Select All
                   </button>
-                  <span className="text-slate-300">|</span>
+                  <span className="text-muted-foreground">|</span>
                   <button 
                     onClick={clearAllSheets}
-                    className="text-sm text-slate-600 hover:text-slate-700 font-medium"
+                    className="text-sm text-muted-foreground hover:text-foreground font-medium"
                   >
                     Clear All
                   </button>
@@ -184,23 +184,23 @@ const ExportExcel = () => {
                     onClick={() => toggleSheet(sheet.id)}
                     className={`p-4 rounded-lg border-2 transition-all text-left ${
                       selectedSheets.includes(sheet.id)
-                        ? 'border-emerald-500 bg-emerald-50 shadow-md'
-                        : 'border-slate-200 hover:border-emerald-300'
+                        ? 'border-emerald-500 bg-muted shadow-card'
+                        : 'border-border hover:border-emerald-300'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="text-2xl">{sheet.icon}</span>
                         <div>
-                          <div className="font-semibold text-slate-800 text-sm">{sheet.name}</div>
-                          <div className="text-xs text-slate-500 mt-0.5">{sheet.description}</div>
+                          <div className="font-semibold text-foreground text-sm">{sheet.name}</div>
+                          <div className="text-xs text-muted-foreground mt-0.5">{sheet.description}</div>
                         </div>
                       </div>
                       {selectedSheets.includes(sheet.id) && (
                         <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                       )}
                     </div>
-                    <div className="flex gap-3 text-xs text-slate-500 mt-2">
+                    <div className="flex gap-3 text-xs text-muted-foreground mt-2">
                       <span>📄 {sheet.rows} rows</span>
                       <span>📊 {sheet.columns} cols</span>
                     </div>
@@ -208,7 +208,7 @@ const ExportExcel = () => {
                 ))}
               </div>
 
-              <div className="mt-4 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+              <div className="mt-4 p-3 bg-muted rounded-lg border border-emerald-200">
                 <div className="text-sm text-emerald-800">
                   <span className="font-semibold">{selectedSheets.length}</span> sheets selected • 
                   <span className="font-semibold"> {totalRows.toLocaleString()}</span> total rows
@@ -217,10 +217,10 @@ const ExportExcel = () => {
             </div>
 
             {/* File Format */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
-                <h2 className="text-lg font-semibold text-slate-800">File Format</h2>
+                <h2 className="text-lg font-semibold text-foreground">File Format</h2>
               </div>
               <div className="space-y-3">
                 {formatOptions.map((format) => (
@@ -228,8 +228,8 @@ const ExportExcel = () => {
                     key={format.id}
                     className={`flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
                       fileFormat === format.id
-                        ? 'border-emerald-500 bg-emerald-50'
-                        : 'border-slate-200 hover:border-emerald-300'
+                        ? 'border-emerald-500 bg-muted'
+                        : 'border-border hover:border-emerald-300'
                     }`}
                   >
                     <input
@@ -242,14 +242,14 @@ const ExportExcel = () => {
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-slate-800">{format.name}</span>
+                        <span className="font-semibold text-foreground">{format.name}</span>
                         {format.recommended && (
                           <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full font-medium">
                             Recommended
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-slate-600 mt-1">{format.description}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{format.description}</p>
                     </div>
                   </label>
                 ))}
@@ -257,20 +257,20 @@ const ExportExcel = () => {
             </div>
 
             {/* Advanced Features */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="w-5 h-5 text-emerald-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Advanced Features</h2>
+                <h2 className="text-lg font-semibold text-foreground">Advanced Features</h2>
               </div>
               <div className="space-y-3">
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       📊
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Include Charts & Graphs</div>
-                      <div className="text-xs text-slate-500">Add visual data representations to sheets</div>
+                      <div className="font-medium text-foreground">Include Charts & Graphs</div>
+                      <div className="text-xs text-muted-foreground">Add visual data representations to sheets</div>
                     </div>
                   </div>
                   <input 
@@ -281,14 +281,14 @@ const ExportExcel = () => {
                   />
                 </label>
 
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                       🔄
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Create Pivot Tables</div>
-                      <div className="text-xs text-slate-500">Auto-generate summary pivot tables</div>
+                      <div className="font-medium text-foreground">Create Pivot Tables</div>
+                      <div className="text-xs text-muted-foreground">Auto-generate summary pivot tables</div>
                     </div>
                   </div>
                   <input 
@@ -299,14 +299,14 @@ const ExportExcel = () => {
                   />
                 </label>
 
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
                       🎨
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Rich Formatting</div>
-                      <div className="text-xs text-slate-500">Colors, fonts, and cell styling</div>
+                      <div className="font-medium text-foreground">Rich Formatting</div>
+                      <div className="text-xs text-muted-foreground">Colors, fonts, and cell styling</div>
                     </div>
                   </div>
                   <input 
@@ -317,14 +317,14 @@ const ExportExcel = () => {
                   />
                 </label>
 
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
                       🧮
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Include Formulas</div>
-                      <div className="text-xs text-slate-500">Keep Excel formulas for calculations</div>
+                      <div className="font-medium text-foreground">Include Formulas</div>
+                      <div className="text-xs text-muted-foreground">Keep Excel formulas for calculations</div>
                     </div>
                   </div>
                   <input 
@@ -335,14 +335,14 @@ const ExportExcel = () => {
                   />
                 </label>
 
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                       🔒
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Password Protection</div>
-                      <div className="text-xs text-slate-500">Lock sheets with password</div>
+                      <div className="font-medium text-foreground">Password Protection</div>
+                      <div className="text-xs text-muted-foreground">Lock sheets with password</div>
                     </div>
                   </div>
                   <input 
@@ -357,10 +357,10 @@ const ExportExcel = () => {
 
             {/* Chart Types (shown when includeCharts is true) */}
             {includeCharts && (
-              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <div className="bg-card rounded-xl shadow-sm border border-border p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <BarChart3 className="w-5 h-5 text-emerald-600" />
-                  <h2 className="text-lg font-semibold text-slate-800">Chart Types to Include</h2>
+                  <h2 className="text-lg font-semibold text-foreground">Chart Types to Include</h2>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {chartTypes.map((chart) => (
@@ -368,12 +368,12 @@ const ExportExcel = () => {
                       key={chart.id}
                       className={`p-4 rounded-lg border-2 text-center ${
                         chart.enabled
-                          ? 'border-emerald-500 bg-emerald-50'
-                          : 'border-slate-200 bg-slate-50'
+                          ? 'border-emerald-500 bg-muted'
+                          : 'border-border bg-muted'
                       }`}
                     >
                       <div className="text-3xl mb-2">{chart.icon}</div>
-                      <div className="text-sm font-medium text-slate-800">{chart.name}</div>
+                      <div className="text-sm font-medium text-foreground">{chart.name}</div>
                     </div>
                   ))}
                 </div>
@@ -381,18 +381,18 @@ const ExportExcel = () => {
             )}
 
             {/* Generate Button */}
-            <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl shadow-lg p-6 text-white">
+            <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl shadow-card p-6 text-background">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold mb-1">Ready to Export</h3>
-                  <p className="text-emerald-100 text-sm">
+                  <p className="text-background/70 text-sm">
                     {selectedSheets.length} sheets • {estimatedSize} MB estimated • {fileFormat.toUpperCase()} format
                   </p>
                 </div>
                 <button 
                   onClick={handleGenerate}
                   disabled={selectedSheets.length === 0 || generating}
-                  className="px-6 py-3 bg-white text-emerald-600 rounded-lg hover:bg-emerald-50 transition-colors flex items-center gap-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-card text-emerald-600 rounded-lg hover:bg-muted transition-colors flex items-center gap-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {generating ? (
                     <>
@@ -413,81 +413,81 @@ const ExportExcel = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Preview */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Eye className="w-5 h-5 text-emerald-600" />
-                <h3 className="text-lg font-semibold text-slate-800">Export Preview</h3>
+                <h3 className="text-lg font-semibold text-foreground">Export Preview</h3>
               </div>
               <div className="space-y-3">
-                <div className="p-3 bg-emerald-50 rounded-lg">
+                <div className="p-3 bg-muted rounded-lg">
                   <div className="text-xs text-emerald-600 font-medium mb-1">WORKBOOK INFO</div>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Sheets:</span>
-                      <span className="font-semibold text-slate-800">{selectedSheets.length}</span>
+                      <span className="text-muted-foreground">Sheets:</span>
+                      <span className="font-semibold text-foreground">{selectedSheets.length}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Total Rows:</span>
-                      <span className="font-semibold text-slate-800">{totalRows.toLocaleString()}</span>
+                      <span className="text-muted-foreground">Total Rows:</span>
+                      <span className="font-semibold text-foreground">{totalRows.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Est. Size:</span>
-                      <span className="font-semibold text-slate-800">{estimatedSize} MB</span>
+                      <span className="text-muted-foreground">Est. Size:</span>
+                      <span className="font-semibold text-foreground">{estimatedSize} MB</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Format:</span>
-                      <span className="font-semibold text-slate-800">.{fileFormat}</span>
+                      <span className="text-muted-foreground">Format:</span>
+                      <span className="font-semibold text-foreground">.{fileFormat}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-3 bg-blue-50 rounded-lg">
+                <div className="p-3 bg-muted rounded-lg">
                   <div className="text-xs text-blue-600 font-medium mb-1">FEATURES</div>
                   <div className="flex flex-wrap gap-1">
-                    {includeCharts && <span className="px-2 py-1 bg-white rounded text-xs">📊 Charts</span>}
-                    {includePivot && <span className="px-2 py-1 bg-white rounded text-xs">🔄 Pivot</span>}
-                    {includeFormatting && <span className="px-2 py-1 bg-white rounded text-xs">🎨 Styling</span>}
-                    {includeFormulas && <span className="px-2 py-1 bg-white rounded text-xs">🧮 Formulas</span>}
-                    {protectSheets && <span className="px-2 py-1 bg-white rounded text-xs">🔒 Protected</span>}
+                    {includeCharts && <span className="px-2 py-1 bg-card rounded text-xs">📊 Charts</span>}
+                    {includePivot && <span className="px-2 py-1 bg-card rounded text-xs">🔄 Pivot</span>}
+                    {includeFormatting && <span className="px-2 py-1 bg-card rounded text-xs">🎨 Styling</span>}
+                    {includeFormulas && <span className="px-2 py-1 bg-card rounded text-xs">🧮 Formulas</span>}
+                    {protectSheets && <span className="px-2 py-1 bg-card rounded text-xs">🔒 Protected</span>}
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Stats */}
-            <div className="bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl shadow-lg p-6 text-white">
+            <div className="bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl shadow-card p-6 text-background">
               <h3 className="text-lg font-semibold mb-4">Export Statistics</h3>
               <div className="space-y-4">
                 <div>
-                  <div className="text-emerald-100 text-sm mb-1">Total Exports</div>
-                  <div className="text-3xl font-bold">1,247</div>
+                  <div className="text-background/70 text-sm mb-1">Total Exports</div>
+                  <div className="text-lg sm:text-xl font-semibold tracking-tight">1,247</div>
                 </div>
                 <div>
-                  <div className="text-emerald-100 text-sm mb-1">This Month</div>
-                  <div className="text-3xl font-bold">89</div>
+                  <div className="text-background/70 text-sm mb-1">This Month</div>
+                  <div className="text-lg sm:text-xl font-semibold tracking-tight">89</div>
                 </div>
                 <div>
-                  <div className="text-emerald-100 text-sm mb-1">Total Size</div>
-                  <div className="text-3xl font-bold">8.4 GB</div>
+                  <div className="text-background/70 text-sm mb-1">Total Size</div>
+                  <div className="text-lg sm:text-xl font-semibold tracking-tight">8.4 GB</div>
                 </div>
               </div>
             </div>
 
             {/* Recent Exports */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Recent Exports</h3>
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Recent Exports</h3>
               <div className="space-y-3">
                 {recentExports.map((item) => (
-                  <div key={item.id} className="p-3 border border-slate-200 rounded-lg hover:shadow-md transition-shadow">
+                  <div key={item.id} className="p-3 border border-border rounded-lg hover:shadow-card transition-shadow">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3 flex-1">
                         <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
                           <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-slate-800 truncate">{item.name}</div>
-                          <div className="text-xs text-slate-500 mt-1">{item.date}</div>
-                          <div className="text-xs text-slate-400">{item.size} • {item.sheets} sheets</div>
+                          <div className="text-sm font-medium text-foreground truncate">{item.name}</div>
+                          <div className="text-xs text-muted-foreground mt-1">{item.date}</div>
+                          <div className="text-xs text-muted-foreground">{item.size} • {item.sheets} sheets</div>
                         </div>
                       </div>
                       <button className="text-emerald-600 hover:text-emerald-700">
@@ -531,30 +531,30 @@ const ExportExcel = () => {
       {/* Success Modal */}
       {showSuccess && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 animate-scale-in">
+          <div className="bg-card rounded-xl shadow-card p-8 max-w-md w-full mx-4 animate-scale-in">
             <div className="text-center">
               <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="w-8 h-8 text-emerald-600 animate-bounce" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-800 mb-2">Excel Workbook Generated!</h3>
-              <p className="text-slate-600 mb-4">Your comprehensive Excel file is ready for download</p>
-              <div className="bg-emerald-50 rounded-lg p-4 mb-4">
+              <h3 className="text-xl font-semibold text-foreground mb-2">Excel Workbook Generated!</h3>
+              <p className="text-muted-foreground mb-4">Your comprehensive Excel file is ready for download</p>
+              <div className="bg-muted rounded-lg p-4 mb-4">
                 <div className="text-sm space-y-1">
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Sheets:</span>
-                    <span className="font-semibold text-slate-800">{selectedSheets.length}</span>
+                    <span className="text-muted-foreground">Sheets:</span>
+                    <span className="font-semibold text-foreground">{selectedSheets.length}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Size:</span>
-                    <span className="font-semibold text-slate-800">{estimatedSize} MB</span>
+                    <span className="text-muted-foreground">Size:</span>
+                    <span className="font-semibold text-foreground">{estimatedSize} MB</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Format:</span>
-                    <span className="font-semibold text-slate-800">.{fileFormat}</span>
+                    <span className="text-muted-foreground">Format:</span>
+                    <span className="font-semibold text-foreground">.{fileFormat}</span>
                   </div>
                 </div>
               </div>
-              <p className="text-sm text-slate-500">Download starting automatically...</p>
+              <p className="text-sm text-muted-foreground">Download starting automatically...</p>
             </div>
           </div>
         </div>

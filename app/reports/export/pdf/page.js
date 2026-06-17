@@ -100,19 +100,19 @@ const ExportPDF = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Export to PDF</h1>
-            <p className="text-slate-600">Create beautiful, professional PDF reports with custom styling</p>
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Export to PDF</h1>
+            <p className="text-muted-foreground">Create beautiful, professional PDF reports with custom styling</p>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-slate-700">
+            <button className="px-4 py-2 bg-card border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-foreground">
               <Save className="w-4 h-4" />
               Save Template
             </button>
-            <button className="px-4 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-slate-700">
+            <button className="px-4 py-2 bg-card border border-border rounded-lg hover:bg-muted transition-colors flex items-center gap-2 text-foreground">
               <Printer className="w-4 h-4" />
               Print
             </button>
@@ -123,10 +123,10 @@ const ExportPDF = () => {
           {/* Main Configuration */}
           <div className="lg:col-span-2 space-y-6">
             {/* Template Selection */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Layout className="w-5 h-5 text-rose-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Choose Template</h2>
+                <h2 className="text-lg font-semibold text-foreground">Choose Template</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {templates.map((template) => (
@@ -135,25 +135,25 @@ const ExportPDF = () => {
                     onClick={() => setSelectedTemplate(template.id)}
                     className={`p-4 rounded-lg border-2 transition-all text-left ${
                       selectedTemplate === template.id
-                        ? 'border-rose-500 shadow-lg scale-105'
-                        : 'border-slate-200 hover:border-rose-300'
+                        ? 'border-rose-500 shadow-card scale-105'
+                        : 'border-border hover:border-rose-300'
                     }`}
                   >
                     <div className={`w-full h-24 rounded-lg bg-gradient-to-br ${template.color} flex items-center justify-center text-4xl mb-3 shadow-inner`}>
                       {template.preview}
                     </div>
-                    <div className="font-semibold text-slate-800 text-sm mb-1">{template.name}</div>
-                    <div className="text-xs text-slate-500">{template.description}</div>
+                    <div className="font-semibold text-foreground text-sm mb-1">{template.name}</div>
+                    <div className="text-xs text-muted-foreground">{template.description}</div>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Report Type Selection */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <FileText className="w-5 h-5 text-rose-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Report Type</h2>
+                <h2 className="text-lg font-semibold text-foreground">Report Type</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {reportTypes.map((type) => (
@@ -162,31 +162,31 @@ const ExportPDF = () => {
                     onClick={() => setReportType(type.id)}
                     className={`p-4 rounded-lg border-2 transition-all ${
                       reportType === type.id
-                        ? 'border-rose-500 bg-rose-50'
-                        : 'border-slate-200 hover:border-rose-300'
+                        ? 'border-rose-500 bg-muted'
+                        : 'border-border hover:border-rose-300'
                     }`}
                   >
                     <div className="text-2xl mb-2">{type.icon}</div>
-                    <div className="font-medium text-slate-800 text-sm mb-1">{type.name}</div>
-                    <div className="text-xs text-slate-500">{type.pages} pages</div>
+                    <div className="font-medium text-foreground text-sm mb-1">{type.name}</div>
+                    <div className="text-xs text-muted-foreground">{type.pages} pages</div>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Page Settings */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Settings className="w-5 h-5 text-rose-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Page Settings</h2>
+                <h2 className="text-lg font-semibold text-foreground">Page Settings</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Page Size</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">Page Size</label>
                   <select 
                     value={pageSize}
                     onChange={(e) => setPageSize(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                   >
                     <option value="a4">A4 (210 × 297 mm)</option>
                     <option value="letter">Letter (8.5 × 11 in)</option>
@@ -195,11 +195,11 @@ const ExportPDF = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Orientation</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">Orientation</label>
                   <select 
                     value={orientation}
                     onChange={(e) => setOrientation(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                   >
                     <option value="portrait">Portrait</option>
                     <option value="landscape">Landscape</option>
@@ -209,10 +209,10 @@ const ExportPDF = () => {
             </div>
 
             {/* Color Scheme */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Palette className="w-5 h-5 text-rose-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Color Scheme</h2>
+                <h2 className="text-lg font-semibold text-foreground">Color Scheme</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {colorSchemes.map((scheme) => (
@@ -221,8 +221,8 @@ const ExportPDF = () => {
                     onClick={() => setColorScheme(scheme.id)}
                     className={`p-4 rounded-lg border-2 transition-all ${
                       colorScheme === scheme.id
-                        ? 'border-rose-500 bg-rose-50'
-                        : 'border-slate-200 hover:border-rose-300'
+                        ? 'border-rose-500 bg-muted'
+                        : 'border-border hover:border-rose-300'
                     }`}
                   >
                     <div className="flex gap-1 mb-2">
@@ -230,27 +230,27 @@ const ExportPDF = () => {
                         <div key={idx} className="w-8 h-8 rounded" style={{ backgroundColor: color }}></div>
                       ))}
                     </div>
-                    <div className="font-medium text-slate-800 text-sm">{scheme.name}</div>
+                    <div className="font-medium text-foreground text-sm">{scheme.name}</div>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Content Options */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Image className="w-5 h-5 text-rose-600" />
-                <h2 className="text-lg font-semibold text-slate-800">Content Options</h2>
+                <h2 className="text-lg font-semibold text-foreground">Content Options</h2>
               </div>
               <div className="space-y-3">
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                       📊
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Include Charts & Graphs</div>
-                      <div className="text-xs text-slate-500">Add visual data representations</div>
+                      <div className="font-medium text-foreground">Include Charts & Graphs</div>
+                      <div className="text-xs text-muted-foreground">Add visual data representations</div>
                     </div>
                   </div>
                   <input 
@@ -261,14 +261,14 @@ const ExportPDF = () => {
                   />
                 </label>
 
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                       🖼️
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Include Company Logo</div>
-                      <div className="text-xs text-slate-500">Show branding on header</div>
+                      <div className="font-medium text-foreground">Include Company Logo</div>
+                      <div className="text-xs text-muted-foreground">Show branding on header</div>
                     </div>
                   </div>
                   <input 
@@ -279,14 +279,14 @@ const ExportPDF = () => {
                   />
                 </label>
 
-                <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                <label className="flex items-center justify-between p-3 border border-border rounded-lg cursor-pointer hover:bg-muted">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                       📝
                     </div>
                     <div>
-                      <div className="font-medium text-slate-800">Include Footer Info</div>
-                      <div className="text-xs text-slate-500">Page numbers and timestamps</div>
+                      <div className="font-medium text-foreground">Include Footer Info</div>
+                      <div className="text-xs text-muted-foreground">Page numbers and timestamps</div>
                     </div>
                   </div>
                   <input 
@@ -300,18 +300,18 @@ const ExportPDF = () => {
             </div>
 
             {/* Generate Button */}
-            <div className="bg-gradient-to-r from-rose-600 to-orange-600 rounded-xl shadow-lg p-6 text-white">
+            <div className="bg-gradient-to-r from-rose-600 to-orange-600 rounded-xl shadow-card p-6 text-background">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold mb-1">Ready to Generate</h3>
-                  <p className="text-rose-100 text-sm">
+                  <p className="text-background/70 text-sm">
                     {currentReport?.name} • {currentTemplate?.name} Template • {pageSize.toUpperCase()} {orientation}
                   </p>
                 </div>
                 <button 
                   onClick={handleGenerate}
                   disabled={generating}
-                  className="px-6 py-3 bg-white text-rose-600 rounded-lg hover:bg-rose-50 transition-colors flex items-center gap-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-card text-rose-600 rounded-lg hover:bg-muted transition-colors flex items-center gap-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {generating ? (
                     <>
@@ -332,66 +332,66 @@ const ExportPDF = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Preview Card */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Eye className="w-5 h-5 text-rose-600" />
-                <h3 className="text-lg font-semibold text-slate-800">Preview</h3>
+                <h3 className="text-lg font-semibold text-foreground">Preview</h3>
               </div>
-              <div className="aspect-[8.5/11] bg-slate-100 rounded-lg border-2 border-slate-200 flex items-center justify-center overflow-hidden">
+              <div className="aspect-[8.5/11] bg-muted rounded-lg border-2 border-border flex items-center justify-center overflow-hidden">
                 <div className={`w-full h-full bg-gradient-to-br ${currentTemplate?.color} opacity-20 flex items-center justify-center text-6xl`}>
                   {currentTemplate?.preview}
                 </div>
               </div>
               <div className="mt-4 space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Template:</span>
-                  <span className="font-medium text-slate-800">{currentTemplate?.name}</span>
+                  <span className="text-muted-foreground">Template:</span>
+                  <span className="font-medium text-foreground">{currentTemplate?.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Est. Size:</span>
-                  <span className="font-medium text-slate-800">3-5 MB</span>
+                  <span className="text-muted-foreground">Est. Size:</span>
+                  <span className="font-medium text-foreground">3-5 MB</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Pages:</span>
-                  <span className="font-medium text-slate-800">{currentReport?.pages}</span>
+                  <span className="text-muted-foreground">Pages:</span>
+                  <span className="font-medium text-foreground">{currentReport?.pages}</span>
                 </div>
               </div>
             </div>
 
             {/* Quick Stats */}
-            <div className="bg-gradient-to-br from-rose-600 to-pink-600 rounded-xl shadow-lg p-6 text-white">
+            <div className="bg-gradient-to-br from-rose-600 to-pink-600 rounded-xl shadow-card p-6 text-background">
               <h3 className="text-lg font-semibold mb-4">Export Statistics</h3>
               <div className="space-y-4">
                 <div>
-                  <div className="text-rose-100 text-sm mb-1">Total PDFs Generated</div>
-                  <div className="text-3xl font-bold">284</div>
+                  <div className="text-background/70 text-sm mb-1">Total PDFs Generated</div>
+                  <div className="text-lg sm:text-xl font-semibold tracking-tight">284</div>
                 </div>
                 <div>
-                  <div className="text-rose-100 text-sm mb-1">This Month</div>
-                  <div className="text-3xl font-bold">42</div>
+                  <div className="text-background/70 text-sm mb-1">This Month</div>
+                  <div className="text-lg sm:text-xl font-semibold tracking-tight">42</div>
                 </div>
                 <div>
-                  <div className="text-rose-100 text-sm mb-1">Total Size</div>
-                  <div className="text-3xl font-bold">1.2 GB</div>
+                  <div className="text-background/70 text-sm mb-1">Total Size</div>
+                  <div className="text-lg sm:text-xl font-semibold tracking-tight">1.2 GB</div>
                 </div>
               </div>
             </div>
 
             {/* Recent Exports */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Recent Exports</h3>
+            <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Recent Exports</h3>
               <div className="space-y-3">
                 {recentExports.map((item) => (
-                  <div key={item.id} className="p-3 border border-slate-200 rounded-lg hover:shadow-md transition-shadow">
+                  <div key={item.id} className="p-3 border border-border rounded-lg hover:shadow-card transition-shadow">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3 flex-1">
                         <div className="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center flex-shrink-0">
                           <FileText className="w-4 h-4 text-rose-600" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-slate-800 truncate">{item.name}</div>
-                          <div className="text-xs text-slate-500 mt-1">{item.date}</div>
-                          <div className="text-xs text-slate-400">{item.size} • {item.template}</div>
+                          <div className="text-sm font-medium text-foreground truncate">{item.name}</div>
+                          <div className="text-xs text-muted-foreground mt-1">{item.date}</div>
+                          <div className="text-xs text-muted-foreground">{item.size} • {item.template}</div>
                         </div>
                       </div>
                       <button className="text-rose-600 hover:text-rose-700">
@@ -435,22 +435,22 @@ const ExportPDF = () => {
       {/* Success Modal */}
       {showPreview && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 animate-scale-in">
+          <div className="bg-card rounded-xl shadow-card p-8 max-w-md w-full mx-4 animate-scale-in">
             <div className="text-center">
               <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="w-8 h-8 text-rose-600 animate-bounce" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-800 mb-2">PDF Generated Successfully!</h3>
-              <p className="text-slate-600 mb-4">Your professional PDF report is ready</p>
-              <div className="bg-rose-50 rounded-lg p-4 mb-4">
-                <div className="text-sm text-slate-700 mb-1">
+              <h3 className="text-xl font-semibold text-foreground mb-2">PDF Generated Successfully!</h3>
+              <p className="text-muted-foreground mb-4">Your professional PDF report is ready</p>
+              <div className="bg-muted rounded-lg p-4 mb-4">
+                <div className="text-sm text-foreground mb-1">
                   <span className="font-semibold">{currentReport?.name}</span>
                 </div>
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-muted-foreground">
                   {currentTemplate?.name} Template • {pageSize.toUpperCase()} {orientation}
                 </div>
               </div>
-              <p className="text-sm text-slate-500">Download starting automatically...</p>
+              <p className="text-sm text-muted-foreground">Download starting automatically...</p>
             </div>
           </div>
         </div>

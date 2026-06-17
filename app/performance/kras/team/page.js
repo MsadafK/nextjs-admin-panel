@@ -217,7 +217,7 @@ export default function TeamKRAsPage() {
       'good': 'bg-blue-100 text-blue-700',
       'satisfactory': 'bg-yellow-100 text-yellow-700'
     };
-    return colors[status] || 'bg-slate-100 text-slate-700';
+    return colors[status] || 'bg-muted text-foreground';
   };
 
   const getPriorityColor = (priority) => {
@@ -225,14 +225,14 @@ export default function TeamKRAsPage() {
       'critical': 'bg-red-100 text-red-700',
       'high': 'bg-orange-100 text-orange-700',
       'medium': 'bg-yellow-100 text-yellow-700',
-      'low': 'bg-slate-100 text-slate-700'
+      'low': 'bg-muted text-foreground'
     };
-    return colors[priority] || 'bg-slate-100 text-slate-700';
+    return colors[priority] || 'bg-muted text-foreground';
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50 to-cyan-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -240,23 +240,23 @@ export default function TeamKRAsPage() {
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent flex items-center gap-3">
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground flex items-center gap-3">
               <Users size={32} />
               Team KRAs Dashboard
             </h1>
-            <p className="text-slate-600 mt-1">Track and manage team key result areas</p>
+            <p className="text-muted-foreground mt-1">Track and manage team key result areas</p>
           </div>
 
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-all flex items-center gap-2 text-slate-700 hover:shadow-md">
+            <button className="px-4 py-2 bg-card rounded-lg border border-border hover:border-border transition-all flex items-center gap-2 text-foreground hover:shadow-card">
               <Filter size={18} />
               <span>Filter</span>
             </button>
-            <button className="px-4 py-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-all flex items-center gap-2 text-slate-700 hover:shadow-md">
+            <button className="px-4 py-2 bg-card rounded-lg border border-border hover:border-border transition-all flex items-center gap-2 text-foreground hover:shadow-card">
               <Download size={18} />
               <span>Export</span>
             </button>
-            <button className="px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2">
+            <button className="px-4 py-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-background rounded-lg hover:shadow-card transition-all flex items-center gap-2">
               <Plus size={18} />
               <span>Add KRA</span>
             </button>
@@ -268,12 +268,12 @@ export default function TeamKRAsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-4 shadow-sm border border-border"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Calendar size={20} className="text-teal-600" />
-              <span className="font-semibold text-slate-700">Review Period</span>
+              <span className="font-semibold text-foreground">Review Period</span>
             </div>
             <div className="flex gap-2">
               {['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025'].map((quarter) => (
@@ -282,8 +282,8 @@ export default function TeamKRAsPage() {
                   onClick={() => setSelectedQuarter(quarter)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
                     selectedQuarter === quarter
-                      ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-background shadow-card'
+                      : 'bg-muted text-muted-foreground hover:bg-muted'
                   }`}
                 >
                   {quarter}
@@ -301,11 +301,11 @@ export default function TeamKRAsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.05 }}
-              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all border border-slate-100 group"
+              className="bg-card rounded-xl p-6 shadow-sm hover:shadow-card transition-all border border-border group"
             >
               <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} group-hover:scale-110 transition-transform shadow-lg`}>
-                  <stat.icon className="text-white" size={24} />
+                <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} group-hover:scale-110 transition-transform shadow-card`}>
+                  <stat.icon className="text-background" size={24} />
                 </div>
                 <div className={`flex items-center gap-1 text-sm font-bold px-2.5 py-1 rounded-full ${
                   stat.trend === 'up' && !stat.title.includes('Risk') ? 'bg-green-100 text-green-700' : 
@@ -316,9 +316,9 @@ export default function TeamKRAsPage() {
                   {stat.change}
                 </div>
               </div>
-              <h3 className="text-3xl font-bold text-slate-800 mb-1">{stat.value}</h3>
-              <p className="text-slate-600 text-sm mb-1">{stat.title}</p>
-              <p className="text-xs text-slate-500">{stat.subtitle}</p>
+              <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-1">{stat.value}</h3>
+              <p className="text-muted-foreground text-sm mb-1">{stat.title}</p>
+              <p className="text-xs text-muted-foreground">{stat.subtitle}</p>
             </motion.div>
           ))}
         </div>
@@ -328,19 +328,19 @@ export default function TeamKRAsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-6 shadow-sm border border-border"
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <BarChart3 size={20} className="text-teal-600" />
-              <h2 className="text-xl font-bold text-slate-800">Team Performance Overview</h2>
+              <h2 className="text-base font-semibold text-foreground">Team Performance Overview</h2>
             </div>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
               <input
                 type="text"
                 placeholder="Search teams..."
-                className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"
+                className="pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"
               />
             </div>
           </div>
@@ -352,7 +352,7 @@ export default function TeamKRAsPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 + index * 0.05 }}
-                className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-5 border border-slate-200 hover:border-teal-300 hover:shadow-md transition-all group"
+                className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-5 border border-border hover:border-teal-300 hover:shadow-card transition-all group"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
@@ -360,8 +360,8 @@ export default function TeamKRAsPage() {
                       {team.icon}
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-800">{team.name}</h3>
-                      <p className="text-xs text-slate-500">{team.members} members</p>
+                      <h3 className="font-bold text-foreground">{team.name}</h3>
+                      <p className="text-xs text-muted-foreground">{team.members} members</p>
                     </div>
                   </div>
                   <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(team.status)}`}>
@@ -371,29 +371,29 @@ export default function TeamKRAsPage() {
 
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">Lead:</span>
-                    <span className="font-semibold text-slate-800">{team.lead}</span>
+                    <span className="text-muted-foreground">Lead:</span>
+                    <span className="font-semibold text-foreground">{team.lead}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">Total KRAs:</span>
-                    <span className="font-semibold text-slate-800">{team.kras}</span>
+                    <span className="text-muted-foreground">Total KRAs:</span>
+                    <span className="font-semibold text-foreground">{team.kras}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">Completed:</span>
+                    <span className="text-muted-foreground">Completed:</span>
                     <span className="font-semibold text-green-600">{team.completed}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">In Progress:</span>
+                    <span className="text-muted-foreground">In Progress:</span>
                     <span className="font-semibold text-blue-600">{team.inProgress}</span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">Achievement</span>
-                    <span className="font-bold text-slate-800">{team.achievement}%</span>
+                    <span className="text-muted-foreground">Achievement</span>
+                    <span className="font-bold text-foreground">{team.achievement}%</span>
                   </div>
-                  <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="h-3 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${team.achievement}%` }}
@@ -403,7 +403,7 @@ export default function TeamKRAsPage() {
                   </div>
                 </div>
 
-                <button className="w-full mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 text-sm font-medium transition-all flex items-center justify-center gap-2 group-hover:bg-teal-50 group-hover:text-teal-700">
+                <button className="w-full mt-4 px-4 py-2 bg-muted hover:bg-muted rounded-lg text-foreground text-sm font-medium transition-all flex items-center justify-center gap-2 group-hover:bg-muted group-hover:text-teal-700">
                   View Details
                   <ChevronRight size={16} />
                 </button>
@@ -417,16 +417,16 @@ export default function TeamKRAsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden"
+          className="bg-card rounded-xl shadow-sm border border-border overflow-hidden"
         >
-          <div className="p-6 border-b border-slate-100">
+          <div className="p-6 border-b border-border">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Target size={20} className="text-teal-600" />
-                <h2 className="text-xl font-bold text-slate-800">Active KRAs</h2>
+                <h2 className="text-base font-semibold text-foreground">Active KRAs</h2>
               </div>
               <div className="flex gap-2">
-                <button className="px-3 py-1.5 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors text-slate-700">
+                <button className="px-3 py-1.5 text-sm bg-muted hover:bg-muted rounded-lg transition-colors text-foreground">
                   All Status
                 </button>
               </div>
@@ -435,49 +435,49 @@ export default function TeamKRAsPage() {
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="bg-muted border-b border-border">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">KRA Title</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Team</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Owner</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Progress</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Status</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Priority</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase">Due Date</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">KRA Title</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Team</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Owner</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Progress</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Priority</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase">Due Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {recentKRAs.map((kra, index) => (
                   <motion.tr
                     key={kra.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6 + index * 0.05 }}
-                    className="hover:bg-slate-50 transition-colors"
+                    className="hover:bg-muted transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-semibold text-slate-800">{kra.title}</p>
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="font-semibold text-foreground">{kra.title}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
                           Target: {kra.target} • Current: {kra.current}
                         </p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-700">{kra.team}</span>
+                      <span className="text-sm text-foreground">{kra.team}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm font-medium text-slate-800">{kra.owner}</span>
+                      <span className="text-sm font-medium text-foreground">{kra.owner}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden max-w-[100px]">
+                        <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden max-w-[100px]">
                           <div 
                             className="h-full bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full"
                             style={{ width: `${kra.progress}%` }}
                           />
                         </div>
-                        <span className="text-sm font-semibold text-slate-700">{kra.progress}%</span>
+                        <span className="text-sm font-semibold text-foreground">{kra.progress}%</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -491,7 +491,7 @@ export default function TeamKRAsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1 text-sm text-slate-600">
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
                         <Clock size={14} />
                         {new Date(kra.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </div>
@@ -509,31 +509,31 @@ export default function TeamKRAsPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.7 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-slate-100"
+            className="bg-card rounded-xl p-6 shadow-sm border border-border"
           >
             <div className="flex items-center gap-2 mb-6">
               <Award size={20} className="text-yellow-500 fill-yellow-500" />
-              <h2 className="text-xl font-bold text-slate-800">Top Performers</h2>
+              <h2 className="text-base font-semibold text-foreground">Top Performers</h2>
             </div>
 
             <div className="space-y-3">
               {topPerformers.map((performer, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-teal-600 to-cyan-600 text-white font-bold text-sm">
+                <div key={index} className="flex items-center gap-3 p-3 bg-muted rounded-lg hover:bg-muted transition-colors">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-teal-600 to-cyan-600 text-background font-bold text-sm">
                     {index + 1}
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-slate-800">{performer.name}</p>
-                    <p className="text-xs text-slate-500">{performer.team} • {performer.kras} KRAs</p>
+                    <p className="font-semibold text-foreground">{performer.name}</p>
+                    <p className="text-xs text-muted-foreground">{performer.team} • {performer.kras} KRAs</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold text-teal-600">{performer.achievement}%</p>
+                    <p className="text-base font-semibold text-teal-600">{performer.achievement}%</p>
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
                         <Star 
                           key={i} 
                           size={12} 
-                          className={i < Math.floor(performer.achievement / 20) ? 'text-yellow-500 fill-yellow-500' : 'text-slate-300'}
+                          className={i < Math.floor(performer.achievement / 20) ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}
                         />
                       ))}
                     </div>
@@ -548,47 +548,47 @@ export default function TeamKRAsPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.7 }}
-            className="bg-gradient-to-br from-teal-600 to-cyan-600 rounded-xl p-6 text-white shadow-lg"
+            className="bg-gradient-to-br from-teal-600 to-cyan-600 rounded-xl p-6 text-background shadow-card"
           >
             <div className="flex items-center gap-2 mb-4">
               <Zap size={24} />
-              <h2 className="text-xl font-bold">Quick Insights</h2>
+              <h2 className="text-base font-semibold">Quick Insights</h2>
             </div>
 
             <div className="space-y-4">
-              <div className="bg-white/10 rounded-lg p-4">
+              <div className="bg-card/10 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-teal-100">On Track KRAs</span>
-                  <span className="text-2xl font-bold">28</span>
+                  <span className="text-background/70">On Track KRAs</span>
+                  <span className="text-lg font-semibold tracking-tight">28</span>
                 </div>
-                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-white rounded-full" style={{ width: '67%' }} />
+                <div className="h-2 bg-card/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-card rounded-full" style={{ width: '67%' }} />
                 </div>
               </div>
 
-              <div className="bg-white/10 rounded-lg p-4">
+              <div className="bg-card/10 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-teal-100">Needs Attention</span>
-                  <span className="text-2xl font-bold">8</span>
+                  <span className="text-background/70">Needs Attention</span>
+                  <span className="text-lg font-semibold tracking-tight">8</span>
                 </div>
-                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                <div className="h-2 bg-card/20 rounded-full overflow-hidden">
                   <div className="h-full bg-yellow-400 rounded-full" style={{ width: '19%' }} />
                 </div>
               </div>
 
-              <div className="bg-white/10 rounded-lg p-4">
+              <div className="bg-card/10 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-teal-100">At Risk</span>
-                  <span className="text-2xl font-bold">6</span>
+                  <span className="text-background/70">At Risk</span>
+                  <span className="text-lg font-semibold tracking-tight">6</span>
                 </div>
-                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+                <div className="h-2 bg-card/20 rounded-full overflow-hidden">
                   <div className="h-full bg-red-400 rounded-full" style={{ width: '14%' }} />
                 </div>
               </div>
 
               <div className="pt-4 border-t border-white/20">
-                <p className="text-sm text-teal-100 mb-2">Average Team Achievement</p>
-                <p className="text-4xl font-bold">85%</p>
+                <p className="text-sm text-background/70 mb-2">Average Team Achievement</p>
+                <p className="text-xl sm:text-2xl font-semibold tracking-tight">85%</p>
                 <p className="text-sm text-teal-200 mt-1">+3% from last quarter</p>
               </div>
             </div>

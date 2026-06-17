@@ -153,10 +153,10 @@ export default function TeamMessagesPage() {
   ];
 
   const quickStats = [
-    { label: 'Total Chats', value: '45', icon: MessageSquare, color: 'from-blue-500 to-indigo-600', bgColor: 'bg-blue-50', textColor: 'text-blue-600' },
-    { label: 'Unread', value: '12', icon: AlertCircle, color: 'from-orange-500 to-amber-600', bgColor: 'bg-orange-50', textColor: 'text-orange-600' },
-    { label: 'Active Today', value: '23', icon: Users, color: 'from-emerald-500 to-teal-600', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600' },
-    { label: 'Pinned', value: '3', icon: Pin, color: 'from-purple-500 to-pink-600', bgColor: 'bg-purple-50', textColor: 'text-purple-600' },
+    { label: 'Total Chats', value: '45', icon: MessageSquare, color: 'from-blue-500 to-indigo-600', bgColor: 'bg-muted', textColor: 'text-blue-600' },
+    { label: 'Unread', value: '12', icon: AlertCircle, color: 'from-orange-500 to-amber-600', bgColor: 'bg-muted', textColor: 'text-orange-600' },
+    { label: 'Active Today', value: '23', icon: Users, color: 'from-emerald-500 to-teal-600', bgColor: 'bg-muted', textColor: 'text-emerald-600' },
+    { label: 'Pinned', value: '3', icon: Pin, color: 'from-purple-500 to-pink-600', bgColor: 'bg-muted', textColor: 'text-purple-600' },
   ];
 
   const selectedConv = conversations.find(c => c.id === selectedConversation);
@@ -170,14 +170,14 @@ export default function TeamMessagesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
               Team Messages
             </h1>
-            <p className="text-slate-600">Stay connected with your team in real-time</p>
+            <p className="text-muted-foreground">Stay connected with your team in real-time</p>
           </div>
         </div>
 
@@ -186,32 +186,32 @@ export default function TeamMessagesPage() {
           {quickStats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card hover:shadow-dropdown transition-all duration-300">
                 <div className={`${stat.bgColor} w-12 h-12 rounded-xl flex items-center justify-center mb-4`}>
                   <Icon className={`w-6 h-6 ${stat.textColor}`} />
                 </div>
-                <p className="text-slate-600 text-sm mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-slate-800">{stat.value}</p>
+                <p className="text-muted-foreground text-sm mb-1">{stat.label}</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{stat.value}</p>
               </div>
             );
           })}
         </div>
 
         {/* Main Chat Interface */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+        <div className="bg-card border border-border rounded-lg shadow-card overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12" style={{ height: '600px' }}>
             {/* Conversations Sidebar */}
-            <div className="lg:col-span-4 border-r border-slate-200 flex flex-col">
+            <div className="lg:col-span-4 border-r border-border flex flex-col">
               {/* Search and Filters */}
-              <div className="p-4 border-b border-slate-200">
+              <div className="p-4 border-b border-border">
                 <div className="relative mb-3">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
                     type="text"
                     placeholder="Search conversations..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+                    className="w-full pl-10 pr-4 py-3 border-2 border-border rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
                   />
                 </div>
                 <div className="flex gap-2 overflow-x-auto">
@@ -221,8 +221,8 @@ export default function TeamMessagesPage() {
                       onClick={() => setFilterStatus(filter.value)}
                       className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${
                         filterStatus === filter.value
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          ? 'bg-foreground text-background'
+                          : 'bg-muted text-muted-foreground hover:bg-muted'
                       }`}
                     >
                       {filter.label} ({filter.count})
@@ -237,8 +237,8 @@ export default function TeamMessagesPage() {
                   <div
                     key={conv.id}
                     onClick={() => setSelectedConversation(conv.id)}
-                    className={`p-4 border-b border-slate-100 cursor-pointer transition-all hover:bg-slate-50 ${
-                      selectedConversation === conv.id ? 'bg-blue-50 border-l-4 border-l-blue-600' : ''
+                    className={`p-4 border-b border-border cursor-pointer transition-all hover:bg-muted ${
+                      selectedConversation === conv.id ? 'bg-muted border-l-2 border-l-blue-600' : ''
                     }`}
                   >
                     <div className="flex items-start gap-3">
@@ -247,24 +247,24 @@ export default function TeamMessagesPage() {
                           {conv.avatar}
                         </div>
                         {conv.isOnline && (
-                          <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+                          <div className="absolute bottom-0 right-0 w-3 h-3 bg-muted0 border-2 border-white rounded-full"></div>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex items-center gap-2">
-                            <h3 className="font-bold text-slate-800 truncate">{conv.name}</h3>
+                            <h3 className="font-bold text-foreground truncate">{conv.name}</h3>
                             {conv.isPinned && <Pin className="w-4 h-4 text-blue-600" />}
                             {conv.type === 'group' && (
-                              <span className="text-xs text-slate-500">({conv.members})</span>
+                              <span className="text-xs text-muted-foreground">({conv.members})</span>
                             )}
                           </div>
-                          <span className="text-xs text-slate-500">{conv.lastMessageTime}</span>
+                          <span className="text-xs text-muted-foreground">{conv.lastMessageTime}</span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <p className="text-sm text-slate-600 truncate">{conv.lastMessage}</p>
+                          <p className="text-sm text-muted-foreground truncate">{conv.lastMessage}</p>
                           {conv.unreadCount > 0 && (
-                            <span className="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[20px] text-center">
+                            <span className="bg-foreground text-background text-xs font-bold px-2 py-1 rounded-full min-w-[20px] text-center">
                               {conv.unreadCount}
                             </span>
                           )}
@@ -279,7 +279,7 @@ export default function TeamMessagesPage() {
             {/* Chat Area */}
             <div className="lg:col-span-8 flex flex-col">
               {/* Chat Header */}
-              <div className="p-4 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+              <div className="p-4 border-b border-border bg-gradient-to-r from-blue-50 to-indigo-50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="relative">
@@ -287,26 +287,26 @@ export default function TeamMessagesPage() {
                         {selectedConv?.avatar}
                       </div>
                       {selectedConv?.isOnline && (
-                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-muted0 border-2 border-white rounded-full"></div>
                       )}
                     </div>
                     <div>
-                      <h2 className="font-bold text-slate-800 text-lg">{selectedConv?.name}</h2>
-                      <p className="text-sm text-slate-600">
+                      <h2 className="font-bold text-foreground text-lg">{selectedConv?.name}</h2>
+                      <p className="text-sm text-muted-foreground">
                         {selectedConv?.isOnline ? 'Active now' : 'Offline'}
                         {selectedConv?.type === 'group' && ` • ${selectedConv?.members} members`}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                      <Phone className="w-5 h-5 text-slate-600" />
+                    <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                      <Phone className="w-5 h-5 text-muted-foreground" />
                     </button>
-                    <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                      <Video className="w-5 h-5 text-slate-600" />
+                    <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                      <Video className="w-5 h-5 text-muted-foreground" />
                     </button>
-                    <button className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                      <MoreVertical className="w-5 h-5 text-slate-600" />
+                    <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                      <MoreVertical className="w-5 h-5 text-muted-foreground" />
                     </button>
                   </div>
                 </div>
@@ -326,13 +326,13 @@ export default function TeamMessagesPage() {
                     )}
                     <div className={`flex flex-col max-w-[70%] ${message.isSent ? 'items-end' : 'items-start'}`}>
                       {!message.isSent && (
-                        <span className="text-xs font-semibold text-slate-600 mb-1">{message.sender}</span>
+                        <span className="text-xs font-semibold text-muted-foreground mb-1">{message.sender}</span>
                       )}
                       <div
-                        className={`rounded-2xl px-4 py-3 ${
+                        className={`rounded-lg px-4 py-3 ${
                           message.isSent
-                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white'
-                            : 'bg-slate-100 text-slate-800'
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-background'
+                            : 'bg-muted text-foreground'
                         }`}
                       >
                         <p className="text-sm">{message.content}</p>
@@ -340,7 +340,7 @@ export default function TeamMessagesPage() {
                           <div className="mt-2 space-y-2">
                             {message.attachments.map((att, idx) => (
                               <div key={idx} className={`flex items-center gap-2 p-2 rounded-lg ${
-                                message.isSent ? 'bg-white/20' : 'bg-white'
+                                message.isSent ? 'bg-card/20' : 'bg-card'
                               }`}>
                                 <File className="w-4 h-4" />
                                 <div className="flex-1 min-w-0">
@@ -353,11 +353,11 @@ export default function TeamMessagesPage() {
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-slate-500">{message.timestamp}</span>
+                        <span className="text-xs text-muted-foreground">{message.timestamp}</span>
                         {message.isSent && (
                           <span>
                             {message.status === 'delivered' ? (
-                              <Check className="w-4 h-4 text-slate-400" />
+                              <Check className="w-4 h-4 text-muted-foreground" />
                             ) : (
                               <CheckCheck className="w-4 h-4 text-blue-600" />
                             )}
@@ -370,16 +370,16 @@ export default function TeamMessagesPage() {
               </div>
 
               {/* Message Input */}
-              <div className="p-4 border-t border-slate-200 bg-slate-50">
+              <div className="p-4 border-t border-border bg-muted">
                 <div className="flex items-center gap-3">
-                  <button className="p-2 hover:bg-slate-200 rounded-lg transition-colors">
-                    <Paperclip className="w-5 h-5 text-slate-600" />
+                  <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                    <Paperclip className="w-5 h-5 text-muted-foreground" />
                   </button>
-                  <button className="p-2 hover:bg-slate-200 rounded-lg transition-colors">
-                    <Image className="w-5 h-5 text-slate-600" />
+                  <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                    <Image className="w-5 h-5 text-muted-foreground" />
                   </button>
-                  <button className="p-2 hover:bg-slate-200 rounded-lg transition-colors">
-                    <Smile className="w-5 h-5 text-slate-600" />
+                  <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                    <Smile className="w-5 h-5 text-muted-foreground" />
                   </button>
                   <input
                     type="text"
@@ -387,11 +387,11 @@ export default function TeamMessagesPage() {
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    className="flex-1 px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+                    className="flex-1 px-4 py-3 border-2 border-border rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
                   />
                   <button
                     onClick={handleSendMessage}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-background p-3 rounded-xl hover:shadow-card transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={!messageText.trim()}
                   >
                     <Send className="w-5 h-5" />

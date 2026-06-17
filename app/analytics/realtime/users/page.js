@@ -21,9 +21,9 @@ export default function LiveUsersPage() {
   }, []);
 
   const deviceStats = [
-    { type: 'Desktop', count: 1124, percentage: 61, icon: Monitor, color: 'from-blue-500 to-cyan-500', bgColor: 'bg-blue-50' },
-    { type: 'Mobile', count: 589, percentage: 32, icon: Smartphone, color: 'from-purple-500 to-pink-500', bgColor: 'bg-purple-50' },
-    { type: 'Tablet', count: 134, percentage: 7, icon: Tablet, color: 'from-orange-500 to-amber-500', bgColor: 'bg-orange-50' },
+    { type: 'Desktop', count: 1124, percentage: 61, icon: Monitor, color: 'from-blue-500 to-cyan-500', bgColor: 'bg-muted' },
+    { type: 'Mobile', count: 589, percentage: 32, icon: Smartphone, color: 'from-purple-500 to-pink-500', bgColor: 'bg-muted' },
+    { type: 'Tablet', count: 134, percentage: 7, icon: Tablet, color: 'from-orange-500 to-amber-500', bgColor: 'bg-muted' },
   ];
 
   const topPages = [
@@ -52,10 +52,10 @@ export default function LiveUsersPage() {
   ];
 
   const quickStats = [
-    { label: 'Avg. Session', value: '4:32', icon: Clock, color: 'text-emerald-600', bgColor: 'bg-emerald-50' },
-    { label: 'Pages/Session', value: '5.8', icon: Eye, color: 'text-blue-600', bgColor: 'bg-blue-50' },
-    { label: 'Bounce Rate', value: '32%', icon: MousePointer, color: 'text-purple-600', bgColor: 'bg-purple-50' },
-    { label: 'Active Now', value: `${liveCount}`, icon: Activity, color: 'text-orange-600', bgColor: 'bg-orange-50' },
+    { label: 'Avg. Session', value: '4:32', icon: Clock, color: 'text-emerald-600', bgColor: 'bg-muted' },
+    { label: 'Pages/Session', value: '5.8', icon: Eye, color: 'text-blue-600', bgColor: 'bg-muted' },
+    { label: 'Bounce Rate', value: '32%', icon: MousePointer, color: 'text-purple-600', bgColor: 'bg-muted' },
+    { label: 'Active Now', value: `${liveCount}`, icon: Activity, color: 'text-orange-600', bgColor: 'bg-muted' },
   ];
 
   return (
@@ -65,38 +65,38 @@ export default function LiveUsersPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
                 Live Users
               </h1>
               <div className="flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-muted0 rounded-full animate-pulse"></div>
                 <span className="text-sm font-semibold">LIVE</span>
               </div>
             </div>
-            <p className="text-slate-600">Real-time user activity monitoring</p>
+            <p className="text-muted-foreground">Real-time user activity monitoring</p>
           </div>
           <div className="text-right">
-            <p className="text-slate-500 text-sm mb-1">Last updated</p>
-            <p className="text-slate-700 font-semibold">{new Date().toLocaleTimeString()}</p>
+            <p className="text-muted-foreground text-sm mb-1">Last updated</p>
+            <p className="text-foreground font-semibold">{new Date().toLocaleTimeString()}</p>
           </div>
         </div>
 
         {/* Live Counter - Hero Section */}
         <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 shadow-2xl overflow-hidden">
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-            <div className="absolute bottom-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+            <div className="absolute top-10 left-10 w-72 h-72 bg-card rounded-full blur-3xl"></div>
+            <div className="absolute bottom-10 right-10 w-96 h-96 bg-card rounded-full blur-3xl"></div>
           </div>
           <div className="relative z-10 text-center">
             <div className="flex items-center justify-center gap-4 mb-4">
               <Users className="w-16 h-16 text-white" />
               <Zap className={`w-8 h-8 text-yellow-300 ${pulse ? 'animate-ping' : ''}`} />
             </div>
-            <h2 className="text-white text-2xl font-medium mb-2">Users Online Right Now</h2>
-            <div className={`text-8xl font-bold text-white mb-4 transition-all duration-500 ${pulse ? 'scale-110' : 'scale-100'}`}>
+            <h2 className="text-background text-xl font-medium mb-2">Users Online Right Now</h2>
+            <div className={`text-5xl sm:text-6xl font-bold text-background mb-4 transition-all duration-500 ${pulse ? 'scale-110' : 'scale-100'}`}>
               {liveCount.toLocaleString()}
             </div>
-            <p className="text-indigo-100 text-lg">People are actively browsing your platform</p>
+            <p className="text-background/70 text-lg">People are actively browsing your platform</p>
           </div>
         </div>
 
@@ -105,20 +105,20 @@ export default function LiveUsersPage() {
           {quickStats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300">
+              <div key={index} className="bg-card rounded-2xl p-6 shadow-lg border border-border hover:shadow-dropdown transition-all duration-300">
                 <div className={`${stat.bgColor} w-12 h-12 rounded-xl flex items-center justify-center mb-4`}>
                   <Icon className={`w-6 h-6 ${stat.color}`} />
                 </div>
-                <p className="text-slate-600 text-sm mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-slate-800">{stat.value}</p>
+                <p className="text-muted-foreground text-sm mb-1">{stat.label}</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{stat.value}</p>
               </div>
             );
           })}
         </div>
 
         {/* Device Stats */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-          <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+        <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
+          <h3 className="text-base font-semibold text-foreground mb-6 flex items-center gap-2">
             <Globe className="w-6 h-6 text-indigo-600" />
             Device Distribution
           </h3>
@@ -130,16 +130,16 @@ export default function LiveUsersPage() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <div className={`${device.bgColor} p-2 rounded-lg`}>
-                        <Icon className="w-5 h-5 text-slate-700" />
+                        <Icon className="w-5 h-5 text-foreground" />
                       </div>
-                      <span className="font-semibold text-slate-800">{device.type}</span>
+                      <span className="font-semibold text-foreground">{device.type}</span>
                     </div>
                     <div className="text-right">
-                      <span className="font-bold text-slate-800">{device.count}</span>
-                      <span className="text-slate-500 text-sm ml-2">({device.percentage}%)</span>
+                      <span className="font-bold text-foreground">{device.count}</span>
+                      <span className="text-muted-foreground text-sm ml-2">({device.percentage}%)</span>
                     </div>
                   </div>
-                  <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                  <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
                     <div 
                       className={`h-full bg-gradient-to-r ${device.color} rounded-full transition-all duration-500`}
                       style={{ width: `${device.percentage}%` }}
@@ -154,17 +154,17 @@ export default function LiveUsersPage() {
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Top Pages */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-            <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
+            <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
               <TrendingUp className="w-6 h-6 text-indigo-600" />
               Top Active Pages
             </h3>
             <div className="space-y-3">
               {topPages.map((page, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-xl hover:bg-muted transition-colors">
                   <div className="flex-1 min-w-0">
-                    <p className="font-mono text-sm text-slate-700 truncate">{page.page}</p>
-                    <div className="flex items-center gap-4 mt-1 text-xs text-slate-500">
+                    <p className="font-mono text-sm text-foreground truncate">{page.page}</p>
+                    <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
                       <span>{page.users} users</span>
                       <span>•</span>
                       <span>{page.views} views</span>
@@ -181,19 +181,19 @@ export default function LiveUsersPage() {
           </div>
 
           {/* Top Locations */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-            <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
+            <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
               <MapPin className="w-6 h-6 text-indigo-600" />
               Top Locations
             </h3>
             <div className="space-y-3">
               {topLocations.map((location, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-xl hover:bg-muted transition-colors">
                   <div className="flex items-center gap-3">
                     <span className="text-3xl">{location.flag}</span>
                     <div>
-                      <p className="font-semibold text-slate-800">{location.city}</p>
-                      <p className="text-xs text-slate-500">{location.country}</p>
+                      <p className="font-semibold text-foreground">{location.city}</p>
+                      <p className="text-xs text-muted-foreground">{location.country}</p>
                     </div>
                   </div>
                   <div className="bg-purple-100 text-purple-700 font-bold px-4 py-2 rounded-full">
@@ -206,28 +206,28 @@ export default function LiveUsersPage() {
         </div>
 
         {/* Recent Activities */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-          <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+        <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
+          <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
             <Activity className="w-6 h-6 text-indigo-600" />
             Recent Activity Feed
-            <span className="ml-auto text-sm font-normal text-slate-500">Auto-refreshing</span>
+            <span className="ml-auto text-sm font-normal text-muted-foreground">Auto-refreshing</span>
           </h3>
           <div className="space-y-2">
             {recentActivities.map((activity, index) => (
               <div 
                 key={index} 
-                className="flex items-center justify-between p-4 border-l-4 border-indigo-500 bg-gradient-to-r from-indigo-50 to-transparent rounded-r-xl hover:from-indigo-100 transition-colors"
+                className="flex items-center justify-between p-4 border-l-2 border-indigo-500 bg-gradient-to-r from-indigo-50 to-transparent rounded-r-xl hover:from-indigo-100 transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  <div className="w-10 h-10 bg-foreground rounded-full flex items-center justify-center text-white font-bold text-sm">
                     {activity.user.slice(-2)}
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-800">{activity.user}</p>
-                    <p className="text-sm text-slate-600">{activity.action} • <span className="font-mono text-xs">{activity.page}</span></p>
+                    <p className="font-semibold text-foreground">{activity.user}</p>
+                    <p className="text-sm text-muted-foreground">{activity.action} • <span className="font-mono text-xs">{activity.page}</span></p>
                   </div>
                 </div>
-                <span className="text-xs text-slate-500 font-medium">{activity.time}</span>
+                <span className="text-xs text-muted-foreground font-medium">{activity.time}</span>
               </div>
             ))}
           </div>

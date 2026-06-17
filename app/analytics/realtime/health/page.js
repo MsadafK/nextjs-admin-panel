@@ -28,7 +28,7 @@ export default function SystemHealthPage() {
       status: cpuUsage < 60 ? 'good' : cpuUsage < 80 ? 'warning' : 'critical',
       icon: Cpu,
       color: cpuUsage < 60 ? 'from-emerald-500 to-teal-600' : cpuUsage < 80 ? 'from-orange-500 to-amber-600' : 'from-red-500 to-pink-600',
-      bgColor: cpuUsage < 60 ? 'bg-emerald-50' : cpuUsage < 80 ? 'bg-orange-50' : 'bg-red-50',
+      bgColor: cpuUsage < 60 ? 'bg-muted' : cpuUsage < 80 ? 'bg-muted' : 'bg-muted',
       textColor: cpuUsage < 60 ? 'text-emerald-600' : cpuUsage < 80 ? 'text-orange-600' : 'text-red-600',
       percentage: cpuUsage
     },
@@ -38,7 +38,7 @@ export default function SystemHealthPage() {
       status: memoryUsage < 70 ? 'good' : memoryUsage < 85 ? 'warning' : 'critical',
       icon: HardDrive,
       color: memoryUsage < 70 ? 'from-blue-500 to-indigo-600' : memoryUsage < 85 ? 'from-orange-500 to-amber-600' : 'from-red-500 to-pink-600',
-      bgColor: memoryUsage < 70 ? 'bg-blue-50' : memoryUsage < 85 ? 'bg-orange-50' : 'bg-red-50',
+      bgColor: memoryUsage < 70 ? 'bg-muted' : memoryUsage < 85 ? 'bg-muted' : 'bg-muted',
       textColor: memoryUsage < 70 ? 'text-blue-600' : memoryUsage < 85 ? 'text-orange-600' : 'text-red-600',
       percentage: memoryUsage
     },
@@ -48,7 +48,7 @@ export default function SystemHealthPage() {
       status: 'good',
       icon: Wifi,
       color: 'from-purple-500 to-pink-600',
-      bgColor: 'bg-purple-50',
+      bgColor: 'bg-muted',
       textColor: 'text-purple-600',
       percentage: (networkSpeed / 800) * 100
     },
@@ -58,7 +58,7 @@ export default function SystemHealthPage() {
       status: 'good',
       icon: Clock,
       color: 'from-cyan-500 to-blue-600',
-      bgColor: 'bg-cyan-50',
+      bgColor: 'bg-muted',
       textColor: 'text-cyan-600',
       percentage: uptime
     }
@@ -111,51 +111,51 @@ export default function SystemHealthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="page-container space-y-6">
+      <div className="max-w-7xl mx-auto space-y-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
                 System Health
               </h1>
               <div className="flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-muted0 rounded-full animate-pulse"></div>
                 <span className="text-sm font-semibold">ALL SYSTEMS OPERATIONAL</span>
               </div>
             </div>
-            <p className="text-slate-600">Real-time infrastructure monitoring</p>
+            <p className="text-muted-foreground">Real-time infrastructure monitoring</p>
           </div>
-          <button className="flex items-center gap-2 bg-white text-slate-700 px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 border border-slate-200">
+          <button className="flex items-center gap-2 bg-card text-foreground px-6 py-3 rounded-xl hover:shadow-card transition-all duration-300 border border-border">
             <RefreshCw className="w-5 h-5" />
             <span>Refresh</span>
           </button>
         </div>
 
         {/* Overall Status Hero */}
-        <div className="relative bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 rounded-3xl p-8 shadow-2xl overflow-hidden">
+        <div className="relative bg-foreground text-background rounded-lg p-6 sm:p-8 overflow-hidden">
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-            <div className="absolute bottom-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+            <div className="absolute top-10 left-10 w-72 h-72 bg-card rounded-full blur-3xl"></div>
+            <div className="absolute bottom-10 right-10 w-96 h-96 bg-card rounded-full blur-3xl"></div>
           </div>
           <div className="relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center md:text-left">
-                <Activity className="w-12 h-12 text-white mb-4 mx-auto md:mx-0" />
-                <h2 className="text-white text-xl font-medium mb-2">System Status</h2>
-                <div className="text-5xl font-bold text-white mb-2">100%</div>
-                <p className="text-emerald-100">All services operational</p>
+                <Activity className="w-12 h-12 text-background mb-4 mx-auto md:mx-0" />
+                <h2 className="text-background text-lg font-medium mb-2">System Status</h2>
+                <div className="text-3xl sm:text-4xl font-bold text-background mb-2">100%</div>
+                <p className="text-background/70">All services operational</p>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 text-white">
-                <p className="text-emerald-100 text-sm mb-1">Active Connections</p>
-                <p className="text-4xl font-bold mb-1">{activeConnections.toLocaleString()}</p>
-                <p className="text-emerald-100 text-sm">+3.2% from last hour</p>
+              <div className="bg-card/20 backdrop-blur-sm rounded-lg p-6 text-background">
+                <p className="text-background/70 text-sm mb-1">Active Connections</p>
+                <p className="text-xl sm:text-2xl font-semibold tracking-tight mb-1">{activeConnections.toLocaleString()}</p>
+                <p className="text-background/70 text-sm">+3.2% from last hour</p>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 text-white">
-                <p className="text-emerald-100 text-sm mb-1">Avg Response Time</p>
-                <p className="text-4xl font-bold mb-1">52ms</p>
-                <p className="text-emerald-100 text-sm">Across all services</p>
+              <div className="bg-card/20 backdrop-blur-sm rounded-lg p-6 text-background">
+                <p className="text-background/70 text-sm mb-1">Avg Response Time</p>
+                <p className="text-xl sm:text-2xl font-semibold tracking-tight mb-1">52ms</p>
+                <p className="text-background/70 text-sm">Across all services</p>
               </div>
             </div>
           </div>
@@ -166,7 +166,7 @@ export default function SystemHealthPage() {
           {systemMetrics.map((metric, index) => {
             const Icon = metric.icon;
             return (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
+              <div key={index} className="bg-card border border-border rounded-lg shadow-card">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`${metric.bgColor} w-12 h-12 rounded-xl flex items-center justify-center`}>
                     <Icon className={`w-6 h-6 ${metric.textColor}`} />
@@ -179,11 +179,11 @@ export default function SystemHealthPage() {
                     {metric.status.toUpperCase()}
                   </span>
                 </div>
-                <p className="text-slate-600 text-sm mb-2">{metric.label}</p>
-                <p className="text-3xl font-bold text-slate-800 mb-3">{metric.value}</p>
-                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                <p className="text-muted-foreground text-sm mb-2">{metric.label}</p>
+                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-3">{metric.value}</p>
+                <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                   <div 
-                    className={`h-full bg-gradient-to-r ${metric.color} rounded-full transition-all duration-500`}
+                    className={`h-full bg-foreground/60 rounded-full transition-all duration-500`}
                     style={{ width: `${metric.percentage}%` }}
                   ></div>
                 </div>
@@ -193,8 +193,8 @@ export default function SystemHealthPage() {
         </div>
 
         {/* Services Status */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-          <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+        <div className="bg-card border border-border rounded-lg shadow-card">
+          <h3 className="text-base font-semibold text-foreground mb-6 flex items-center gap-2">
             <Server className="w-6 h-6 text-blue-600" />
             Services Status
           </h3>
@@ -204,22 +204,22 @@ export default function SystemHealthPage() {
               const StatusIcon = getStatusIcon(service.status);
               const statusColor = getStatusColor(service.status);
               return (
-                <div key={index} className="bg-slate-50 rounded-xl p-5 hover:shadow-md transition-all duration-300 border border-slate-200">
+                <div key={index} className="bg-muted rounded-xl p-5 hover:shadow-card transition-all duration-300 border border-border">
                   <div className="flex items-start justify-between mb-4">
                     <div className={`bg-${statusColor}-100 p-2 rounded-lg`}>
                       <Icon className={`w-5 h-5 text-${statusColor}-600`} />
                     </div>
                     <StatusIcon className={`w-5 h-5 text-${statusColor}-600`} />
                   </div>
-                  <h4 className="font-bold text-slate-800 mb-3">{service.name}</h4>
+                  <h4 className="font-bold text-foreground mb-3">{service.name}</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Uptime:</span>
-                      <span className="font-semibold text-slate-800">{service.uptime}</span>
+                      <span className="text-muted-foreground">Uptime:</span>
+                      <span className="font-semibold text-foreground">{service.uptime}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-600">Response:</span>
-                      <span className="font-semibold text-slate-800">{service.responseTime}</span>
+                      <span className="text-muted-foreground">Response:</span>
+                      <span className="font-semibold text-foreground">{service.responseTime}</span>
                     </div>
                   </div>
                 </div>
@@ -231,8 +231,8 @@ export default function SystemHealthPage() {
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Alerts */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-            <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <div className="bg-card border border-border rounded-lg shadow-card">
+            <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
               <AlertTriangle className="w-6 h-6 text-orange-600" />
               Recent Alerts
             </h3>
@@ -240,15 +240,15 @@ export default function SystemHealthPage() {
               {alerts.map((alert, index) => (
                 <div 
                   key={index} 
-                  className={`p-4 rounded-xl border-l-4 ${
-                    alert.type === 'warning' ? 'border-orange-500 bg-orange-50' :
-                    alert.type === 'success' ? 'border-emerald-500 bg-emerald-50' :
-                    'border-blue-500 bg-blue-50'
+                  className={`p-4 rounded-xl border-l-2 ${
+                    alert.type === 'warning' ? 'border-orange-500 bg-muted' :
+                    alert.type === 'success' ? 'border-emerald-500 bg-muted' :
+                    'border-blue-500 bg-muted'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <p className="text-sm text-slate-700 flex-1">{alert.message}</p>
-                    <span className="text-xs text-slate-500 whitespace-nowrap">{alert.time}</span>
+                    <p className="text-sm text-foreground flex-1">{alert.message}</p>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">{alert.time}</span>
                   </div>
                 </div>
               ))}
@@ -256,21 +256,21 @@ export default function SystemHealthPage() {
           </div>
 
           {/* Recent Incidents */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-            <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <div className="bg-card border border-border rounded-lg shadow-card">
+            <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
               <BarChart3 className="w-6 h-6 text-blue-600" />
               Recent Incidents
             </h3>
             <div className="space-y-3">
               {recentIncidents.map((incident, index) => (
-                <div key={index} className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <div key={index} className="p-4 bg-muted rounded-xl border border-border">
                   <div className="flex items-start justify-between mb-2">
-                    <p className="font-semibold text-slate-800">{incident.title}</p>
+                    <p className="font-semibold text-foreground">{incident.title}</p>
                     <span className="bg-emerald-100 text-emerald-700 text-xs px-3 py-1 rounded-full font-semibold">
                       Resolved
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-slate-600">
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <span>Duration: {incident.duration}</span>
                     <span>•</span>
                     <span>{incident.time}</span>
@@ -282,35 +282,35 @@ export default function SystemHealthPage() {
         </div>
 
         {/* Server Locations */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-100">
-          <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+        <div className="bg-card border border-border rounded-lg shadow-card">
+          <h3 className="text-base font-semibold text-foreground mb-6 flex items-center gap-2">
             <Globe className="w-6 h-6 text-blue-600" />
             Server Locations
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {serverLocations.map((server, index) => (
-              <div key={index} className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-5 border border-slate-200">
+              <div key={index} className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-5 border border-border">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-3xl">{server.flag}</span>
                   <CheckCircle className="w-5 h-5 text-emerald-600" />
                 </div>
-                <h4 className="font-bold text-slate-800 mb-3">{server.location}</h4>
+                <h4 className="font-bold text-foreground mb-3">{server.location}</h4>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-600">Load:</span>
-                    <span className="font-semibold text-slate-800">{server.load}%</span>
+                    <span className="text-muted-foreground">Load:</span>
+                    <span className="font-semibold text-foreground">{server.load}%</span>
                   </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div className="w-full bg-muted rounded-full h-2">
                     <div 
                       className={`h-full rounded-full ${
-                        server.load < 60 ? 'bg-emerald-500' : server.load < 80 ? 'bg-orange-500' : 'bg-red-500'
+                        server.load < 60 ? 'bg-muted0' : server.load < 80 ? 'bg-muted0' : 'bg-muted0'
                       }`}
                       style={{ width: `${server.load}%` }}
                     ></div>
                   </div>
                   <div className="flex justify-between text-sm pt-2">
-                    <span className="text-slate-600">Ping:</span>
-                    <span className="font-semibold text-slate-800">{server.ping}</span>
+                    <span className="text-muted-foreground">Ping:</span>
+                    <span className="font-semibold text-foreground">{server.ping}</span>
                   </div>
                 </div>
               </div>
