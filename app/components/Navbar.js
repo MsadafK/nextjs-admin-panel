@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import NextImage from 'next/image';
 
 /* ─── Zinc design tokens (mirrors globals.css CSS vars) ────────────────── */
 const Z = {
@@ -322,7 +323,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
             } w-9 h-9`}
             title={t ? t('language') : 'Change language'}
           >
-            <img src={currentLang.flagUrl} alt={currentLang.name} className="w-6 h-4 rounded-sm object-cover" />
+            <NextImage src={currentLang.flagUrl} alt={currentLang.name} width={24} height={16} className="rounded-sm object-cover" />
           </button>
 
           {showLanguageMenu && (
@@ -339,7 +340,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                     onClick={() => handleLanguageChange(lang.code)}
                     className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2.5 transition-colors ${Z.menuItem(dark, active)}`}
                   >
-                    <img src={lang.flagUrl} alt={lang.name} className="w-5 h-4 rounded-sm object-cover flex-shrink-0" />
+                    <NextImage src={lang.flagUrl} alt={lang.name} width={20} height={16} className="rounded-sm object-cover flex-shrink-0" />
                     <span>{lang.name}</span>
                     {active && <span className={`ml-auto text-xs ${Z.textSecondary(dark)}`}>✓</span>}
                   </button>
@@ -378,10 +379,12 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                   <div key={msg.id} className={`px-4 py-3 transition-colors ${Z.panelRow(dark)}`}>
                     <div className="flex items-start gap-3">
                       <div className="relative flex-shrink-0">
-                        <img
+                        <NextImage
                           src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.avatarSeed}`}
                           alt={msg.name}
-                          className="w-9 h-9 rounded-full"
+                          width={36}
+                          height={36}
+                          className="rounded-full"
                         />
                         {msg.unread && (
                           <span className={`absolute top-0 right-0 w-2.5 h-2.5 ${msg.dotColor} rounded-full border-2 ${dark ? 'border-zinc-900' : 'border-white'}`} />
@@ -461,10 +464,12 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
             className="rounded-full transition-all hover:ring-2 hover:ring-zinc-300 dark:hover:ring-zinc-700 hover:ring-offset-1"
             aria-label="Profile"
           >
-            <img
+            <NextImage
               src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jonathan"
               alt="Jonathan Deo"
-              className="w-8 h-8 rounded-full"
+              width={32}
+              height={32}
+              className="rounded-full"
             />
           </button>
 
@@ -473,10 +478,12 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
               {/* Profile header */}
               <div className={`px-5 py-4 border-b ${Z.panelHeader(dark)}`}>
                 <div className="flex items-center gap-3">
-                  <img
+                  <NextImage
                     src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jonathan"
                     alt="Jonathan Deo"
-                    className="w-12 h-12 rounded-full flex-shrink-0"
+                    width={48}
+                    height={48}
+                    className="rounded-full flex-shrink-0"
                   />
                   <div className="min-w-0">
                     <p className={`text-sm font-semibold ${Z.textPrimary(dark)}`}>Jonathan Deo</p>

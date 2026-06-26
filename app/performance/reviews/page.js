@@ -45,10 +45,12 @@ const [reviews, setReviews] = useState(mockReviews);
       setReviews(prev => [newReview, ...prev.slice(0, 4)]); // Keep top 5
     }, 30000);
 
-    setReviewCount(reviews.length);
-
     return () => clearInterval(interval);
-  }, []); // Empty dependency array to prevent infinite loop
+  }, []);
+
+  useEffect(() => {
+    setReviewCount(reviews.length);
+  }, [reviews.length]);
 
   const filteredReviews = reviews.filter(review =>
     (review.employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

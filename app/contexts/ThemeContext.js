@@ -5,22 +5,18 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
+const themes = {
+  emerald: { primary: 'emerald', name: 'Emerald' },
+  blue: { primary: 'blue', name: 'Blue' },
+  purple: { primary: 'purple', name: 'Purple' },
+  orange: { primary: 'orange', name: 'Orange' },
+  rose: { primary: 'rose', name: 'Rose' },
+};
+
 export function ThemeProvider({ children }) {
   const [currentTheme, setCurrentTheme] = useState('emerald');
   const [isDark, setIsDark] = useState(false);
   const [mounted, setMounted] = useState(false);
-
-  // Define your themes here (expand as needed based on your app)
-  const themes = {
-    emerald: { primary: 'emerald', name: 'Emerald' },
-    blue: { primary: 'blue', name: 'Blue' },
-    purple: { primary: 'purple', name: 'Purple' },
-    orange: { primary: 'orange', name: 'Orange' },
-    rose: { primary: 'rose', name: 'Rose' },
-    // indigo: { primary: 'indigo', name: 'Indigo' },
-    // green: { primary: 'green', name: 'Green' },
-    // red: { primary: 'red', name: 'Red' },
-  };
 
   useEffect(() => {
     setMounted(true);

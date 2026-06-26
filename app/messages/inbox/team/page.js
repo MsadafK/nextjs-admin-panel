@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { MessageSquare, Send, Search, Filter, MoreVertical, Pin, Star, Clock, Check, CheckCheck, Paperclip, Smile, Image, File, Users, Video, Phone, Archive, Trash2, AlertCircle, Circle } from 'lucide-react';
+import { MessageSquare, Send, Search, Filter, MoreVertical, Pin, Star, Clock, Check, CheckCheck, Paperclip, Smile, ImageIcon, File, Users, Video, Phone, Archive, Trash2, AlertCircle, Circle } from 'lucide-react';
 
 export default function TeamMessagesPage() {
   const [selectedConversation, setSelectedConversation] = useState(1);
@@ -376,7 +376,7 @@ export default function TeamMessagesPage() {
                     <Paperclip className="w-5 h-5 text-muted-foreground" />
                   </button>
                   <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-                    <Image className="w-5 h-5 text-muted-foreground" />
+                    <ImageIcon className="w-5 h-5 text-muted-foreground" />
                   </button>
                   <button className="p-2 hover:bg-muted rounded-lg transition-colors">
                     <Smile className="w-5 h-5 text-muted-foreground" />

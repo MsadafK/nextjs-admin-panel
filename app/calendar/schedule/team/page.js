@@ -76,7 +76,7 @@ const [schedule, setSchedule] = useState(mockTeamSchedule);
               {t('team_schedule') || 'Team Schedule'}
             </h1>
             <p className={`text-muted-foreground`}>
-              Overview of your team's calendar. Coordinate effectively!
+              Overview of your team&apos;s calendar. Coordinate effectively!
             </p>
           </div>
           <div className="flex items-center gap-4">

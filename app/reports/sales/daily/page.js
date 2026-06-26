@@ -454,7 +454,7 @@ export default function DailySalesPage() {
               <Zap size={24} />
             </div>
             <div className="flex-1">
-              <h3 className="text-base font-semibold mb-2">Today's Insights</h3>
+              <h3 className="text-base font-semibold mb-2">Today&apos;s Insights</h3>
               <div className="grid md:grid-cols-3 gap-4 text-sm">
                 <div className="bg-card/10 rounded-lg p-3">
                   <p className="text-blue-200 mb-1">Peak Hour</p>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { User, Mail, Phone, MapPin, Briefcase, Calendar, Upload, X, Check, AlertCircle, Eye, EyeOff, Shield, Building, Globe, Lock } from 'lucide-react';
+import NextImage from 'next/image';
 
 
 
@@ -290,9 +291,12 @@ export default function AddSingleUser() {
             <div className="flex-shrink-0">
               {imagePreview ? (
                 <div className="relative">
-                  <img 
-                    src={imagePreview} 
-                    alt="Profile preview" 
+                  <NextImage
+                    src={imagePreview}
+                    alt="Profile preview"
+                    width={128}
+                    height={128}
+                    unoptimized
                     className="w-32 h-32 rounded-full object-cover border-4 border-border dark:border-border"
                   />
                   <button

@@ -400,7 +400,7 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                     />
                     <span className="text-sm font-medium text-foreground">Notify me before key expires</span>
                   </label>
-                  <p className="text-xs text-muted-foreground mt-2 ml-6">You'll receive an email 7 days before expiration</p>
+                  <p className="text-xs text-muted-foreground mt-2 ml-6">You&apos;ll receive an email 7 days before expiration</p>
                 </div>
               </div>
             </div>
@@ -449,7 +449,7 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                     <div>
                       <h3 className="font-semibold text-yellow-900 mb-1">Important</h3>
                       <p className="text-sm text-yellow-800">
-                        Once generated, you won't be able to see this API key again. Make sure to copy and store it securely.
+                        Once generated, you won&apos;t be able to see this API key again. Make sure to copy and store it securely.
                       </p>
                     </div>
                   </div>
@@ -474,7 +474,7 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                   <CheckCircle size={32} className="text-green-600" />
                 </div>
                 <h2 className="text-lg font-semibold tracking-tight text-foreground mb-2">API Key Generated Successfully!</h2>
-                <p className="text-muted-foreground">Copy and save your key now. You won't be able to see it again.</p>
+                <p className="text-muted-foreground">Copy and save your key now. You won&apos;t be able to see it again.</p>
               </div>
 
               <div className="space-y-6">
@@ -540,7 +540,7 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                       <ul className="text-sm text-red-800 space-y-1">
                         <li>• Store this key in a secure location</li>
                         <li>• Never commit it to version control</li>
-                        <li>• Don't share it via email or messaging</li>
+                        <li>• Don&apos;t share it via email or messaging</li>
                         <li>• Rotate regularly for security</li>
                       </ul>
                     </div>
@@ -554,7 +554,7 @@ IMPORTANT: Store this key securely. You won't be able to see it again.
                   </button>
                   <button className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-background rounded-lg hover:bg-green-700 transition-colors">
                     <CheckCircle size={20} />
-                    I've Saved the Key
+                    I&apos;ve Saved the Key
                   </button>
                 </div>
               </div>

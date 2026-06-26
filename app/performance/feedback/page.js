@@ -636,7 +636,7 @@ const Feedback = () => {
                       <span className="text-sm font-medium text-foreground">Admin Team</span>
                       <span className="text-xs text-muted-foreground">2 hours ago</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">Thank you for your feedback! We're looking into this and will update you soon.</p>
+                    <p className="text-sm text-muted-foreground">Thank you for your feedback! We&apos;re looking into this and will update you soon.</p>
                   </div>
                 </div>
               </div>

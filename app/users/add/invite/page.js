@@ -300,7 +300,7 @@ export default function InviteUsers() {
                       <h4 className="font-semibold text-blue-900 mb-2">CSV Format Requirements:</h4>
                       <ul className="text-sm text-blue-800 space-y-1">
                         <li>• Column 1: Email address (required)</li>
-                        <li>• Column 2: Role (optional, defaults to "User")</li>
+                        <li>• Column 2: Role (optional, defaults to &quot;User&quot;)</li>
                         <li>• Column 3: First Name (optional)</li>
                         <li>• Column 4: Last Name (optional)</li>
                       </ul>

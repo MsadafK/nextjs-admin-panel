@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FileText, Download, Layout, Palette, Image, Type, Settings, CheckCircle2, Eye, Sparkles, ChevronDown, Save, Printer } from 'lucide-react';
+import { FileText, Download, Layout, Palette, ImageIcon, Type, Settings, CheckCircle2, Eye, Sparkles, ChevronDown, Save, Printer } from 'lucide-react';
 
 const ExportPDF = () => {
   const [selectedTemplate, setSelectedTemplate] = useState('professional');
@@ -239,7 +239,7 @@ const ExportPDF = () => {
             {/* Content Options */}
             <div className="bg-card rounded-xl shadow-sm border border-border p-6">
               <div className="flex items-center gap-2 mb-4">
-                <Image className="w-5 h-5 text-rose-600" />
+                <ImageIcon className="w-5 h-5 text-rose-600" />
                 <h2 className="text-lg font-semibold text-foreground">Content Options</h2>
               </div>
               <div className="space-y-3">

@@ -8,6 +8,18 @@ const nextConfig = {
   experimental: {
     forceSwcTransforms: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'flagcdn.com',
+      },
+    ],
+  },
   webpack: (config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, MailOpen, Star, Archive, Trash2, Reply, Forward, MoreVertical, Search, Filter, CheckSquare, Square, Clock, Paperclip, Flag, User, AlertCircle, X, Send, Smile, Image, FileText } from 'lucide-react';
+import { Mail, MailOpen, Star, Archive, Trash2, Reply, Forward, MoreVertical, Search, Filter, CheckSquare, Square, Clock, Paperclip, Flag, User, AlertCircle, X, Send, Smile, ImageIcon, FileText } from 'lucide-react';
 
 export default function UnreadMessages() {
   const [selectedMessages, setSelectedMessages] = useState([]);
@@ -224,7 +224,7 @@ export default function UnreadMessages() {
               <div className="bg-card border border-border rounded-lg shadow-card p-12 text-center">
                 <MailOpen size={64} className="mx-auto text-muted-foreground mb-4" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">No unread messages</h3>
-                <p className="text-muted-foreground">You're all caught up! Great work.</p>
+                <p className="text-muted-foreground">You&apos;re all caught up! Great work.</p>
               </div>
             ) : (
               filteredMessages.map((message) => (
@@ -445,7 +445,7 @@ export default function UnreadMessages() {
                           <Paperclip size={20} className="text-muted-foreground" />
                         </button>
                         <button className="p-2 hover:bg-muted rounded transition-colors" title="Image">
-                          <Image size={20} className="text-muted-foreground" />
+                          <ImageIcon size={20} className="text-muted-foreground" />
                         </button>
                       </div>
                       <div className="flex gap-2">

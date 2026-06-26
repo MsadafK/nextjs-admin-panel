@@ -299,7 +299,7 @@ export default function BulkImportUsers() {
               <div>
                 <p className={`font-medium text-foreground`}>Download Template</p>
                 <p className={`text-sm text-muted-foreground`}>
-                  Click the "Download Template" button to get the CSV format with sample data
+                  Click the &quot;Download Template&quot; button to get the CSV format with sample data
                 </p>
               </div>
             </div>

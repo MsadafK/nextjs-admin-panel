@@ -471,7 +471,7 @@ export default function ActiveKeys() {
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-muted-foreground">Today's Requests</span>
+                    <span className="text-sm text-muted-foreground">Today&apos;s Requests</span>
                     <span className="text-sm font-bold text-foreground">45.2K</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">

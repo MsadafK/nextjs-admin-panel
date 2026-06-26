@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FileText, Download, Eye, Star, Search, Filter, Plus, Edit3, Trash2, Copy, Clock, CheckCircle2, Users, TrendingUp, Package, DollarSign, Database, Settings, Sparkles, Upload } from 'lucide-react';
+import { FileText, Download, Eye, Star, Search, Filter, Plus, Edit3, Trash2, Copy, Clock, CheckCircle2, Users, TrendingUp, Package, DollarSign, Database, Settings, Sparkles, Upload, X } from 'lucide-react';
 
 const ImportTemplates = () => {
   const [searchQuery, setSearchQuery] = useState('');

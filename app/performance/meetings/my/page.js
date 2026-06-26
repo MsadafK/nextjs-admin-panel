@@ -487,7 +487,7 @@ export default function MyMeetingsPage() {
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-bold text-foreground flex items-center gap-2">
                   <Clock size={18} className="text-blue-600" />
-                  Today's Schedule
+                  Today&apos;s Schedule
                 </h3>
                 <button className="text-sm text-blue-600 hover:text-blue-700">
                   View Calendar

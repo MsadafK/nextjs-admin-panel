@@ -14,7 +14,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
   const [showPositionMenu, setShowPositionMenu] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({});
   const [hoveredItem, setHoveredItem] = useState(null);
-  const [hoverTimeout, setHoverTimeout] = useState(null);
+  const hoverTimeout = useRef(null);
   const hoverMenuRef = useRef(null);
   const positionMenuButtonRef = useRef(null);
   const [userName, setUserName] = useState('John Doe');
@@ -463,44 +463,41 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
 
   const handleMouseEnter = (item, event) => {
     if (isCollapsed || position === 'bottom' || position === 'top') {
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
+      if (hoverTimeout.current) {
+        clearTimeout(hoverTimeout.current);
       }
       const rect = event.currentTarget.getBoundingClientRect();
-      const timeout = setTimeout(() => {
+      hoverTimeout.current = setTimeout(() => {
         setHoveredItem({ ...item, rect });
       }, 150);
-      setHoverTimeout(timeout);
     }
   };
 
   const handleMouseLeave = () => {
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
+    if (hoverTimeout.current) {
+      clearTimeout(hoverTimeout.current);
     }
-    const timeout = setTimeout(() => {
+    hoverTimeout.current = setTimeout(() => {
       setHoveredItem(null);
       if (position === 'top' || position === 'bottom') {
         setExpandedMenus({});
       }
     }, 300);
-    setHoverTimeout(timeout);
   };
 
   const handleHoverMenuMouseEnter = () => {
-    if (hoverTimeout) {
-      clearTimeout(hoverTimeout);
+    if (hoverTimeout.current) {
+      clearTimeout(hoverTimeout.current);
     }
   };
 
   const handleHoverMenuMouseLeave = () => {
-    const timeout = setTimeout(() => {
+    hoverTimeout.current = setTimeout(() => {
       setHoveredItem(null);
       if (position === 'top' || position === 'bottom') {
         setExpandedMenus({});
       }
     }, 300);
-    setHoverTimeout(timeout);
   };
 
   useEffect(() => {
@@ -513,8 +510,8 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
+      if (hoverTimeout.current) {
+        clearTimeout(hoverTimeout.current);
       }
     };
   }, []);
@@ -530,7 +527,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
     handleChange(mediaQuery);
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  }, [isCollapsed, onToggle, position]);
 
   const getContainerClasses = () => {
     let classes = `transition-all duration-300 flex ${
