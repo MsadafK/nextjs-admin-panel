@@ -6,14 +6,14 @@ import QuickActions from './components/Dashboard/QuickActions';
 
 export default function Dashboard() {
   return (
-    <div className="p-6">
+    <div className="page-container">
       {/* Page header */}
       <div className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">
           Dashboard
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Welcome back! Here&apos;s what&apos;s happening with your business today.
+          Welcome back! Here's what's happening with your business today.
         </p>
       </div>
 
