@@ -7,17 +7,21 @@ import {
   ChevronDown, ChevronUp, Eye, X
 } from 'lucide-react';
 
-/* ── Badge tokens — monochrome ── */
+/* ── Static Data ── */
+const roles    = ['all', 'Admin', 'Manager', 'User'];
+const statuses = ['all', 'Active', 'Inactive', 'Suspended'];
+
+/* ── Badge tokens using semantic variables ── */
 const STATUS_STYLES = {
-  Active:    'bg-zinc-900 text-zinc-50 border-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:border-zinc-200',
-  Inactive:  'bg-zinc-100 text-zinc-500 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
-  Suspended: 'bg-zinc-200 text-zinc-700 border-zinc-300 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600',
+  Active:    'bg-foreground text-background border-foreground',
+  Inactive:  'bg-muted text-muted-foreground border-border',
+  Suspended: 'bg-secondary text-secondary-foreground border-border',
 };
 
 const ROLE_STYLES = {
-  Admin:   'bg-zinc-900 text-zinc-50 border-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:border-zinc-200',
-  Manager: 'bg-zinc-200 text-zinc-700 border-zinc-300 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600',
-  User:    'bg-zinc-100 text-zinc-500 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
+  Admin:   'bg-foreground text-background border-foreground',
+  Manager: 'bg-secondary text-secondary-foreground border-border',
+  User:    'bg-muted text-muted-foreground border-border',
 };
 
 export default function UserList() {
@@ -40,9 +44,6 @@ export default function UserList() {
     { id: 7, name: 'Tom Harris',    email: 'tom.h@example.com',    role: 'Admin',   status: 'Active',    lastLogin: '30 minutes ago', avatar: 'TH' },
     { id: 8, name: 'Amy Martinez',  email: 'amy.m@example.com',    role: 'User',    status: 'Active',    lastLogin: '4 hours ago',    avatar: 'AM' },
   ]);
-
-  const roles    = ['all', 'Admin', 'Manager', 'User'];
-  const statuses = ['all', 'Active', 'Inactive', 'Suspended'];
 
   const filteredUsers = users
     .filter(u => {
@@ -78,19 +79,14 @@ export default function UserList() {
   };
 
   const stats = [
-    { label: 'Total Users', value: users.length,                                       icon: UserCheck },
+    { label: 'Total Users', value: users.length,                                      icon: UserCheck },
     { label: 'Active',      value: users.filter(u => u.status === 'Active').length,    icon: UserCheck },
     { label: 'Inactive',    value: users.filter(u => u.status === 'Inactive').length,  icon: UserX     },
     { label: 'Suspended',   value: users.filter(u => u.status === 'Suspended').length, icon: Lock      },
   ];
 
-  const inputCls = `w-full px-3 py-2 text-sm bg-background border border-border rounded-md
-    text-foreground placeholder:text-muted-foreground
-    focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors`;
-
   return (
-    <div className="p-4 sm:p-6 space-y-5">
-
+    <div className="page-container space-y-5">
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -101,9 +97,8 @@ export default function UserList() {
             Manage and monitor all users in your system
           </p>
         </div>
-        <button className="self-start sm:self-auto flex items-center gap-2 px-3 py-2 text-sm
-          font-medium bg-foreground text-background rounded-md hover:opacity-80 transition-opacity">
-          <Download size={14} />
+        <button className="btn btn-primary self-start sm:self-auto">
+          <Download size={16} />
           Export
         </button>
       </div>
@@ -113,13 +108,13 @@ export default function UserList() {
         {stats.map((s) => {
           const Icon = s.icon;
           return (
-            <div key={s.label} className="bg-card border border-border rounded-lg p-4 sm:p-5 shadow-card">
+            <div key={s.label} className="card p-4 sm:p-5 shadow-card hover:shadow-dropdown transition-shadow duration-150">
               <div className="flex items-center justify-between">
                 <div className="space-y-1 min-w-0">
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide truncate">
                     {s.label}
                   </p>
-                  <p className="text-2xl font-semibold text-foreground">{s.value}</p>
+                  <p className="text-2xl font-semibold tracking-tight text-foreground">{s.value}</p>
                 </div>
                 <div className="p-2 rounded-md bg-muted flex-shrink-0">
                   <Icon size={16} className="text-muted-foreground" strokeWidth={1.75} />
@@ -131,17 +126,17 @@ export default function UserList() {
       </div>
 
       {/* ── Toolbar ── */}
-      <div className="bg-card border border-border rounded-lg shadow-card">
-        <div className="p-3 sm:p-4 flex flex-col sm:flex-row gap-2 sm:gap-3">
+      <div className="card p-0 shadow-card">
+        <div className="p-3 sm:p-4 flex flex-col sm:flex-row gap-2 sm:gap-3 border-b border-border">
           {/* Search */}
           <div className="flex-1 relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search by name or email…"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className={`${inputCls} pl-8`}
+              className="input pl-9 w-full"
             />
           </div>
 
@@ -149,27 +144,19 @@ export default function UserList() {
             {/* Filter toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-md
-                border transition-colors
-                ${showFilters
-                  ? 'bg-foreground text-background border-foreground'
-                  : 'bg-background text-muted-foreground border-border hover:bg-muted hover:text-foreground'
-                }`}
+              className={`btn ${showFilters ? 'btn-primary' : 'btn-outline'}`}
             >
-              <Filter size={14} />
+              <Filter size={16} />
               <span className="hidden sm:inline">Filters</span>
-              {showFilters ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+              {showFilters ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
 
             {/* Bulk email */}
-            <button className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium
-              bg-background border border-border text-muted-foreground rounded-md
-              hover:bg-muted hover:text-foreground transition-colors">
-              <Mail size={14} />
+            <button className="btn btn-outline">
+              <Mail size={16} />
               <span className="hidden sm:inline">Email</span>
               {selectedUsers.length > 0 && (
-                <span className="bg-foreground text-background text-xs px-1.5 py-0.5
-                  rounded-full font-semibold">
+                <span className="bg-foreground text-background text-xs px-1.5 py-0.5 rounded-full font-semibold ml-1">
                   {selectedUsers.length}
                 </span>
               )}
@@ -179,34 +166,26 @@ export default function UserList() {
 
         {/* Filter panel */}
         {showFilters && (
-          <div className="px-3 sm:px-4 pb-4 border-t border-border">
+          <div className="px-3 sm:px-4 pb-4 bg-muted/20">
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <div className="flex-1">
-                <label className="block text-xs font-medium text-muted-foreground
-                  uppercase tracking-wide mb-1.5">Status</label>
-                <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                  className={inputCls}>
-                  {statuses.map(s => (
-                    <option key={s} value={s}>{s === 'all' ? 'All Statuses' : s}</option>
-                  ))}
+                <label className="label uppercase tracking-wide text-xs text-muted-foreground mb-1.5 block">Status</label>
+                <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="input w-full">
+                  {statuses.map(s => <option key={s} value={s}>{s === 'all' ? 'All Statuses' : s}</option>)}
                 </select>
               </div>
               <div className="flex-1">
-                <label className="block text-xs font-medium text-muted-foreground
-                  uppercase tracking-wide mb-1.5">Role</label>
-                <select value={filterRole} onChange={e => setFilterRole(e.target.value)}
-                  className={inputCls}>
-                  {roles.map(r => (
-                    <option key={r} value={r}>{r === 'all' ? 'All Roles' : r}</option>
-                  ))}
+                <label className="label uppercase tracking-wide text-xs text-muted-foreground mb-1.5 block">Role</label>
+                <select value={filterRole} onChange={e => setFilterRole(e.target.value)} className="input w-full">
+                  {roles.map(r => <option key={r} value={r}>{r === 'all' ? 'All Roles' : r}</option>)}
                 </select>
               </div>
               <div className="flex sm:items-end">
                 <button
                   onClick={() => { setFilterStatus('all'); setFilterRole('all'); setSearchTerm(''); }}
-                  className="flex items-center gap-1.5 px-3 py-2 text-sm
-                    text-muted-foreground hover:text-foreground transition-colors">
-                  <X size={13} /> Clear all
+                  className="btn btn-ghost text-muted-foreground hover:text-foreground"
+                >
+                  <X size={14} /> Clear all
                 </button>
               </div>
             </div>
@@ -215,7 +194,7 @@ export default function UserList() {
       </div>
 
       {/* ── Table ── */}
-      <div className="bg-card border border-border rounded-lg shadow-card overflow-hidden">
+      <div className="card p-0 shadow-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -225,7 +204,7 @@ export default function UserList() {
                     type="checkbox"
                     checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
                     onChange={toggleSelectAll}
-                    className="w-4 h-4 rounded border-border accent-foreground"
+                    className="w-4 h-4 rounded border-border accent-foreground cursor-pointer"
                   />
                 </th>
                 {[
@@ -238,9 +217,7 @@ export default function UserList() {
                     {col.field ? (
                       <button
                         onClick={() => toggleSort(col.field)}
-                        className="flex items-center gap-1.5 text-xs font-semibold
-                          text-muted-foreground uppercase tracking-wide
-                          hover:text-foreground transition-colors"
+                        className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide hover:text-foreground transition-colors"
                       >
                         {col.label}
                         <SortIcon field={col.field} />
@@ -252,8 +229,7 @@ export default function UserList() {
                     )}
                   </th>
                 ))}
-                <th className="px-4 py-3 text-right text-xs font-semibold
-                  text-muted-foreground uppercase tracking-wide">
+                <th className="px-4 py-3 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                   Actions
                 </th>
               </tr>
@@ -262,20 +238,18 @@ export default function UserList() {
             <tbody className="divide-y divide-border">
               {filteredUsers.map(user => (
                 <tr key={user.id} className="hover:bg-muted/30 transition-colors">
-
                   <td className="px-4 py-3">
                     <input
                       type="checkbox"
                       checked={selectedUsers.includes(user.id)}
                       onChange={() => toggleUserSelection(user.id)}
-                      className="w-4 h-4 rounded border-border accent-foreground"
+                      className="w-4 h-4 rounded border-border accent-foreground cursor-pointer"
                     />
                   </td>
 
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3 min-w-[160px]">
-                      <div className="w-8 h-8 rounded-full bg-foreground flex items-center
-                        justify-center text-background text-xs font-semibold flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center text-foreground text-xs font-semibold flex-shrink-0">
                         {user.avatar}
                       </div>
                       <div className="min-w-0">
@@ -286,15 +260,13 @@ export default function UserList() {
                   </td>
 
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md
-                      text-xs font-medium border ${ROLE_STYLES[user.role] ?? ROLE_STYLES.User}`}>
+                    <span className={`badge ${ROLE_STYLES[user.role] ?? ROLE_STYLES.User}`}>
                       {user.role}
                     </span>
                   </td>
 
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md
-                      text-xs font-medium border ${STATUS_STYLES[user.status] ?? STATUS_STYLES.Inactive}`}>
+                    <span className={`badge ${STATUS_STYLES[user.status] ?? STATUS_STYLES.Inactive}`}>
                       {user.status}
                     </span>
                   </td>
@@ -305,45 +277,37 @@ export default function UserList() {
 
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
-                      <button className="p-1.5 text-muted-foreground hover:text-foreground
-                        hover:bg-muted rounded-md transition-colors" title="View">
-                        <Eye size={14} />
+                      <button className="btn btn-ghost h-8 w-8 p-0" title="View">
+                        <Eye size={16} />
                       </button>
-                      <button className="p-1.5 text-muted-foreground hover:text-foreground
-                        hover:bg-muted rounded-md transition-colors" title="Edit">
-                        <Edit2 size={14} />
+                      <button className="btn btn-ghost h-8 w-8 p-0" title="Edit">
+                        <Edit2 size={16} />
                       </button>
-                      <button className="p-1.5 text-muted-foreground hover:text-foreground
-                        hover:bg-muted rounded-md transition-colors" title="Toggle status">
-                        {user.status === 'Active' ? <Lock size={14} /> : <Unlock size={14} />}
+                      <button className="btn btn-ghost h-8 w-8 p-0" title="Toggle status">
+                        {user.status === 'Active' ? <Lock size={16} /> : <Unlock size={16} />}
                       </button>
 
                       <div className="relative">
                         <button
                           onClick={() => setActiveDropdown(activeDropdown === user.id ? null : user.id)}
-                          className="p-1.5 text-muted-foreground hover:text-foreground
-                            hover:bg-muted rounded-md transition-colors">
-                          <MoreVertical size={14} />
+                          className="btn btn-ghost h-8 w-8 p-0"
+                        >
+                          <MoreVertical size={16} />
                         </button>
 
                         {activeDropdown === user.id && (
-                          <div className="absolute right-0 mt-1 w-44 bg-card border border-border
-                            rounded-lg shadow-dropdown z-20 overflow-hidden py-1">
-                            <button className="w-full px-3 py-2 text-left text-sm text-foreground
-                              hover:bg-muted flex items-center gap-2 transition-colors">
-                              <Mail size={13} className="text-muted-foreground" />
+                          <div className="absolute right-0 mt-1 w-44 card p-1 shadow-dropdown z-20">
+                            <button className="w-full px-3 py-2 text-left text-sm text-foreground hover:bg-muted rounded-md flex items-center gap-2 transition-colors">
+                              <Mail size={14} className="text-muted-foreground" />
                               Send Email
                             </button>
-                            <button className="w-full px-3 py-2 text-left text-sm text-foreground
-                              hover:bg-muted flex items-center gap-2 transition-colors">
-                              <Eye size={13} className="text-muted-foreground" />
+                            <button className="w-full px-3 py-2 text-left text-sm text-foreground hover:bg-muted rounded-md flex items-center gap-2 transition-colors">
+                              <Eye size={14} className="text-muted-foreground" />
                               View Activity
                             </button>
                             <div className="border-t border-border my-1" />
-                            <button className="w-full px-3 py-2 text-left text-sm
-                              text-red-600 dark:text-red-400
-                              hover:bg-muted flex items-center gap-2 transition-colors">
-                              <Trash2 size={13} />
+                            <button className="w-full px-3 py-2 text-left text-sm text-destructive hover:bg-destructive/10 rounded-md flex items-center gap-2 transition-colors">
+                              <Trash2 size={14} />
                               Delete User
                             </button>
                           </div>
@@ -366,30 +330,20 @@ export default function UserList() {
         </div>
 
         {/* ── Pagination ── */}
-        <div className="px-4 py-3 border-t border-border flex flex-col sm:flex-row
-          items-start sm:items-center justify-between gap-3">
+        <div className="px-4 py-3 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-muted/10">
           <p className="text-xs text-muted-foreground">
-            Showing{' '}
-            <span className="font-medium text-foreground">{filteredUsers.length}</span>
-            {' '}of{' '}
-            <span className="font-medium text-foreground">{users.length}</span>
-            {' '}users
+            Showing <span className="font-medium text-foreground">{filteredUsers.length}</span> of <span className="font-medium text-foreground">{users.length}</span> users
           </p>
           <div className="flex items-center gap-1">
             {['Previous', '1', '2', 'Next'].map((label) => (
               <button key={label}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors
-                  ${label === '1'
-                    ? 'bg-foreground text-background hover:opacity-80'
-                    : 'border border-border text-muted-foreground hover:bg-muted hover:text-foreground'
-                  }`}>
+                className={`btn h-8 px-3 text-xs ${label === '1' ? 'btn-primary' : 'btn-outline'}`}>
                 {label}
               </button>
             ))}
           </div>
         </div>
       </div>
-
     </div>
   );
 }
