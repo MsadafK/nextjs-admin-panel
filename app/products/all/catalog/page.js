@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Search, Filter, Grid, List, Plus, Eye, Edit, Trash2, Star, Package, TrendingUp, DollarSign, Tag, MoreVertical, Download, Upload, RefreshCw, ShoppingCart, Heart } from 'lucide-react';
+import { Search, Filter, Grid, List, Plus, Eye, Edit, Trash2, Star, Package, TrendingUp, DollarSign, Tag, Download, Upload, Heart } from 'lucide-react';
 
 export default function ProductCatalogPage() {
   const [viewMode, setViewMode] = useState('grid');
@@ -25,129 +25,33 @@ export default function ProductCatalogPage() {
   ];
 
   const products = [
-    {
-      id: 1,
-      name: 'Wireless Noise-Cancelling Headphones',
-      category: 'Electronics',
-      price: 4599,
-      stock: 45,
-      sold: 234,
-      status: 'active',
-      rating: 4.5,
-      image: '🎧',
-      sku: 'ELC-001',
-      trend: '+12%'
-    },
-    {
-      id: 2,
-      name: 'Smart Fitness Watch Pro',
-      category: 'Electronics',
-      price: 12999,
-      stock: 28,
-      sold: 189,
-      status: 'active',
-      rating: 4.8,
-      image: '⌚',
-      sku: 'ELC-002',
-      trend: '+23%'
-    },
-    {
-      id: 3,
-      name: 'Premium Cotton T-Shirt',
-      category: 'Fashion',
-      price: 799,
-      stock: 0,
-      sold: 567,
-      status: 'out-of-stock',
-      rating: 4.3,
-      image: '👕',
-      sku: 'FSH-001',
-      trend: '+8%'
-    },
-    {
-      id: 4,
-      name: 'Ergonomic Office Chair',
-      category: 'Home & Living',
-      price: 8999,
-      stock: 15,
-      sold: 98,
-      status: 'active',
-      rating: 4.6,
-      image: '🪑',
-      sku: 'HOM-001',
-      trend: '+15%'
-    },
-    {
-      id: 5,
-      name: 'Yoga Mat Premium',
-      category: 'Sports',
-      price: 1299,
-      stock: 67,
-      sold: 345,
-      status: 'active',
-      rating: 4.7,
-      image: '🧘',
-      sku: 'SPT-001',
-      trend: '+19%'
-    },
-    {
-      id: 6,
-      name: 'Bestseller Fiction Book Set',
-      category: 'Books',
-      price: 999,
-      stock: 42,
-      sold: 156,
-      status: 'active',
-      rating: 4.4,
-      image: '📚',
-      sku: 'BOK-001',
-      trend: '+6%'
-    },
-    {
-      id: 7,
-      name: 'Bluetooth Speaker Portable',
-      category: 'Electronics',
-      price: 2499,
-      stock: 89,
-      sold: 423,
-      status: 'active',
-      rating: 4.6,
-      image: '🔊',
-      sku: 'ELC-003',
-      trend: '+28%'
-    },
-    {
-      id: 8,
-      name: 'Designer Sunglasses',
-      category: 'Fashion',
-      price: 1599,
-      stock: 34,
-      sold: 212,
-      status: 'active',
-      rating: 4.5,
-      image: '🕶️',
-      sku: 'FSH-002',
-      trend: '+11%'
-    },
+    { id: 1, name: 'Wireless Noise-Cancelling Headphones', category: 'Electronics', price: 4599, stock: 45, sold: 234, status: 'active', rating: 4.5, image: '🎧', sku: 'ELC-001', trend: '+12%' },
+    { id: 2, name: 'Smart Fitness Watch Pro', category: 'Electronics', price: 12999, stock: 28, sold: 189, status: 'active', rating: 4.8, image: '⌚', sku: 'ELC-002', trend: '+23%' },
+    { id: 3, name: 'Premium Cotton T-Shirt', category: 'Fashion', price: 799, stock: 0, sold: 567, status: 'out-of-stock', rating: 4.3, image: '👕', sku: 'FSH-001', trend: '+8%' },
+    { id: 4, name: 'Ergonomic Office Chair', category: 'Home & Living', price: 8999, stock: 15, sold: 98, status: 'active', rating: 4.6, image: '🪑', sku: 'HOM-001', trend: '+15%' },
+    { id: 5, name: 'Yoga Mat Premium', category: 'Sports', price: 1299, stock: 67, sold: 345, status: 'active', rating: 4.7, image: '🧘', sku: 'SPT-001', trend: '+19%' },
+    { id: 6, name: 'Bestseller Fiction Book Set', category: 'Books', price: 999, stock: 42, sold: 156, status: 'active', rating: 4.4, image: '📚', sku: 'BOK-001', trend: '+6%' },
+    { id: 7, name: 'Bluetooth Speaker Portable', category: 'Electronics', price: 2499, stock: 89, sold: 423, status: 'active', rating: 4.6, image: '🔊', sku: 'ELC-003', trend: '+28%' },
+    { id: 8, name: 'Designer Sunglasses', category: 'Fashion', price: 1599, stock: 34, sold: 212, status: 'active', rating: 4.5, image: '🕶️', sku: 'FSH-002', trend: '+11%' },
   ];
 
   const stats = [
-    { label: 'Total Products', value: '156', icon: Package, color: 'from-blue-500 to-indigo-600', bgColor: 'bg-muted', textColor: 'text-blue-600' },
-    { label: 'Active Products', value: '142', icon: TrendingUp, color: 'from-emerald-500 to-teal-600', bgColor: 'bg-muted', textColor: 'text-emerald-600' },
-    { label: 'Total Revenue', value: '₹45.6L', icon: DollarSign, color: 'from-purple-500 to-pink-600', bgColor: 'bg-muted', textColor: 'text-purple-600' },
-    { label: 'Out of Stock', value: '14', icon: Tag, color: 'from-orange-500 to-red-600', bgColor: 'bg-muted', textColor: 'text-orange-600' },
+    { label: 'Total Products', value: '156', icon: Package, iconColor: 'text-blue-500' },
+    { label: 'Active Products', value: '142', icon: TrendingUp, iconColor: 'text-emerald-500' },
+    { label: 'Total Revenue', value: '₹45.6L', icon: DollarSign, iconColor: 'text-purple-500' },
+    { label: 'Out of Stock', value: '14', icon: Tag, iconColor: 'text-orange-500' },
   ];
 
   const getStatusBadge = (status) => {
     switch(status) {
       case 'active':
-        return 'bg-emerald-100 text-emerald-700';
+        return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
       case 'draft':
-        return 'bg-muted text-foreground';
+        return 'bg-muted text-muted-foreground border-border';
       case 'out-of-stock':
-        return 'bg-red-100 text-red-700';
+        return 'bg-destructive/10 text-destructive border-destructive/20';
       default:
-        return 'bg-muted text-foreground';
+        return 'bg-muted text-foreground border-border';
     }
   };
 
@@ -156,254 +60,260 @@ export default function ProductCatalogPage() {
   };
 
   return (
-    <div className="page-container space-y-6">
-      <div className="max-w-7xl mx-auto space-y-5">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-2">
-              Product Catalog
-            </h1>
-            <p className="text-muted-foreground">Manage and organize your product inventory</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 bg-card text-foreground px-4 py-3 rounded-xl hover:shadow-card transition-all duration-300 border border-border">
-              <Upload className="w-5 h-5" />
-              <span className="hidden sm:inline">Import</span>
-            </button>
-            <button className="flex items-center gap-2 bg-card text-foreground px-4 py-3 rounded-xl hover:shadow-card transition-all duration-300 border border-border">
-              <Download className="w-5 h-5" />
-              <span className="hidden sm:inline">Export</span>
-            </button>
-            <button className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-background px-6 py-3 rounded-xl hover:shadow-card transition-all duration-300">
-              <Plus className="w-5 h-5" />
-              <span>Add Product</span>
-            </button>
-          </div>
+    <div className="page-container max-w-7xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1">
+            Product Catalog
+          </h1>
+          <p className="text-sm text-muted-foreground">Manage and organize your product inventory</p>
         </div>
+        <div className="flex items-center gap-3">
+          <button className="btn btn-outline">
+            <Upload size={16} />
+            <span className="hidden sm:inline ml-2">Import</span>
+          </button>
+          <button className="btn btn-outline">
+            <Download size={16} />
+            <span className="hidden sm:inline ml-2">Export</span>
+          </button>
+          <button className="btn btn-primary">
+            <Plus size={16} />
+            <span className="ml-2">Add Product</span>
+          </button>
+        </div>
+      </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <div key={index} className="bg-card border border-border rounded-lg shadow-card hover:shadow-dropdown transition-all duration-300">
-                <div className={`${stat.bgColor} w-12 h-12 rounded-xl flex items-center justify-center mb-4`}>
-                  <Icon className={`w-6 h-6 ${stat.textColor}`} />
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div key={index} className="card p-4 sm:p-5 shadow-card hover:shadow-dropdown transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1 min-w-0">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide truncate">
+                    {stat.label}
+                  </p>
+                  <p className="text-2xl font-semibold tracking-tight text-foreground">{stat.value}</p>
                 </div>
-                <p className="text-muted-foreground text-sm mb-1">{stat.label}</p>
-                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{stat.value}</p>
+                <div className="p-2 rounded-md bg-muted flex-shrink-0">
+                  <Icon size={20} className={stat.iconColor} strokeWidth={2} />
+                </div>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Filters and Search */}
-        <div className="bg-card border border-border rounded-lg shadow-card">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search products by name, SKU, or category..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:border-ring focus:outline-none transition-colors"
-              />
             </div>
+          );
+        })}
+      </div>
 
-            {/* Category Filter */}
-            <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="pl-10 pr-8 py-3 border-2 border-border rounded-xl focus:border-ring focus:outline-none transition-colors appearance-none cursor-pointer bg-card min-w-[180px]"
-              >
-                {categories.map(cat => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label} ({cat.count})
-                  </option>
-                ))}
-              </select>
-            </div>
+      {/* Filters and Search */}
+      <div className="card p-3 sm:p-4 shadow-card">
+        <div className="flex flex-col lg:flex-row gap-3">
+          {/* Search */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search products by name, SKU, or category..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="input pl-9 w-full"
+            />
+          </div>
 
-            {/* Status Filter */}
-            <div className="relative">
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="px-4 py-3 border-2 border-border rounded-xl focus:border-ring focus:outline-none transition-colors appearance-none cursor-pointer bg-card min-w-[150px]"
-              >
-                {statuses.map(status => (
-                  <option key={status.value} value={status.value}>{status.label}</option>
-                ))}
-              </select>
-            </div>
+          {/* Category Filter */}
+          <div className="relative">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="input pl-9 pr-8 w-full lg:w-auto min-w-[180px] appearance-none"
+            >
+              {categories.map(cat => (
+                <option key={cat.value} value={cat.value}>
+                  {cat.label} ({cat.count})
+                </option>
+              ))}
+            </select>
+          </div>
 
-            {/* View Toggle */}
-            <div className="flex bg-muted rounded-xl p-1">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-3 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-card shadow-card' : 'text-muted-foreground'}`}
-              >
-                <Grid className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-3 rounded-lg transition-all ${viewMode === 'list' ? 'bg-card shadow-card' : 'text-muted-foreground'}`}
-              >
-                <List className="w-5 h-5" />
-              </button>
-            </div>
+          {/* Status Filter */}
+          <div className="relative">
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="input w-full lg:w-auto min-w-[150px]"
+            >
+              {statuses.map(status => (
+                <option key={status.value} value={status.value}>{status.label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* View Toggle */}
+          <div className="flex bg-muted/50 p-1 rounded-md border border-border">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded transition-all ${viewMode === 'grid' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              <Grid size={18} />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 rounded transition-all ${viewMode === 'list' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              <List size={18} />
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Products Grid/List View */}
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <div key={product.id} className="bg-card border border-border rounded-lg shadow-card overflow-hidden hover:shadow-dropdown transition-all duration-300 hover:-translate-y-1 group">
-                {/* Product Image */}
-                <div className="relative bg-gradient-to-br from-purple-100 to-pink-100 h-48 flex items-center justify-center">
-                  <span className="text-7xl">{product.image}</span>
-                  <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="bg-card p-2 rounded-lg shadow-card hover:bg-muted transition-colors">
-                      <Heart className="w-4 h-4 text-muted-foreground" />
-                    </button>
-                    <button className="bg-card p-2 rounded-lg shadow-card hover:bg-muted transition-colors">
-                      <Eye className="w-4 h-4 text-muted-foreground" />
-                    </button>
-                  </div>
-                  <span className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(product.status)}`}>
-                    {getStatusText(product.status)}
-                  </span>
+      {/* Products Grid/List View */}
+      {viewMode === 'grid' ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <div key={product.id} className="card p-0 overflow-hidden hover:shadow-dropdown transition-all duration-300 hover:-translate-y-1 group flex flex-col">
+              {/* Product Image */}
+              <div className="relative bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 h-48 flex items-center justify-center flex-shrink-0">
+                <span className="text-7xl group-hover:scale-110 transition-transform duration-300">{product.image}</span>
+                
+                <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button className="bg-background/80 backdrop-blur-sm p-2 rounded-lg shadow-sm hover:bg-background transition-colors text-muted-foreground hover:text-rose-500">
+                    <Heart size={16} />
+                  </button>
+                  <button className="bg-background/80 backdrop-blur-sm p-2 rounded-lg shadow-sm hover:bg-background transition-colors text-muted-foreground hover:text-foreground">
+                    <Eye size={16} />
+                  </button>
                 </div>
+                
+                <span className={`badge absolute top-3 left-3 ${getStatusBadge(product.status)}`}>
+                  {getStatusText(product.status)}
+                </span>
+              </div>
 
-                {/* Product Info */}
-                <div className="p-5">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h3 className="font-bold text-foreground mb-1 line-clamp-2">{product.name}</h3>
-                      <p className="text-sm text-muted-foreground">{product.category}</p>
+              {/* Product Info */}
+              <div className="p-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-foreground leading-tight mb-1 truncate">{product.name}</h3>
+                      <p className="text-xs text-muted-foreground">{product.category}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 mb-3">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold text-foreground">{product.rating}</span>
-                    <span className="text-muted-foreground text-sm ml-1">({product.sold} sold)</span>
+                  <div className="flex items-center gap-1 mb-4">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span className="text-sm font-semibold text-foreground">{product.rating}</span>
+                    <span className="text-muted-foreground text-xs ml-1">({product.sold} sold)</span>
                   </div>
 
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-end justify-between mb-4">
                     <div>
-                      <p className="text-lg font-semibold tracking-tight text-purple-600">₹{product.price.toLocaleString()}</p>
+                      <p className="text-lg font-bold tracking-tight text-foreground">₹{product.price.toLocaleString()}</p>
                       <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground">Stock: <span className="font-semibold">{product.stock}</span></p>
-                      <p className="text-xs text-emerald-600 font-semibold">{product.trend}</p>
+                      <p className="text-xs text-muted-foreground mb-0.5">Stock: <span className="font-semibold text-foreground">{product.stock}</span></p>
+                      <p className={`text-xs font-semibold ${product.status === 'out-of-stock' ? 'text-destructive' : 'text-emerald-600'}`}>
+                        {product.status === 'out-of-stock' ? 'Out of stock' : product.trend}
+                      </p>
                     </div>
                   </div>
+                </div>
 
-                  <div className="flex gap-2">
-                    <button className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-background py-2 rounded-lg hover:shadow-card transition-all duration-300 flex items-center justify-center gap-2">
-                      <Edit className="w-4 h-4" />
-                      Edit
-                    </button>
-                    <button className="bg-muted text-muted-foreground p-2 rounded-lg hover:bg-muted hover:text-red-600 transition-colors">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                <div className="flex gap-2 mt-auto">
+                  <button className="btn btn-outline flex-1 py-2">
+                    <Edit size={14} className="mr-2" /> Edit
+                  </button>
+                  <button className="btn btn-outline px-3 text-destructive hover:bg-destructive/10 border-transparent hover:border-destructive/20">
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="bg-card border border-border rounded-lg shadow-card overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gradient-to-r from-purple-50 to-pink-50 border-b-2 border-border">
-                    <th className="text-left py-4 px-6 text-foreground font-semibold">Product</th>
-                    <th className="text-left py-4 px-6 text-foreground font-semibold">Category</th>
-                    <th className="text-left py-4 px-6 text-foreground font-semibold">Price</th>
-                    <th className="text-left py-4 px-6 text-foreground font-semibold">Stock</th>
-                    <th className="text-left py-4 px-6 text-foreground font-semibold">Sold</th>
-                    <th className="text-left py-4 px-6 text-foreground font-semibold">Status</th>
-                    <th className="text-left py-4 px-6 text-foreground font-semibold">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((product, index) => (
-                    <tr key={product.id} className="border-b border-border hover:bg-muted transition-colors">
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center text-2xl">
-                            {product.image}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-foreground">{product.name}</p>
-                            <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 text-foreground">{product.category}</td>
-                      <td className="py-4 px-6 font-bold text-purple-600">₹{product.price.toLocaleString()}</td>
-                      <td className="py-4 px-6 text-foreground">{product.stock}</td>
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-2">
-                          <span className="text-foreground">{product.sold}</span>
-                          <span className="text-xs text-emerald-600 font-semibold">{product.trend}</span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(product.status)}`}>
-                          {getStatusText(product.status)}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-2">
-                          <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-                            <Eye className="w-4 h-4 text-muted-foreground" />
-                          </button>
-                          <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-                            <Edit className="w-4 h-4 text-muted-foreground" />
-                          </button>
-                          <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-                            <Trash2 className="w-4 h-4 text-muted-foreground" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
+          ))}
+        </div>
+      ) : (
+        <div className="card p-0 overflow-hidden shadow-card">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-muted/50 border-b border-border">
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase tracking-wide text-xs">Product</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase tracking-wide text-xs">Category</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase tracking-wide text-xs">Price</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase tracking-wide text-xs">Stock</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase tracking-wide text-xs">Sold</th>
+                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase tracking-wide text-xs">Status</th>
+                  <th className="text-right py-3 px-4 font-semibold text-muted-foreground uppercase tracking-wide text-xs">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {products.map((product) => (
+                  <tr key={product.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-3 min-w-[200px]">
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 rounded-md flex items-center justify-center text-xl flex-shrink-0">
+                          {product.image}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-foreground truncate">{product.name}</p>
+                          <p className="text-xs text-muted-foreground truncate">SKU: {product.sku}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-foreground whitespace-nowrap">{product.category}</td>
+                    <td className="py-3 px-4 font-semibold text-foreground whitespace-nowrap">₹{product.price.toLocaleString()}</td>
+                    <td className="py-3 px-4 text-foreground">{product.stock}</td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-foreground">{product.sold}</span>
+                        {product.status !== 'out-of-stock' && (
+                          <span className="text-xs text-emerald-600 font-semibold">{product.trend}</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <span className={`badge ${getStatusBadge(product.status)}`}>
+                        {getStatusText(product.status)}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center justify-end gap-1">
+                        <button className="btn btn-ghost h-8 w-8 p-0" title="View">
+                          <Eye size={16} />
+                        </button>
+                        <button className="btn btn-ghost h-8 w-8 p-0" title="Edit">
+                          <Edit size={16} />
+                        </button>
+                        <button className="btn btn-ghost h-8 w-8 p-0 text-destructive hover:bg-destructive/10" title="Delete">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Pagination */}
-        <div className="flex items-center justify-between bg-card border border-border rounded-lg shadow-card">
-          <p className="text-muted-foreground">Showing <span className="font-semibold">1-8</span> of <span className="font-semibold">156</span> products</p>
-          <div className="flex gap-2">
-            <button className="px-4 py-2 border-2 border-border rounded-lg hover:bg-muted transition-colors text-muted-foreground font-semibold">
-              Previous
+      {/* Pagination */}
+      <div className="card p-3 sm:px-4 sm:py-3 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-card">
+        <p className="text-sm text-muted-foreground">
+          Showing <span className="font-semibold text-foreground">1-8</span> of <span className="font-semibold text-foreground">156</span> products
+        </p>
+        <div className="flex items-center gap-1">
+          {['Previous', '1', '2', '3', 'Next'].map((label) => (
+            <button
+              key={label}
+              className={`btn h-8 px-3 text-xs ${label === '1' ? 'btn-primary' : 'btn-outline'}`}
+            >
+              {label}
             </button>
-            <button className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-background rounded-lg hover:shadow-card transition-all">
-              1
-            </button>
-            <button className="px-4 py-2 border-2 border-border rounded-lg hover:bg-muted transition-colors text-muted-foreground">
-              2
-            </button>
-            <button className="px-4 py-2 border-2 border-border rounded-lg hover:bg-muted transition-colors text-muted-foreground">
-              3
-            </button>
-            <button className="px-4 py-2 border-2 border-border rounded-lg hover:bg-muted transition-colors text-muted-foreground font-semibold">
-              Next
-            </button>
-          </div>
+          ))}
         </div>
       </div>
     </div>
