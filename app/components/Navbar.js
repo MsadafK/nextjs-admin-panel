@@ -29,7 +29,6 @@ const languages = [
   { code: 'es', name: 'Español', flagUrl: 'https://flagcdn.com/w40/es.png' },
   { code: 'fr', name: 'Français', flagUrl: 'https://flagcdn.com/w40/fr.png' },
   { code: 'de', name: 'Deutsch', flagUrl: 'https://flagcdn.com/w40/de.png' },
-  { code: 'zh', name: '中文', flagUrl: 'https://flagcdn.com/w40/cn.png' },
 ];
 
 const profileMenuItems = [

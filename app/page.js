@@ -13,7 +13,7 @@ export default function Dashboard() {
           Dashboard
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Welcome back! Here's what's happening with your business today.
+          Welcome back! Here&apos;s what&apos;s happening with your business today.
         </p>
       </div>
 

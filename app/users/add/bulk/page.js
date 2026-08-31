@@ -262,7 +262,7 @@ export default function BulkImportUsers() {
               <div className="mt-0.5 w-6 h-6 rounded-full bg-foreground flex items-center justify-center text-background text-xs font-bold flex-shrink-0">1</div>
               <div>
                 <p className="font-medium text-foreground">Download Template</p>
-                <p className="text-sm text-muted-foreground">Click the "Download Template" button to get the CSV format with sample data</p>
+                <p className="text-sm text-muted-foreground">Click the &quot;Download Template&quot; button to get the CSV format with sample data</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">

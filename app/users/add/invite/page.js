@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, UserPlus, Trash2, Copy, Send, CheckCircle, XCircle, Upload, Download, Plus, X, AlertCircle } from 'lucide-react';
+import { Mail, UserPlus, Trash2, Copy, Send, CheckCircle, XCircle, Upload, Download, Plus, X, AlertCircle, Info } from 'lucide-react';
 
 export default function InviteUsers() {
   const [inviteMethod, setInviteMethod] = useState('single');
@@ -230,7 +230,7 @@ export default function InviteUsers() {
                   <h4 className="font-semibold text-foreground mb-2">CSV Format Requirements:</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• Column 1: Email address (required)</li>
-                    <li>• Column 2: Role (optional, defaults to "User")</li>
+                    <li>• Column 2: Role (optional, defaults to &quot;User&quot;)</li>
                     <li>• Column 3: First Name (optional)</li>
                     <li>• Column 4: Last Name (optional)</li>
                   </ul>
