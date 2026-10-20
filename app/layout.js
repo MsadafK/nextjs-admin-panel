@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <LanguageProvider>
             <FontsProvider>
-              {/* Humara saara client logic is wrapper ke andar hai */}
+              {/*Humara saara client logic is wrapper ke andar hai*/}
               <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
             </FontsProvider>
           </LanguageProvider>
