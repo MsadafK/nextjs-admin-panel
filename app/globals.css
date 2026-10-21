@@ -7,7 +7,7 @@
    Neutral: Zinc | Philosophy: Stripe / Vercel / Linear
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); */
 
 @layer base {
   /* ── Light Mode ── */
@@ -158,8 +158,8 @@
   }
 
   .btn:focus-visible {
-    ring: 2px solid hsl(var(--ring));
-    ring-offset: 2px;
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
   }
 
   .btn-primary {

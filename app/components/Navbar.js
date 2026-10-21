@@ -1,22 +1,23 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
-  Search, Bell, User, Settings, LogOut, Menu, Sun, Moon, 
-  Globe, Mail, FileText, CheckSquare, MessageSquare, Pin, PinOff
+  Search, Bell, User, LogOut, Menu, Sun, Moon,
+  Mail, FileText, CheckSquare, Pin, PinOff, ArrowRight
 } from 'lucide-react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { menuItems } from './Sidebar/MenuItems';
+import { useRouter } from 'next/navigation';
 import NextImage from 'next/image';
 
-/* ─── Static Mock Data (Moved outside render cycle for performance) ─── */
-const notifications = [
-  { id: 1, title: 'New user registered', time: '2 min ago', unread: true, i18nKey: 'notification_new_user' },
-  { id: 2, title: 'Server maintenance scheduled', time: '1 hour ago', unread: true, i18nKey: 'notification_maintenance' },
-  { id: 3, title: 'Backup completed successfully', time: '3 hours ago', unread: false, i18nKey: 'notification_backup' },
+const INITIAL_NOTIFICATIONS = [
+  { id: 1, title: 'New user registered', time: '2 min ago', unread: true, i18nKey: 'notification_new_user', href: '/users/all/list' },
+  { id: 2, title: 'Server maintenance scheduled', time: '1 hour ago', unread: true, i18nKey: 'notification_maintenance', href: '/analytics/realtime/health' },
+  { id: 3, title: 'Backup completed successfully', time: '3 hours ago', unread: false, i18nKey: 'notification_backup', href: '/security/audit/system' },
 ];
 
-const inboxMessages = [
+const INITIAL_INBOX = [
   { id: 1, name: 'Michell Flintoff', message: 'You: Yesterday was great…', time: 'just now', unread: true, avatarSeed: 'Michell', dotColor: 'bg-blue-500' },
   { id: 2, name: 'Bianca Anderson', message: 'Nice looking dress you…', time: '5 mins ago', unread: true, avatarSeed: 'Bianca', dotColor: 'bg-blue-500' },
   { id: 3, name: 'Andrew Johnson', message: 'Sent a photo', time: '10 mins ago', unread: true, avatarSeed: 'Andrew', dotColor: 'bg-violet-500' },
@@ -32,15 +33,36 @@ const languages = [
 ];
 
 const profileMenuItems = [
-  { icon: User, label: 'My Profile', sub: 'Account settings', lightBg: 'bg-blue-50', darkBg: 'bg-blue-950/40', ic: 'text-blue-500' },
-  { icon: FileText, label: 'My Notes', sub: 'My Daily Notes', lightBg: 'bg-teal-50', darkBg: 'bg-teal-950/40', ic: 'text-teal-500' },
-  { icon: CheckSquare, label: 'My Tasks', sub: 'To-do and daily tasks', lightBg: 'bg-violet-50', darkBg: 'bg-violet-950/40', ic: 'text-violet-500' },
+  { icon: User, label: 'My Profile', sub: 'Account settings', href: '/settings', lightBg: 'bg-blue-50', darkBg: 'bg-blue-950/40', ic: 'text-blue-500' },
+  { icon: FileText, label: 'My Notes', sub: 'My Daily Notes', href: '/calendar/reminders/active', lightBg: 'bg-teal-50', darkBg: 'bg-teal-950/40', ic: 'text-teal-500' },
+  { icon: CheckSquare, label: 'My Tasks', sub: 'To-do and daily tasks', href: '/performance/meetings/actions', lightBg: 'bg-violet-50', darkBg: 'bg-violet-950/40', ic: 'text-violet-500' },
 ];
 
-/* ─── Zinc design tokens ─── */
+/* Flatten all navigable routes from menuItems for Ctrl+K search */
+function getFlatRoutes(items = menuItems, parentTrail = []) {
+  let routes = [];
+  for (const item of items) {
+    const label = item.label.replace(/_/g, ' ');
+    const currentTrail = [...parentTrail, label];
+    if (item.href && !item.subItems && !item.childItems) {
+      routes.push({
+        label,
+        href: item.href,
+        category: parentTrail.join(' › ') || 'General',
+        icon: item.icon,
+      });
+    }
+    if (item.subItems) routes = routes.concat(getFlatRoutes(item.subItems, currentTrail));
+    if (item.childItems) routes = routes.concat(getFlatRoutes(item.childItems, currentTrail));
+  }
+  return routes;
+}
+
+const ALL_ROUTES = getFlatRoutes();
+
 const Z = {
-  nav: (dark, isSticky) => dark 
-    ? `bg-zinc-900 border-zinc-800 ${isSticky ? 'bg-zinc-900/80 backdrop-blur-md supports-[backdrop-filter]:bg-zinc-900/60' : ''}` 
+  nav: (dark, isSticky) => dark
+    ? `bg-zinc-900 border-zinc-800 ${isSticky ? 'bg-zinc-900/80 backdrop-blur-md supports-[backdrop-filter]:bg-zinc-900/60' : ''}`
     : `bg-white border-zinc-200 ${isSticky ? 'bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/60' : ''}`,
   btn: (dark) => dark
     ? 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 border border-transparent hover:border-zinc-700 rounded-md'
@@ -65,6 +87,12 @@ const Z = {
 };
 
 export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarDarkMode }) {
+  const router = useRouter();
+  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
+  const [inboxMessages, setInboxMessages] = useState(INITIAL_INBOX);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
@@ -94,8 +122,16 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const unreadInboxCount = inboxMessages.filter(m => m.unread).length;
   const unreadNotifCount = notifications.filter(n => n.unread).length;
 
-  /* refs for click-outside */
+  const filteredRoutes = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return ALL_ROUTES.slice(0, 6);
+    return ALL_ROUTES.filter(
+      r => r.label.toLowerCase().includes(q) || r.category.toLowerCase().includes(q)
+    ).slice(0, 8);
+  }, [searchQuery]);
+
   const searchRef = useRef(null);
+  const searchContainerRef = useRef(null);
   const topSearchRef = useRef(null);
   const themeMenuRef = useRef(null);
   const languageMenuRef = useRef(null);
@@ -105,15 +141,21 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.ctrlKey && e.key === 'k') {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        sidebarPosition === 'top' ? setShowTopSearch(true) : searchRef.current?.focus();
+        if (sidebarPosition === 'top') setShowTopSearch(true);
+        setShowSearchDropdown(true);
         setTimeout(() => searchRef.current?.focus(), 0);
       }
-      if (e.key === 'Escape') { setShowTopSearch(false); searchRef.current?.blur(); }
+      if (e.key === 'Escape') {
+        setShowTopSearch(false);
+        setShowSearchDropdown(false);
+        searchRef.current?.blur();
+      }
     };
 
     const onOutside = (e) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target)) setShowSearchDropdown(false);
       if (themeMenuRef.current && !themeMenuRef.current.contains(e.target)) setShowThemeMenu(false);
       if (languageMenuRef.current && !languageMenuRef.current.contains(e.target)) setShowLanguageMenu(false);
       if (topSearchRef.current && !topSearchRef.current.contains(e.target)) setShowTopSearch(false);
@@ -132,6 +174,13 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
 
   const handleLanguageChange = (code) => {
     if (changeLanguage) { changeLanguage(code); setShowLanguageMenu(false); }
+  };
+
+  const handleNavigate = (href) => {
+    setShowSearchDropdown(false);
+    setShowMobileSearch(false);
+    setSearchQuery('');
+    router.push(href);
   };
 
   const navClasses = [
@@ -155,7 +204,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
               <Menu size={20} />
             </button>
 
-            <div className="relative">
+            <div className="relative" ref={searchContainerRef}>
               <button
                 onClick={() => setShowMobileSearch(!showMobileSearch)}
                 className={`${iconBtn} md:hidden`}
@@ -170,7 +219,9 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                     <Search size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${Z.textSecondary(dark)}`} />
                     <input
                       type="text"
-                      placeholder={t ? t('search') : 'Search…'}
+                      value={searchQuery}
+                      onChange={(e) => { setSearchQuery(e.target.value); setShowSearchDropdown(true); }}
+                      placeholder={t ? t('search') : 'Search pages…'}
                       autoFocus
                       className={`w-full pl-9 pr-4 py-2 text-sm border rounded-md outline-none transition-colors ${Z.input(dark)}`}
                     />
@@ -183,13 +234,63 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                 <input
                   ref={searchRef}
                   type="text"
-                  placeholder={t ? t('search') : 'Search…'}
+                  value={searchQuery}
+                  onFocus={() => setShowSearchDropdown(true)}
+                  onChange={(e) => { setSearchQuery(e.target.value); setShowSearchDropdown(true); }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && filteredRoutes.length > 0) {
+                      handleNavigate(filteredRoutes[0].href);
+                    }
+                  }}
+                  placeholder={t ? t('search') : 'Search pages…'}
                   className={`pl-9 pr-20 py-2 w-64 text-sm border rounded-md outline-none transition-colors ${Z.input(dark)}`}
                 />
                 <kbd className={`absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium border ${dark ? 'border-zinc-700 bg-zinc-800' : 'border-zinc-200 bg-zinc-100'} px-1.5 py-0.5 rounded pointer-events-none ${Z.textSecondary(dark)}`}>
                   Ctrl K
                 </kbd>
               </div>
+
+              {/* Quick Route Search Dropdown */}
+              {showSearchDropdown && (
+                <div className={`absolute left-0 mt-2 w-80 z-50 overflow-hidden ${Z.panel(dark)}`}>
+                  <div className={`px-3 py-2 border-b ${Z.panelHeader(dark)} flex items-center justify-between`}>
+                    <span className={`text-xs font-medium uppercase tracking-wide ${Z.textSecondary(dark)}`}>
+                      Quick Navigation
+                    </span>
+                    <span className={`text-[11px] ${Z.textSecondary(dark)}`}>Enter to jump</span>
+                  </div>
+                  <div className={`divide-y ${Z.panelDivide(dark)} max-h-64 overflow-y-auto`}>
+                    {filteredRoutes.map((route) => {
+                      const RouteIcon = route.icon;
+                      return (
+                        <button
+                          key={route.href}
+                          onClick={() => handleNavigate(route.href)}
+                          className={`w-full px-3 py-2.5 text-left flex items-center justify-between transition-colors ${Z.panelRow(dark)}`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <RouteIcon size={15} className={Z.textSecondary(dark)} />
+                            <div className="min-w-0">
+                              <p className={`text-sm font-medium capitalize truncate ${Z.textPrimary(dark)}`}>
+                                {route.label}
+                              </p>
+                              <p className={`text-xs capitalize truncate ${Z.textSecondary(dark)}`}>
+                                {route.category}
+                              </p>
+                            </div>
+                          </div>
+                          <ArrowRight size={14} className={Z.textSecondary(dark)} />
+                        </button>
+                      );
+                    })}
+                    {filteredRoutes.length === 0 && (
+                      <p className={`px-4 py-6 text-center text-xs ${Z.textSecondary(dark)}`}>
+                        No matching pages found.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </>
         ) : (
@@ -199,7 +300,6 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
 
       {/* ══════════════ RIGHT ══════════════ */}
       <div className={`flex items-center gap-1 sm:gap-2 ${sidebarPosition === 'right' ? 'mr-5' : ''}`}>
-        
         {sidebarPosition === 'top' && (
           <div className="relative flex items-center" ref={topSearchRef}>
             <button
@@ -210,13 +310,14 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
               <Search size={20} />
             </button>
             {showTopSearch && (
-              <div className="relative ml-2 absolute right-full mr-2">
+              <div className="relative ml-2">
                 <input
                   ref={searchRef}
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t ? t('search') : 'Search…'}
-                  className={`pl-3 pr-20 py-2 w-48 text-sm border rounded-md outline-none transition-colors shadow-lg ${Z.input(dark)}`}
-                  onBlur={() => setTimeout(() => setShowTopSearch(false), 150)}
+                  className={`pl-3 pr-4 py-2 w-48 text-sm border rounded-md outline-none transition-colors shadow-lg ${Z.input(dark)}`}
                 />
               </div>
             )}
@@ -250,7 +351,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                   </div>
                   <button
                     onClick={toggleDarkMode}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${isDark ? `bg-${currentTheme}-600` : 'bg-zinc-300'}`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${isDark ? `bg-\${currentTheme}-600` : 'bg-zinc-300'}`}
                   >
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${isDark ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
@@ -287,7 +388,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
             className={`p-2 rounded-md flex items-center justify-center transition-colors duration-150 ${dark ? 'hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700' : 'hover:bg-zinc-100 border border-transparent'} w-9 h-9`}
             title={t ? t('language') : 'Change language'}
           >
-            <NextImage src={currentLang.flagUrl} alt={currentLang.name} width={24} height={16} className="rounded-sm object-cover" />
+            <NextImage src={currentLang.flagUrl} alt={currentLang.name} width={24} height={16} unoptimized className="rounded-sm object-cover" />
           </button>
 
           {showLanguageMenu && (
@@ -304,7 +405,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                     onClick={() => handleLanguageChange(lang.code)}
                     className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2.5 transition-colors ${Z.menuItem(dark, active)}`}
                   >
-                    <NextImage src={lang.flagUrl} alt={lang.name} width={20} height={16} className="rounded-sm object-cover flex-shrink-0" />
+                    <NextImage src={lang.flagUrl} alt={lang.name} width={20} height={16} unoptimized className="rounded-sm object-cover flex-shrink-0" />
                     <span>{lang.name}</span>
                     {active && <span className={`ml-auto text-xs ${Z.textSecondary(dark)}`}>✓</span>}
                   </button>
@@ -329,14 +430,29 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
             <div className={`absolute right-0 mt-2 w-80 z-50 max-h-[500px] overflow-hidden flex flex-col ${Z.panel(dark)} max-[425px]:left-1/2 max-[425px]:-translate-x-[67.5%]`}>
               <div className={`px-4 py-3 border-b ${Z.panelHeader(dark)} flex items-center justify-between flex-shrink-0`}>
                 <h3 className={`text-sm font-semibold ${Z.textPrimary(dark)}`}>Inbox</h3>
-                {unreadInboxCount > 0 && <span className="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">{unreadInboxCount} new</span>}
+                {unreadInboxCount > 0 && (
+                  <button
+                    onClick={() => setInboxMessages(prev => prev.map(m => ({ ...m, unread: false })))}
+                    className="text-xs text-blue-500 hover:underline font-medium"
+                  >
+                    Mark all read
+                  </button>
+                )}
               </div>
-              <div className={`divide-y ${Z.panelDivide(dark)} overflow-y-auto flex-1 custom-scrollbar`}>
+              <div className={`divide-y ${Z.panelDivide(dark)} overflow-y-auto flex-1`}>
                 {inboxMessages.map((msg) => (
-                  <div key={msg.id} className={`px-4 py-3 transition-colors ${Z.panelRow(dark)}`}>
+                  <div
+                    key={msg.id}
+                    onClick={() => {
+                      setInboxMessages(prev => prev.map(m => m.id === msg.id ? { ...m, unread: false } : m));
+                      setShowInbox(false);
+                      router.push('/messages/inbox/unread');
+                    }}
+                    className={`px-4 py-3 transition-colors ${Z.panelRow(dark)}`}
+                  >
                     <div className="flex items-start gap-3">
                       <div className="relative flex-shrink-0">
-                        <NextImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.avatarSeed}`} alt={msg.name} width={36} height={36} className="rounded-full" />
+                        <NextImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.avatarSeed}`} alt={msg.name} width={36} height={36} unoptimized className="rounded-full" />
                         {msg.unread && <span className={`absolute top-0 right-0 w-2.5 h-2.5 ${msg.dotColor} rounded-full border-2 ${dark ? 'border-zinc-900' : 'border-white'}`} />}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -351,7 +467,12 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                 ))}
               </div>
               <div className={`p-3 border-t ${Z.panelHeader(dark)} flex-shrink-0`}>
-                <button className={`w-full py-1.5 text-sm font-medium transition-colors ${Z.ctaBtn(dark)}`}>See all messages</button>
+                <button
+                  onClick={() => { setShowInbox(false); router.push('/messages/inbox/unread'); }}
+                  className={`w-full py-1.5 text-sm font-medium transition-colors ${Z.ctaBtn(dark)}`}
+                >
+                  See all messages
+                </button>
               </div>
             </div>
           )}
@@ -372,11 +493,26 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
             <div className={`absolute right-0 mt-2 w-80 z-50 max-h-[500px] overflow-hidden flex flex-col ${Z.panel(dark)} max-[425px]:left-1/2 max-[425px]:-translate-x-[77.5%]`}>
               <div className={`px-4 py-3 border-b ${Z.panelHeader(dark)} flex items-center justify-between flex-shrink-0`}>
                 <h3 className={`text-sm font-semibold ${Z.textPrimary(dark)}`}>Notifications</h3>
-                {unreadNotifCount > 0 && <span className="bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">{unreadNotifCount} new</span>}
+                {unreadNotifCount > 0 && (
+                  <button
+                    onClick={() => setNotifications(prev => prev.map(n => ({ ...n, unread: false })))}
+                    className="text-xs text-rose-500 hover:underline font-medium"
+                  >
+                    Mark all read
+                  </button>
+                )}
               </div>
-              <div className={`divide-y ${Z.panelDivide(dark)} overflow-y-auto flex-1 custom-scrollbar`}>
+              <div className={`divide-y ${Z.panelDivide(dark)} overflow-y-auto flex-1`}>
                 {notifications.map((n) => (
-                  <div key={n.id} className={`px-4 py-3 transition-colors ${Z.panelRow(dark)}`}>
+                  <div
+                    key={n.id}
+                    onClick={() => {
+                      setNotifications(prev => prev.map(item => item.id === n.id ? { ...item, unread: false } : item));
+                      setShowNotifications(false);
+                      router.push(n.href);
+                    }}
+                    className={`px-4 py-3 transition-colors ${Z.panelRow(dark)}`}
+                  >
                     <div className="flex items-start gap-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${n.unread ? 'bg-rose-500' : (dark ? 'bg-zinc-800' : 'bg-zinc-100')}`}>
                         <Bell size={14} className={n.unread ? 'text-white' : Z.textSecondary(dark)} />
@@ -392,7 +528,12 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                 ))}
               </div>
               <div className={`p-3 border-t ${Z.panelHeader(dark)} flex-shrink-0`}>
-                <button className={`w-full py-1.5 text-sm font-medium transition-colors ${Z.ctaBtn(dark)}`}>See all notifications</button>
+                <button
+                  onClick={() => { setShowNotifications(false); router.push('/security/audit/system'); }}
+                  className={`w-full py-1.5 text-sm font-medium transition-colors ${Z.ctaBtn(dark)}`}
+                >
+                  See all notifications
+                </button>
               </div>
             </div>
           )}
@@ -405,14 +546,14 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
             className="rounded-full transition-all hover:ring-2 hover:ring-zinc-300 dark:hover:ring-zinc-700 hover:ring-offset-1"
             aria-label="Profile"
           >
-            <NextImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jonathan" alt="Jonathan Deo" width={32} height={32} className="rounded-full bg-zinc-100 dark:bg-zinc-800" />
+            <NextImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jonathan" alt="Jonathan Deo" width={32} height={32} unoptimized className="rounded-full bg-zinc-100 dark:bg-zinc-800" />
           </button>
 
           {showProfile && (
             <div className={`absolute right-0 mt-2 w-72 z-50 overflow-hidden ${Z.panel(dark)} max-[425px]:left-1/2 max-[425px]:-translate-x-[90%]`}>
               <div className={`px-5 py-4 border-b ${Z.panelHeader(dark)}`}>
                 <div className="flex items-center gap-3">
-                  <NextImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jonathan" alt="Jonathan Deo" width={48} height={48} className="rounded-full flex-shrink-0 bg-zinc-100 dark:bg-zinc-800" />
+                  <NextImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jonathan" alt="Jonathan Deo" width={48} height={48} unoptimized className="rounded-full flex-shrink-0 bg-zinc-100 dark:bg-zinc-800" />
                   <div className="min-w-0">
                     <p className={`text-sm font-semibold ${Z.textPrimary(dark)}`}>Jonathan Deo</p>
                     <p className={`text-xs ${Z.textSecondary(dark)}`}>Admin</p>
@@ -423,8 +564,12 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                 </div>
               </div>
               <div className="py-1">
-                {profileMenuItems.map(({ icon: Icon, label, sub, lightBg, darkBg, ic }) => (
-                  <button key={label} className={`flex items-center w-full px-5 py-2.5 text-sm transition-colors ${Z.panelRow(dark)}`}>
+                {profileMenuItems.map(({ icon: Icon, label, sub, href, lightBg, darkBg, ic }) => (
+                  <button
+                    key={label}
+                    onClick={() => { setShowProfile(false); router.push(href); }}
+                    className={`flex items-center w-full px-5 py-2.5 text-sm transition-colors ${Z.panelRow(dark)}`}
+                  >
                     <div className={`w-8 h-8 rounded-md flex items-center justify-center mr-3 flex-shrink-0 ${dark ? darkBg : lightBg}`}>
                       <Icon size={15} className={ic} />
                     </div>
@@ -436,7 +581,10 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                 ))}
               </div>
               <div className={`p-4 border-t ${Z.panelHeader(dark)}`}>
-                <button className={`w-full flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-md transition-colors ${dark ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200' : 'bg-zinc-900 hover:bg-zinc-800 text-white'}`}>
+                <button
+                  onClick={() => setShowProfile(false)}
+                  className={`w-full flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-md transition-colors ${dark ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200' : 'bg-zinc-900 hover:bg-zinc-800 text-white'}`}
+                >
                   <LogOut size={15} /> Sign out
                 </button>
               </div>
@@ -444,13 +592,6 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
           )}
         </div>
       </div>
-      
-      {/* Scrollbar styles specific to dropdowns */}
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: ${dark ? '#3f3f46' : '#e4e4e7'}; border-radius: 4px; }
-      `}</style>
     </nav>
   );
 }

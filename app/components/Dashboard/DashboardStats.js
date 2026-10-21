@@ -1,22 +1,50 @@
 'use client';
 
 import { TrendingUp, TrendingDown, Users, DollarSign, ShoppingCart, Activity } from 'lucide-react';
-
-const stats = [
-  { title: 'Total Revenue',   value: '$45,231.89', change: '+20.1%',  trend: 'up',   description: 'from last month', icon: DollarSign  },
-  { title: 'Active Users',    value: '2,350',      change: '+180.1%', trend: 'up',   description: 'from last month', icon: Users       },
-  { title: 'Total Orders',    value: '12,234',     change: '+19%',    trend: 'up',   description: 'from last month', icon: ShoppingCart},
-  { title: 'Conversion Rate', value: '3.24%',      change: '-4.3%',   trend: 'down', description: 'from last month', icon: Activity    },
-];
+import { summaryStats } from '../../data/mockData';
 
 export default function DashboardStats() {
+  const stats = [
+    {
+      title: 'Total Revenue',
+      value: `$${summaryStats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      change: summaryStats.revenueChange,
+      trend: summaryStats.revenueChange.startsWith('+') ? 'up' : 'down',
+      description: 'from last month',
+      icon: DollarSign,
+    },
+    {
+      title: 'Active Users',
+      value: summaryStats.activeUsers.toLocaleString('en-US'),
+      change: summaryStats.usersChange,
+      trend: summaryStats.usersChange.startsWith('+') ? 'up' : 'down',
+      description: 'from last month',
+      icon: Users,
+    },
+    {
+      title: 'Total Orders',
+      value: summaryStats.totalOrders.toLocaleString('en-US'),
+      change: summaryStats.ordersChange,
+      trend: summaryStats.ordersChange.startsWith('+') ? 'up' : 'down',
+      description: 'from last month',
+      icon: ShoppingCart,
+    },
+    {
+      title: 'Conversion Rate',
+      value: `${summaryStats.conversionRate}%`,
+      change: summaryStats.conversionChange,
+      trend: summaryStats.conversionChange.startsWith('+') ? 'up' : 'down',
+      description: 'from last month',
+      icon: Activity,
+    },
+  ];
+
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       {stats.map((stat, index) => {
         const Icon      = stat.icon;
         const TrendIcon = stat.trend === 'up' ? TrendingUp : TrendingDown;
-        
-        // CSS variables based on trend
+
         const trendIconCls = stat.trend === 'up' ? 'status-success' : 'status-danger';
         const trendTextCls = stat.trend === 'up' ? 'status-success font-medium' : 'status-danger font-medium';
 
@@ -35,7 +63,6 @@ export default function DashboardStats() {
                   {stat.value}
                 </p>
               </div>
-              {/* Monochrome icon chip */}
               <div className="p-2 rounded-md bg-muted flex-shrink-0">
                 <Icon className="w-4 h-4 text-muted-foreground" strokeWidth={1.75} />
               </div>
