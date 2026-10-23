@@ -1,21 +1,30 @@
 'use client';
-import { useState } from 'react';
-import { Search, Filter, Grid, List, Plus, Eye, Edit, Trash2, Star, Package, TrendingUp, DollarSign, Tag, Download, Upload, Heart } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Search, Filter, Grid, List, Plus, Eye, Edit, Trash2, Star, Package, TrendingUp, DollarSign, Tag, Download, Upload, Heart, RefreshCw } from 'lucide-react';
+import { useProducts } from '@/hooks/useProducts';
 
 export default function ProductCatalogPage() {
+  const { products, loading, error, refreshData } = useProducts();
+
   const [viewMode, setViewMode] = useState('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
 
-  const categories = [
-    { value: 'all', label: 'All Categories', count: 156 },
-    { value: 'electronics', label: 'Electronics', count: 45 },
-    { value: 'fashion', label: 'Fashion', count: 38 },
-    { value: 'home', label: 'Home & Living', count: 28 },
-    { value: 'sports', label: 'Sports', count: 22 },
-    { value: 'books', label: 'Books', count: 23 },
-  ];
+  // 1. Dynamic Categories based on live database products
+  const categories = useMemo(() => {
+    const catMap = { all: { value: 'all', label: 'All Categories', count: products.length } };
+    
+    products.forEach(p => {
+      const catName = p.category || 'Uncategorized';
+      if (!catMap[catName]) {
+        catMap[catName] = { value: catName, label: catName, count: 0 };
+      }
+      catMap[catName].count++;
+    });
+    
+    return Object.values(catMap);
+  }, [products]);
 
   const statuses = [
     { value: 'all', label: 'All Status' },
@@ -24,26 +33,38 @@ export default function ProductCatalogPage() {
     { value: 'out-of-stock', label: 'Out of Stock' },
   ];
 
-  const products = [
-    { id: 1, name: 'Wireless Noise-Cancelling Headphones', category: 'Electronics', price: 4599, stock: 45, sold: 234, status: 'active', rating: 4.5, image: '🎧', sku: 'ELC-001', trend: '+12%' },
-    { id: 2, name: 'Smart Fitness Watch Pro', category: 'Electronics', price: 12999, stock: 28, sold: 189, status: 'active', rating: 4.8, image: '⌚', sku: 'ELC-002', trend: '+23%' },
-    { id: 3, name: 'Premium Cotton T-Shirt', category: 'Fashion', price: 799, stock: 0, sold: 567, status: 'out-of-stock', rating: 4.3, image: '👕', sku: 'FSH-001', trend: '+8%' },
-    { id: 4, name: 'Ergonomic Office Chair', category: 'Home & Living', price: 8999, stock: 15, sold: 98, status: 'active', rating: 4.6, image: '🪑', sku: 'HOM-001', trend: '+15%' },
-    { id: 5, name: 'Yoga Mat Premium', category: 'Sports', price: 1299, stock: 67, sold: 345, status: 'active', rating: 4.7, image: '🧘', sku: 'SPT-001', trend: '+19%' },
-    { id: 6, name: 'Bestseller Fiction Book Set', category: 'Books', price: 999, stock: 42, sold: 156, status: 'active', rating: 4.4, image: '📚', sku: 'BOK-001', trend: '+6%' },
-    { id: 7, name: 'Bluetooth Speaker Portable', category: 'Electronics', price: 2499, stock: 89, sold: 423, status: 'active', rating: 4.6, image: '🔊', sku: 'ELC-003', trend: '+28%' },
-    { id: 8, name: 'Designer Sunglasses', category: 'Fashion', price: 1599, stock: 34, sold: 212, status: 'active', rating: 4.5, image: '🕶️', sku: 'FSH-002', trend: '+11%' },
-  ];
+  // 2. Filter products based on search, category and status
+  const filteredProducts = useMemo(() => {
+    return products.filter(p => {
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            p.sku?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
+      const matchesStatus = selectedStatus === 'all' || p.status === selectedStatus;
+      
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+  }, [products, searchQuery, selectedCategory, selectedStatus]);
 
-  const stats = [
-    { label: 'Total Products', value: '156', icon: Package, iconColor: 'text-blue-500' },
-    { label: 'Active Products', value: '142', icon: TrendingUp, iconColor: 'text-emerald-500' },
-    { label: 'Total Revenue', value: '₹45.6L', icon: DollarSign, iconColor: 'text-purple-500' },
-    { label: 'Out of Stock', value: '14', icon: Tag, iconColor: 'text-orange-500' },
-  ];
+  // 3. Dynamic Stats calculated from real database
+  const stats = useMemo(() => {
+    const activeCount = products.filter(p => p.status === 'active').length;
+    const outOfStockCount = products.filter(p => p.status === 'out-of-stock' || p.stock === 0).length;
+    const totalRevenue = products.reduce((acc, p) => acc + (p.price * (p.sold || 0)), 0);
+
+    const formattedRevenue = totalRevenue > 100000 
+      ? `₹${(totalRevenue / 100000).toFixed(1)}L` 
+      : `₹${totalRevenue.toLocaleString()}`;
+
+    return [
+      { label: 'Total Products', value: products.length, icon: Package, iconColor: 'text-blue-500' },
+      { label: 'Active Products', value: activeCount, icon: TrendingUp, iconColor: 'text-emerald-500' },
+      { label: 'Total Revenue', value: formattedRevenue, icon: DollarSign, iconColor: 'text-purple-500' },
+      { label: 'Out of Stock', value: outOfStockCount, icon: Tag, iconColor: 'text-orange-500' },
+    ];
+  }, [products]);
 
   const getStatusBadge = (status) => {
-    switch(status) {
+    switch(status?.toLowerCase()) {
       case 'active':
         return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
       case 'draft':
@@ -56,6 +77,7 @@ export default function ProductCatalogPage() {
   };
 
   const getStatusText = (status) => {
+    if (!status) return 'Unknown';
     return status.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
 
@@ -67,9 +89,12 @@ export default function ProductCatalogPage() {
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1">
             Product Catalog
           </h1>
-          <p className="text-sm text-muted-foreground">Manage and organize your product inventory</p>
+          <p className="text-sm text-muted-foreground">Manage and organize your product inventory (Live DB)</p>
         </div>
         <div className="flex items-center gap-3">
+          <button onClick={refreshData} className="btn btn-outline" title="Refresh Data">
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+          </button>
           <button className="btn btn-outline">
             <Upload size={16} />
             <span className="hidden sm:inline ml-2">Import</span>
@@ -85,6 +110,12 @@ export default function ProductCatalogPage() {
         </div>
       </div>
 
+      {error && (
+        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm font-medium">
+          Database Error: {error}
+        </div>
+      )}
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => {
@@ -96,7 +127,9 @@ export default function ProductCatalogPage() {
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide truncate">
                     {stat.label}
                   </p>
-                  <p className="text-2xl font-semibold tracking-tight text-foreground">{stat.value}</p>
+                  <p className="text-2xl font-semibold tracking-tight text-foreground">
+                    {loading ? '...' : stat.value}
+                  </p>
                 </div>
                 <div className="p-2 rounded-md bg-muted flex-shrink-0">
                   <Icon size={20} className={stat.iconColor} strokeWidth={2} />
@@ -170,9 +203,17 @@ export default function ProductCatalogPage() {
       </div>
 
       {/* Products Grid/List View */}
-      {viewMode === 'grid' ? (
+      {loading ? (
+        <div className="flex items-center justify-center p-12 text-muted-foreground">
+          <RefreshCw className="animate-spin mr-2" size={20} /> Fetching products from Supabase...
+        </div>
+      ) : filteredProducts.length === 0 ? (
+        <div className="card p-12 text-center text-muted-foreground">
+          No products found matching your filters.
+        </div>
+      ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <div key={product.id} className="card p-0 overflow-hidden hover:shadow-dropdown transition-all duration-300 hover:-translate-y-1 group flex flex-col">
               {/* Product Image */}
               <div className="relative bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 h-48 flex items-center justify-center flex-shrink-0">
@@ -210,7 +251,7 @@ export default function ProductCatalogPage() {
 
                   <div className="flex items-end justify-between mb-4">
                     <div>
-                      <p className="text-lg font-bold tracking-tight text-foreground">₹{product.price.toLocaleString()}</p>
+                      <p className="text-lg font-bold tracking-tight text-foreground">₹{Number(product.price).toLocaleString()}</p>
                       <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
                     </div>
                     <div className="text-right">
@@ -250,7 +291,7 @@ export default function ProductCatalogPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {products.map((product) => (
+                {filteredProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-muted/30 transition-colors">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3 min-w-[200px]">
@@ -264,7 +305,7 @@ export default function ProductCatalogPage() {
                       </div>
                     </td>
                     <td className="py-3 px-4 text-foreground whitespace-nowrap">{product.category}</td>
-                    <td className="py-3 px-4 font-semibold text-foreground whitespace-nowrap">₹{product.price.toLocaleString()}</td>
+                    <td className="py-3 px-4 font-semibold text-foreground whitespace-nowrap">₹{Number(product.price).toLocaleString()}</td>
                     <td className="py-3 px-4 text-foreground">{product.stock}</td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
@@ -301,21 +342,23 @@ export default function ProductCatalogPage() {
       )}
 
       {/* Pagination */}
-      <div className="card p-3 sm:px-4 sm:py-3 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-card">
-        <p className="text-sm text-muted-foreground">
-          Showing <span className="font-semibold text-foreground">1-8</span> of <span className="font-semibold text-foreground">156</span> products
-        </p>
-        <div className="flex items-center gap-1">
-          {['Previous', '1', '2', '3', 'Next'].map((label) => (
-            <button
-              key={label}
-              className={`btn h-8 px-3 text-xs ${label === '1' ? 'btn-primary' : 'btn-outline'}`}
-            >
-              {label}
-            </button>
-          ))}
+      {!loading && filteredProducts.length > 0 && (
+        <div className="card p-3 sm:px-4 sm:py-3 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-card">
+          <p className="text-sm text-muted-foreground">
+            Showing <span className="font-semibold text-foreground">{filteredProducts.length}</span> products
+          </p>
+          <div className="flex items-center gap-1">
+            {['Previous', '1', 'Next'].map((label) => (
+              <button
+                key={label}
+                className={`btn h-8 px-3 text-xs ${label === '1' ? 'btn-primary' : 'btn-outline'}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
