@@ -1,40 +1,51 @@
 'use client';
 
 import { TrendingUp, TrendingDown, Users, DollarSign, ShoppingCart, Activity } from 'lucide-react';
-import { summaryStats } from '../../data/mockData';
 
-export default function DashboardStats() {
+export default function DashboardStats({ statsData, loading }) {
+  const s = statsData || {
+    totalRevenue: 0,
+    revenueChange: '+0%',
+    activeUsers: 0,
+    usersChange: '+0%',
+    totalOrders: 0,
+    ordersLabel: 'Total Products',
+    ordersChange: '+0%',
+    conversionRate: '0.0',
+    conversionChange: '+0%',
+  };
+
   const stats = [
     {
-      title: 'Total Revenue',
-      value: `$${summaryStats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      change: summaryStats.revenueChange,
-      trend: summaryStats.revenueChange.startsWith('+') ? 'up' : 'down',
-      description: 'from last month',
+      title: 'Total Inventory / Revenue',
+      value: `₹${Number(s.totalRevenue).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      change: s.revenueChange,
+      trend: s.revenueChange.startsWith('-') ? 'down' : 'up',
+      description: 'live database value',
       icon: DollarSign,
     },
     {
       title: 'Active Users',
-      value: summaryStats.activeUsers.toLocaleString('en-US'),
-      change: summaryStats.usersChange,
-      trend: summaryStats.usersChange.startsWith('+') ? 'up' : 'down',
-      description: 'from last month',
+      value: Number(s.activeUsers).toLocaleString('en-IN'),
+      change: s.usersChange,
+      trend: 'up',
+      description: 'in public.users',
       icon: Users,
     },
     {
-      title: 'Total Orders',
-      value: summaryStats.totalOrders.toLocaleString('en-US'),
-      change: summaryStats.ordersChange,
-      trend: summaryStats.ordersChange.startsWith('+') ? 'up' : 'down',
-      description: 'from last month',
+      title: s.ordersLabel || 'Total Orders',
+      value: Number(s.totalOrders).toLocaleString('en-IN'),
+      change: s.ordersChange,
+      trend: 'up',
+      description: 'in catalog/orders',
       icon: ShoppingCart,
     },
     {
-      title: 'Conversion Rate',
-      value: `${summaryStats.conversionRate}%`,
-      change: summaryStats.conversionChange,
-      trend: summaryStats.conversionChange.startsWith('+') ? 'up' : 'down',
-      description: 'from last month',
+      title: 'Active Catalog Rate',
+      value: `${s.conversionRate}%`,
+      change: s.conversionChange,
+      trend: 'up',
+      description: 'active stock ratio',
       icon: Activity,
     },
   ];
@@ -60,7 +71,7 @@ export default function DashboardStats() {
                   {stat.title}
                 </p>
                 <p className="text-2xl font-semibold tracking-tight text-foreground">
-                  {stat.value}
+                  {loading ? '…' : stat.value}
                 </p>
               </div>
               <div className="p-2 rounded-md bg-muted flex-shrink-0">
