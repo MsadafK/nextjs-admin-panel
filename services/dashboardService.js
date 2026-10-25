@@ -1,9 +1,19 @@
 // services/dashboardService.js
 import { supabase } from '@/lib/supabase';
 
+// services/dashboardService.js ke top par:
+const parseSupabaseDate = (dateStr) => {
+  if (!dateStr) return new Date();
+  const normalized =
+    typeof dateStr === 'string' && !dateStr.endsWith('Z') && !dateStr.includes('+')
+      ? `${dateStr.replace(' ', 'T')}Z`
+      : dateStr;
+  return new Date(normalized);
+};
+
 const formatTimeAgo = (dateStr) => {
   if (!dateStr) return 'Just now';
-  const diff = Math.floor((new Date() - new Date(dateStr)) / 1000);
+  const diff = Math.max(0, Math.floor((new Date() - parseSupabaseDate(dateStr)) / 1000));
   if (diff < 60) return 'Just now';
   if (diff < 3600) return `${Math.floor(diff / 60)} mins ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;

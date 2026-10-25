@@ -1,28 +1,183 @@
 'use client';
 
 import { useState } from 'react';
-import { User, Mail, Phone, MapPin, Briefcase, Calendar, Upload, X, Check, AlertCircle, Eye, EyeOff, Shield, Building, Globe, Lock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import {
+  User, Mail, Phone, MapPin, Briefcase, Calendar, Upload,
+  X, Check, AlertCircle, Eye, EyeOff, Shield, Building, Globe, Lock, ArrowLeft
+} from 'lucide-react';
 import NextImage from 'next/image';
+import { userService } from '@/services/userService';
+
+/* ── Helper Components (Moved outside to prevent input focus loss on typing) ── */
+
+const FormSection = ({ title, icon: Icon, children }) => (
+  <div className="card space-y-6">
+    <div className="flex items-center space-x-3">
+      <div className="p-2 bg-muted rounded-lg">
+        <Icon size={20} className="text-foreground" />
+      </div>
+      <h3 className="text-lg font-semibold tracking-tight text-foreground">{title}</h3>
+    </div>
+    <div className="space-y-4">{children}</div>
+  </div>
+);
+
+const InputField = ({
+  label,
+  name,
+  type = 'text',
+  placeholder,
+  icon: Icon,
+  required = false,
+  error,
+  value,
+  onChange,
+  ...props
+}) => (
+  <div className="space-y-1.5">
+    <label className="label block">
+      {label} {required && <span className="text-destructive">*</span>}
+    </label>
+    <div className="relative">
+      {Icon && (
+        <div className="absolute left-3 top-1/2 -translate-y-1/2">
+          <Icon size={16} className="text-muted-foreground" />
+        </div>
+      )}
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`input ${Icon ? 'pl-9' : ''} ${
+          error ? 'border-destructive focus:border-destructive ring-destructive/20' : ''
+        }`}
+        {...props}
+      />
+    </div>
+    {error && (
+      <div className="flex items-center space-x-1 text-destructive text-xs mt-1">
+        <AlertCircle size={12} />
+        <span>{error}</span>
+      </div>
+    )}
+  </div>
+);
+
+const SelectField = ({ label, name, options, required = false, error, value, onChange }) => (
+  <div className="space-y-1.5">
+    <label className="label block">
+      {label} {required && <span className="text-destructive">*</span>}
+    </label>
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className={`input w-full ${
+        error ? 'border-destructive focus:border-destructive ring-destructive/20' : ''
+      }`}
+    >
+      <option value="">Select {label}</option>
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+    {error && (
+      <div className="flex items-center space-x-1 text-destructive text-xs mt-1">
+        <AlertCircle size={12} />
+        <span>{error}</span>
+      </div>
+    )}
+  </div>
+);
+
+const PasswordField = ({
+  label,
+  name,
+  placeholder,
+  showPassword,
+  onToggle,
+  required = false,
+  error,
+  value,
+  onChange,
+}) => (
+  <div className="space-y-1.5">
+    <label className="label block">
+      {label} {required && <span className="text-destructive">*</span>}
+    </label>
+    <div className="relative">
+      <div className="absolute left-3 top-1/2 -translate-y-1/2">
+        <Lock size={16} className="text-muted-foreground" />
+      </div>
+      <input
+        type={showPassword ? 'text' : 'password'}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`input pl-9 pr-10 ${
+          error ? 'border-destructive focus:border-destructive ring-destructive/20' : ''
+        }`}
+      />
+      <button
+        type="button"
+        onClick={onToggle}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+      >
+        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+    {error && (
+      <div className="flex items-center space-x-1 text-destructive text-xs mt-1">
+        <AlertCircle size={12} />
+        <span>{error}</span>
+      </div>
+    )}
+  </div>
+);
+
+const INITIAL_FORM = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  dateOfBirth: '',
+  gender: '',
+  address: '',
+  city: '',
+  country: '',
+  zipCode: '',
+  department: '',
+  position: '',
+  employeeId: '',
+  joiningDate: '',
+  role: 'user',
+  password: '',
+  confirmPassword: '',
+  profileImage: null,
+};
 
 export default function AddSingleUser() {
-  const [formData, setFormData] = useState({
-    firstName: '', lastName: '', email: '', phone: '', dateOfBirth: '', gender: '', address: '',
-    city: '', country: '', zipCode: '', department: '', position: '', employeeId: '',
-    joiningDate: '', role: 'user', password: '', confirmPassword: '', profileImage: null
-  });
-
+  const router = useRouter();
+  const [formData, setFormData] = useState(INITIAL_FORM);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -30,21 +185,21 @@ export default function AddSingleUser() {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, profileImage: 'Image size should be less than 5MB' }));
+        setErrors((prev) => ({ ...prev, profileImage: 'Image size should be less than 5MB' }));
         return;
       }
-      setFormData(prev => ({ ...prev, profileImage: file }));
+      setFormData((prev) => ({ ...prev, profileImage: file }));
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
-      setErrors(prev => ({ ...prev, profileImage: '' }));
+      setErrors((prev) => ({ ...prev, profileImage: '' }));
     }
   };
 
   const removeImage = () => {
-    setFormData(prev => ({ ...prev, profileImage: null }));
+    setFormData((prev) => ({ ...prev, profileImage: null }));
     setImagePreview(null);
   };
 
@@ -80,156 +235,103 @@ export default function AddSingleUser() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setServerError(null);
     if (!validateForm()) return;
 
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      setIsSubmitting(true);
+
+      const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`;
+      const deptLabel =
+        formData.department.charAt(0).toUpperCase() + formData.department.slice(1);
+
+      // Build rich bio metadata from extra fields
+      const bioParts = [
+        formData.position ? `Position: ${formData.position}` : null,
+        formData.employeeId ? `Emp ID: ${formData.employeeId}` : null,
+        formData.city || formData.country
+          ? `Location: ${[formData.city, formData.country].filter(Boolean).join(', ')}`
+          : null,
+      ].filter(Boolean);
+
+      await userService.createUser({
+        name: fullName,
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        department: deptLabel,
+        role: formData.role,
+        status: 'Active',
+        bio: bioParts.join(' | '),
+      });
+
       setSubmitSuccess(true);
-      
-      // Reset form after success
-      setTimeout(() => {
-        setFormData({
-          firstName: '', lastName: '', email: '', phone: '', dateOfBirth: '', gender: '',
-          address: '', city: '', country: '', zipCode: '', department: '', position: '',
-          employeeId: '', joiningDate: '', role: 'user', password: '', confirmPassword: '',
-          profileImage: null
-        });
-        setImagePreview(null);
-        setSubmitSuccess(false);
-      }, 2000);
-    }, 1500);
+      setFormData(INITIAL_FORM);
+      setImagePreview(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      console.error('Error creating user:', err);
+      setServerError(err.message || 'Failed to save user in Supabase');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
-  /* ── Helper Components ── */
-
-  const FormSection = ({ title, icon: Icon, children }) => (
-    <div className="card space-y-6">
-      <div className="flex items-center space-x-3">
-        <div className="p-2 bg-muted rounded-lg">
-          <Icon size={20} className="text-foreground" />
-        </div>
-        <h3 className="text-lg font-semibold tracking-tight text-foreground">{title}</h3>
-      </div>
-      <div className="space-y-4">
-        {children}
-      </div>
-    </div>
-  );
-
-  const InputField = ({ label, name, type = 'text', placeholder, icon: Icon, required = false, error, ...props }) => (
-    <div className="space-y-1.5">
-      <label className="label block">
-        {label} {required && <span className="text-destructive">*</span>}
-      </label>
-      <div className="relative">
-        {Icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2">
-            <Icon size={16} className="text-muted-foreground" />
-          </div>
-        )}
-        <input
-          type={type}
-          name={name}
-          value={formData[name]}
-          onChange={handleInputChange}
-          placeholder={placeholder}
-          className={`input ${Icon ? 'pl-9' : ''} ${error ? 'border-destructive focus:border-destructive ring-destructive/20' : ''}`}
-          {...props}
-        />
-      </div>
-      {error && (
-        <div className="flex items-center space-x-1 text-destructive text-xs mt-1">
-          <AlertCircle size={12} />
-          <span>{error}</span>
-        </div>
-      )}
-    </div>
-  );
-
-  const SelectField = ({ label, name, options, required = false, error }) => (
-    <div className="space-y-1.5">
-      <label className="label block">
-        {label} {required && <span className="text-destructive">*</span>}
-      </label>
-      <select
-        name={name}
-        value={formData[name]}
-        onChange={handleInputChange}
-        className={`input w-full ${error ? 'border-destructive focus:border-destructive ring-destructive/20' : ''}`}
-      >
-        <option value="">Select {label}</option>
-        {options.map(option => (
-          <option key={option.value} value={option.value}>{option.label}</option>
-        ))}
-      </select>
-      {error && (
-        <div className="flex items-center space-x-1 text-destructive text-xs mt-1">
-          <AlertCircle size={12} />
-          <span>{error}</span>
-        </div>
-      )}
-    </div>
-  );
-
-  const PasswordField = ({ label, name, placeholder, showPassword, onToggle, required = false, error }) => (
-    <div className="space-y-1.5">
-      <label className="label block">
-        {label} {required && <span className="text-destructive">*</span>}
-      </label>
-      <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2">
-          <Lock size={16} className="text-muted-foreground" />
-        </div>
-        <input
-          type={showPassword ? 'text' : 'password'}
-          name={name}
-          value={formData[name]}
-          onChange={handleInputChange}
-          placeholder={placeholder}
-          className={`input pl-9 pr-10 ${error ? 'border-destructive focus:border-destructive ring-destructive/20' : ''}`}
-        />
-        <button
-          type="button"
-          onClick={onToggle}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-        </button>
-      </div>
-      {error && (
-        <div className="flex items-center space-x-1 text-destructive text-xs mt-1">
-          <AlertCircle size={12} />
-          <span>{error}</span>
-        </div>
-      )}
-    </div>
-  );
 
   return (
     <div className="page-container max-w-5xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground mb-1">
-          Add New User
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Create a new user account by filling out the form below
-        </p>
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground mb-1">
+            Add New User
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Create a new user account directly in Supabase (`public.users`)
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => router.push('/users/all/list')}
+          className="btn btn-outline self-start sm:self-auto"
+        >
+          <ArrowLeft size={15} className="mr-2" />
+          Back to User List
+        </button>
       </div>
+
+      {/* Database Error Banner */}
+      {serverError && (
+        <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-center justify-between text-destructive text-sm">
+          <div className="flex items-center gap-2">
+            <AlertCircle size={16} />
+            <span><strong>Database Error:</strong> {serverError}</span>
+          </div>
+          <button onClick={() => setServerError(null)} className="text-xs underline">
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Success Message */}
       {submitSuccess && (
-        <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center space-x-3">
-          <div className="p-2 bg-emerald-500 rounded-full">
-            <Check size={16} className="text-white" />
+        <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-emerald-500 rounded-full">
+              <Check size={16} className="text-white" />
+            </div>
+            <div>
+              <h4 className="font-semibold text-emerald-700 dark:text-emerald-400">Success!</h4>
+              <p className="text-sm text-emerald-600 dark:text-emerald-500">
+                User has been saved to Supabase PostgreSQL successfully.
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 className="font-semibold text-emerald-700 dark:text-emerald-400">Success!</h4>
-            <p className="text-sm text-emerald-600 dark:text-emerald-500">User has been created successfully</p>
-          </div>
+          <button
+            type="button"
+            onClick={() => router.push('/users/all/list')}
+            className="btn btn-primary h-8 text-xs self-start sm:self-auto"
+          >
+            View in User List →
+          </button>
         </div>
       )}
 
@@ -264,7 +366,13 @@ export default function AddSingleUser() {
             </div>
             <div className="flex-1">
               <label className="label block mb-2">Upload Profile Picture</label>
-              <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="profile-upload" />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+                id="profile-upload"
+              />
               <label htmlFor="profile-upload" className="btn btn-outline cursor-pointer w-fit">
                 <Upload size={16} className="mr-2" /> Choose Image
               </label>
@@ -284,26 +392,106 @@ export default function AddSingleUser() {
         {/* Personal Information */}
         <FormSection title="Personal Information" icon={User}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField label="First Name" name="firstName" placeholder="Enter first name" icon={User} required error={errors.firstName} />
-            <InputField label="Last Name" name="lastName" placeholder="Enter last name" icon={User} required error={errors.lastName} />
-            <InputField label="Email Address" name="email" type="email" placeholder="example@company.com" icon={Mail} required error={errors.email} />
-            <InputField label="Phone Number" name="phone" type="tel" placeholder="+1 (555) 000-0000" icon={Phone} required error={errors.phone} />
-            <InputField label="Date of Birth" name="dateOfBirth" type="date" icon={Calendar} />
-            <SelectField label="Gender" name="gender" options={[
-              { value: 'male', label: 'Male' }, { value: 'female', label: 'Female' },
-              { value: 'other', label: 'Other' }, { value: 'prefer_not_to_say', label: 'Prefer not to say' }
-            ]} />
+            <InputField
+              label="First Name"
+              name="firstName"
+              placeholder="Enter first name"
+              icon={User}
+              required
+              value={formData.firstName}
+              onChange={handleInputChange}
+              error={errors.firstName}
+            />
+            <InputField
+              label="Last Name"
+              name="lastName"
+              placeholder="Enter last name"
+              icon={User}
+              required
+              value={formData.lastName}
+              onChange={handleInputChange}
+              error={errors.lastName}
+            />
+            <InputField
+              label="Email Address"
+              name="email"
+              type="email"
+              placeholder="example@company.com"
+              icon={Mail}
+              required
+              value={formData.email}
+              onChange={handleInputChange}
+              error={errors.email}
+            />
+            <InputField
+              label="Phone Number"
+              name="phone"
+              type="tel"
+              placeholder="+91 98765 43210"
+              icon={Phone}
+              required
+              value={formData.phone}
+              onChange={handleInputChange}
+              error={errors.phone}
+            />
+            <InputField
+              label="Date of Birth"
+              name="dateOfBirth"
+              type="date"
+              icon={Calendar}
+              value={formData.dateOfBirth}
+              onChange={handleInputChange}
+            />
+            <SelectField
+              label="Gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleInputChange}
+              options={[
+                { value: 'male', label: 'Male' },
+                { value: 'female', label: 'Female' },
+                { value: 'other', label: 'Other' },
+                { value: 'prefer_not_to_say', label: 'Prefer not to say' },
+              ]}
+            />
           </div>
         </FormSection>
 
         {/* Address Information */}
         <FormSection title="Address Information" icon={MapPin}>
           <div className="grid grid-cols-1 gap-4">
-            <InputField label="Street Address" name="address" placeholder="123 Main Street" icon={MapPin} />
+            <InputField
+              label="Street Address"
+              name="address"
+              placeholder="123 Main Street"
+              icon={MapPin}
+              value={formData.address}
+              onChange={handleInputChange}
+            />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <InputField label="City" name="city" placeholder="New York" icon={Building} />
-              <InputField label="Country" name="country" placeholder="United States" icon={Globe} />
-              <InputField label="Zip Code" name="zipCode" placeholder="10001" />
+              <InputField
+                label="City"
+                name="city"
+                placeholder="Lucknow"
+                icon={Building}
+                value={formData.city}
+                onChange={handleInputChange}
+              />
+              <InputField
+                label="Country"
+                name="country"
+                placeholder="India"
+                icon={Globe}
+                value={formData.country}
+                onChange={handleInputChange}
+              />
+              <InputField
+                label="Zip Code"
+                name="zipCode"
+                placeholder="226001"
+                value={formData.zipCode}
+                onChange={handleInputChange}
+              />
             </div>
           </div>
         </FormSection>
@@ -311,41 +499,114 @@ export default function AddSingleUser() {
         {/* Professional Information */}
         <FormSection title="Professional Information" icon={Briefcase}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SelectField label="Department" name="department" required error={errors.department} options={[
-              { value: 'engineering', label: 'Engineering' }, { value: 'marketing', label: 'Marketing' },
-              { value: 'sales', label: 'Sales' }, { value: 'hr', label: 'Human Resources' },
-              { value: 'finance', label: 'Finance' }, { value: 'operations', label: 'Operations' }
-            ]} />
-            <InputField label="Position" name="position" placeholder="Software Engineer" icon={Briefcase} required error={errors.position} />
-            <InputField label="Employee ID" name="employeeId" placeholder="EMP-001" icon={User} />
-            <InputField label="Joining Date" name="joiningDate" type="date" icon={Calendar} />
+            <SelectField
+              label="Department"
+              name="department"
+              required
+              value={formData.department}
+              onChange={handleInputChange}
+              error={errors.department}
+              options={[
+                { value: 'engineering', label: 'Engineering' },
+                { value: 'marketing', label: 'Marketing' },
+                { value: 'sales', label: 'Sales' },
+                { value: 'support', label: 'Support' },
+                { value: 'management', label: 'Management' },
+                { value: 'hr', label: 'Human Resources' },
+                { value: 'finance', label: 'Finance' },
+                { value: 'operations', label: 'Operations' },
+              ]}
+            />
+            <InputField
+              label="Position"
+              name="position"
+              placeholder="Software Engineer"
+              icon={Briefcase}
+              required
+              value={formData.position}
+              onChange={handleInputChange}
+              error={errors.position}
+            />
+            <InputField
+              label="Employee ID"
+              name="employeeId"
+              placeholder="EMP-001"
+              icon={User}
+              value={formData.employeeId}
+              onChange={handleInputChange}
+            />
+            <InputField
+              label="Joining Date"
+              name="joiningDate"
+              type="date"
+              icon={Calendar}
+              value={formData.joiningDate}
+              onChange={handleInputChange}
+            />
           </div>
         </FormSection>
 
         {/* Account Settings */}
         <FormSection title="Account Settings" icon={Shield}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SelectField label="User Role" name="role" required error={errors.role} options={[
-              { value: 'user', label: 'User' }, { value: 'admin', label: 'Admin' },
-              { value: 'manager', label: 'Manager' }, { value: 'viewer', label: 'Viewer' }
-            ]} />
+            <SelectField
+              label="User Role"
+              name="role"
+              required
+              value={formData.role}
+              onChange={handleInputChange}
+              error={errors.role}
+              options={[
+                { value: 'user', label: 'User' },
+                { value: 'admin', label: 'Admin' },
+                { value: 'manager', label: 'Manager' },
+              ]}
+            />
             <div></div>
-            <PasswordField label="Password" name="password" placeholder="Enter password" showPassword={showPassword} onToggle={() => setShowPassword(!showPassword)} required error={errors.password} />
-            <PasswordField label="Confirm Password" name="confirmPassword" placeholder="Re-enter password" showPassword={showConfirmPassword} onToggle={() => setShowConfirmPassword(!showConfirmPassword)} required error={errors.confirmPassword} />
+            <PasswordField
+              label="Password"
+              name="password"
+              placeholder="Enter password"
+              showPassword={showPassword}
+              onToggle={() => setShowPassword(!showPassword)}
+              required
+              value={formData.password}
+              onChange={handleInputChange}
+              error={errors.password}
+            />
+            <PasswordField
+              label="Confirm Password"
+              name="confirmPassword"
+              placeholder="Re-enter password"
+              showPassword={showConfirmPassword}
+              onToggle={() => setShowConfirmPassword(!showConfirmPassword)}
+              required
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              error={errors.confirmPassword}
+            />
           </div>
           <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 mt-4">
             <p className="text-sm text-blue-700 dark:text-blue-400">
-              <strong>Password Requirements:</strong> Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number, and one special character
+              <strong>Password Requirements:</strong> Minimum 8 characters
             </p>
           </div>
         </FormSection>
 
         {/* Form Actions */}
         <div className="flex items-center justify-end space-x-4 pt-4">
-          <button type="button" className="btn btn-outline px-6">
+          <button
+            type="button"
+            onClick={() => router.push('/users/all/list')}
+            className="btn btn-outline px-6"
+          >
             Cancel
           </button>
-          <button type="submit" disabled={isSubmitting} className="btn btn-primary px-6 disabled:opacity-50 disabled:cursor-not-allowed">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn btn-primary px-6 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {isSubmitting ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
