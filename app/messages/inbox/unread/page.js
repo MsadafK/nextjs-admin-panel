@@ -1,135 +1,158 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Mail, MailOpen, Star, Archive, Trash2, Reply, Forward, MoreVertical, Search, Filter, CheckSquare, Square, Clock, Paperclip, Flag, User, AlertCircle, X, Send, Smile, ImageIcon, FileText } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Mail, MailOpen, Star, Archive, Trash2, Reply, Forward,
+  MoreVertical, Search, CheckSquare, Square, Paperclip,
+  X, Send, Smile, ImageIcon, FileText, RefreshCw, Plus
+} from 'lucide-react';
+import { messageService } from '@/services/messageService';
 
 export default function UnreadMessages() {
+  const [messages, setMessages]                 = useState([]);
+  const [loading, setLoading]                   = useState(true);
+  const [error, setError]                       = useState(null);
   const [selectedMessages, setSelectedMessages] = useState([]);
-  const [filterPriority, setFilterPriority] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMessage, setSelectedMessage] = useState(null);
-  const [showReplyBox, setShowReplyBox] = useState(false);
-  const [replyText, setReplyText] = useState('');
+  const [filterPriority, setFilterPriority]     = useState('all');
+  const [searchTerm, setSearchTerm]             = useState('');
+  const [selectedMessage, setSelectedMessage]   = useState(null);
+  const [showReplyBox, setShowReplyBox]         = useState(false);
+  const [replyText, setReplyText]               = useState('');
 
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      sender: 'Sarah Johnson',
-      email: 'sarah.j@company.com',
-      subject: 'Q4 Marketing Campaign Review',
-      preview: 'Hi team, I wanted to discuss the upcoming Q4 marketing campaign strategy. We need to finalize...',
-      time: '5 min ago',
-      priority: 'high',
-      hasAttachment: true,
-      starred: false,
-      avatar: 'SJ',
-      unread: true
-    },
-    {
-      id: 2,
-      sender: 'Mike Chen',
-      email: 'mike.chen@company.com',
-      subject: 'Budget Approval Needed',
-      preview: 'Please review and approve the budget proposal for the next quarter. The deadline is approaching...',
-      time: '15 min ago',
-      priority: 'high',
-      hasAttachment: true,
-      starred: true,
-      avatar: 'MC',
-      unread: true
-    },
-    {
-      id: 3,
-      sender: 'Emma Wilson',
-      email: 'emma.w@company.com',
-      subject: 'Team Meeting Notes',
-      preview: 'Here are the notes from today\'s team meeting. Action items are highlighted below...',
-      time: '1 hour ago',
-      priority: 'normal',
-      hasAttachment: false,
-      starred: false,
-      avatar: 'EW',
-      unread: true
-    },
-    {
-      id: 4,
-      sender: 'David Park',
-      email: 'david.p@company.com',
-      subject: 'Project Timeline Update',
-      preview: 'The development timeline has been updated based on our discussion. Please review the changes...',
-      time: '2 hours ago',
-      priority: 'normal',
-      hasAttachment: true,
-      starred: false,
-      avatar: 'DP',
-      unread: true
-    },
-    {
-      id: 5,
-      sender: 'Lisa Anderson',
-      email: 'lisa.a@company.com',
-      subject: 'Customer Feedback Summary',
-      preview: 'I\'ve compiled the customer feedback from last month. Overall satisfaction is up by 12%...',
-      time: '3 hours ago',
-      priority: 'low',
-      hasAttachment: false,
-      starred: false,
-      avatar: 'LA',
-      unread: true
-    },
-  ]);
+  // Compose Modal State
+  const [showComposeModal, setShowComposeModal] = useState(false);
+  const [composeData, setComposeData]           = useState({
+    title: '',
+    message: '',
+    priority: 'normal',
+  });
+  const [sending, setSending]                   = useState(false);
+
+  const fetchMessages = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await messageService.getMessages();
+      setMessages(data);
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+      setError(err.message || 'Failed to load messages from Supabase');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchMessages();
+  }, [fetchMessages]);
 
   const toggleSelectMessage = (id) => {
-    setSelectedMessages(prev =>
-      prev.includes(id) ? prev.filter(msgId => msgId !== id) : [...prev, id]
+    setSelectedMessages((prev) =>
+      prev.includes(id) ? prev.filter((msgId) => msgId !== id) : [...prev, id]
     );
   };
+
+  const filteredMessages = messages.filter((msg) => {
+    const q = searchTerm.toLowerCase();
+    const matchesSearch =
+      msg.sender.toLowerCase().includes(q) ||
+      msg.subject.toLowerCase().includes(q) ||
+      msg.preview.toLowerCase().includes(q);
+    const matchesPriority = filterPriority === 'all' || msg.priority === filterPriority;
+    return matchesSearch && matchesPriority;
+  });
 
   const toggleSelectAll = () => {
     if (selectedMessages.length === filteredMessages.length) {
       setSelectedMessages([]);
     } else {
-      setSelectedMessages(filteredMessages.map(msg => msg.id));
+      setSelectedMessages(filteredMessages.map((msg) => msg.id));
     }
   };
 
   const toggleStar = (id) => {
-    setMessages(messages.map(msg =>
-      msg.id === id ? { ...msg, starred: !msg.starred } : msg
-    ));
-  };
-
-  const markAsRead = (id) => {
-    setMessages(messages.map(msg =>
-      msg.id === id ? { ...msg, unread: false } : msg
-    ));
-  };
-
-  const deleteMessages = () => {
-    setMessages(messages.filter(msg => !selectedMessages.includes(msg.id)));
-    setSelectedMessages([]);
-  };
-
-  const archiveMessages = () => {
-    setMessages(messages.filter(msg => !selectedMessages.includes(msg.id)));
-    setSelectedMessages([]);
-  };
-
-  const handleReply = () => {
-    if (replyText.trim()) {
-      console.log('Reply sent:', replyText);
-      setReplyText('');
-      setShowReplyBox(false);
+    setMessages((prev) =>
+      prev.map((msg) => (msg.id === id ? { ...msg, starred: !msg.starred } : msg))
+    );
+    if (selectedMessage?.id === id) {
+      setSelectedMessage((prev) => ({ ...prev, starred: !prev.starred }));
     }
   };
 
-  const filteredMessages = messages.filter(msg => {
-    const matchesSearch = msg.sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         msg.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         msg.preview.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesPriority = filterPriority === 'all' || msg.priority === filterPriority;
-    return matchesSearch && matchesPriority;
-  });
+  const markAsRead = async (id) => {
+    try {
+      await messageService.markAsRead(id);
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === id ? { ...msg, unread: false } : msg))
+      );
+      if (selectedMessage?.id === id) {
+        setSelectedMessage((prev) => ({ ...prev, unread: false }));
+      }
+    } catch (err) {
+      alert('Failed to mark as read: ' + err.message);
+    }
+  };
+
+  const deleteMessages = async () => {
+    if (selectedMessages.length === 0) return;
+    try {
+      await messageService.deleteMessages(selectedMessages);
+      setMessages((prev) => prev.filter((msg) => !selectedMessages.includes(msg.id)));
+      if (selectedMessage && selectedMessages.includes(selectedMessage.id)) {
+        setSelectedMessage(null);
+      }
+      setSelectedMessages([]);
+    } catch (err) {
+      alert('Failed to delete messages: ' + err.message);
+    }
+  };
+
+  const archiveMessages = async () => {
+    for (const id of selectedMessages) {
+      await messageService.markAsRead(id);
+    }
+    setMessages((prev) =>
+      prev.map((m) => (selectedMessages.includes(m.id) ? { ...m, unread: false } : m))
+    );
+    setSelectedMessages([]);
+  };
+
+  const handleReply = async () => {
+    if (!replyText.trim() || !selectedMessage) return;
+    try {
+      setSending(true);
+      await messageService.createMessage({
+        title: `Re: ${selectedMessage.subject}`,
+        message: replyText.trim(),
+        priority: selectedMessage.priority,
+      });
+      setReplyText('');
+      setShowReplyBox(false);
+      await fetchMessages();
+    } catch (err) {
+      alert('Error sending reply: ' + err.message);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleComposeSubmit = async (e) => {
+    e.preventDefault();
+    if (!composeData.title.trim() || !composeData.message.trim()) return;
+    try {
+      setSending(true);
+      await messageService.createMessage(composeData);
+      setComposeData({ title: '', message: '', priority: 'normal' });
+      setShowComposeModal(false);
+      await fetchMessages();
+    } catch (err) {
+      alert('Error broadcasting message: ' + err.message);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const unreadCount = messages.filter((m) => m.unread).length;
 
   return (
     <div className="page-container space-y-6">
@@ -137,25 +160,44 @@ export default function UnreadMessages() {
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-2">Unread Messages</h1>
-              <p className="text-muted-foreground">You have {filteredMessages.length} unread messages</p>
+              <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-1">
+                Messages & Notifications
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Connected to Supabase (`public.notifications`) • {unreadCount} unread
+              </p>
             </div>
-            <div className="flex items-center gap-3">
-              <button className="px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors flex items-center gap-2">
-                <Mail size={20} />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <button
+                onClick={fetchMessages}
+                className="p-2.5 border border-border rounded-lg hover:bg-muted transition-colors"
+                title="Refresh Messages"
+              >
+                <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+              </button>
+              <button
+                onClick={() => setShowComposeModal(true)}
+                className="px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors flex items-center gap-2"
+              >
+                <Plus size={18} />
                 Compose
               </button>
             </div>
           </div>
         </div>
 
+        {error && (
+          <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm">
+            <strong>Database Error:</strong> {error}
+          </div>
+        )}
+
         <div className="bg-card border border-border rounded-lg shadow-card p-4 mb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-4">
               <button
                 onClick={toggleSelectAll}
                 className="p-2 hover:bg-muted rounded transition-colors"
-                title={selectedMessages.length === filteredMessages.length ? 'Deselect All' : 'Select All'}
               >
                 {selectedMessages.length === filteredMessages.length && filteredMessages.length > 0 ? (
                   <CheckSquare size={20} className="text-blue-600" />
@@ -164,67 +206,69 @@ export default function UnreadMessages() {
                 )}
               </button>
 
-              <div className="h-6 w-px bg-muted"></div>
+              <div className="h-6 w-px bg-muted" />
 
               {selectedMessages.length > 0 ? (
                 <>
                   <button
                     onClick={archiveMessages}
                     className="p-2 hover:bg-muted rounded transition-colors"
-                    title="Archive"
+                    title="Mark Selected as Read"
                   >
-                    <Archive size={20} className="text-muted-foreground" />
+                    <MailOpen size={20} className="text-muted-foreground" />
                   </button>
                   <button
                     onClick={deleteMessages}
                     className="p-2 hover:bg-muted rounded transition-colors"
-                    title="Delete"
+                    title="Delete from Supabase"
                   >
                     <Trash2 size={20} className="text-red-600" />
                   </button>
-                  <button className="p-2 hover:bg-muted rounded transition-colors" title="Mark as Read">
-                    <MailOpen size={20} className="text-muted-foreground" />
-                  </button>
-                  <span className="text-sm text-muted-foreground">{selectedMessages.length} selected</span>
+                  <span className="text-sm text-muted-foreground">
+                    {selectedMessages.length} selected
+                  </span>
                 </>
               ) : (
-                <>
-                  <select
-                    value={filterPriority}
-                    onChange={(e) => setFilterPriority(e.target.value)}
-                    className="px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-ring"
-                  >
-                    <option value="all">All Priority</option>
-                    <option value="high">High Priority</option>
-                    <option value="normal">Normal</option>
-                    <option value="low">Low Priority</option>
-                  </select>
-                </>
+                <select
+                  value={filterPriority}
+                  onChange={(e) => setFilterPriority(e.target.value)}
+                  className="px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                >
+                  <option value="all">All Priority</option>
+                  <option value="high">High Priority</option>
+                  <option value="normal">Normal</option>
+                  <option value="low">Low Priority</option>
+                </select>
               )}
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
-                <input
-                  type="text"
-                  placeholder="Search messages..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring"
-                />
-              </div>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+              <input
+                type="text"
+                placeholder="Search messages..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:w-64 pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
+              />
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className={`${selectedMessage ? 'lg:col-span-1' : 'lg:col-span-3'} space-y-2`}>
-            {filteredMessages.length === 0 ? (
+            {loading ? (
+              <div className="bg-card border border-border rounded-lg p-12 text-center text-muted-foreground">
+                <RefreshCw size={24} className="animate-spin mx-auto mb-2" />
+                Loading notifications from Supabase...
+              </div>
+            ) : filteredMessages.length === 0 ? (
               <div className="bg-card border border-border rounded-lg shadow-card p-12 text-center">
                 <MailOpen size={64} className="mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold text-foreground mb-2">No unread messages</h3>
-                <p className="text-muted-foreground">You&apos;re all caught up! Great work.</p>
+                <h3 className="text-xl font-semibold text-foreground mb-2">No messages found</h3>
+                <p className="text-muted-foreground mb-4">
+                  Click &quot;Compose&quot; above to broadcast a new message to the database.
+                </p>
               </div>
             ) : (
               filteredMessages.map((message) => (
@@ -233,7 +277,7 @@ export default function UnreadMessages() {
                   className={`bg-card rounded-lg shadow border-2 transition-all cursor-pointer hover:shadow-card ${
                     selectedMessage?.id === message.id
                       ? 'border-blue-500'
-                      : 'border-border hover:border-border'
+                      : 'border-border'
                   }`}
                   onClick={() => setSelectedMessage(message)}
                 >
@@ -259,16 +303,16 @@ export default function UnreadMessages() {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-foreground">{message.sender}</h3>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <h3 className="font-semibold text-foreground truncate">{message.sender}</h3>
                               {message.priority === 'high' && (
                                 <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
                                   High Priority
                                 </span>
                               )}
                             </div>
-                            <p className="text-sm text-muted-foreground">{message.email}</p>
+                            <p className="text-xs text-muted-foreground truncate">{message.email}</p>
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-muted-foreground whitespace-nowrap">{message.time}</span>
@@ -291,16 +335,15 @@ export default function UnreadMessages() {
                         <p className="text-sm text-muted-foreground line-clamp-2">{message.preview}</p>
 
                         <div className="flex items-center gap-3 mt-2">
-                          {message.hasAttachment && (
-                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <Paperclip size={14} />
-                              Attachment
-                            </span>
-                          )}
-                          {message.unread && (
+                          {message.unread ? (
                             <span className="flex items-center gap-1 text-xs text-blue-600 font-medium">
-                              <Mail size={14} />
+                              <Mail size={13} />
                               Unread
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <MailOpen size={13} />
+                              Read
                             </span>
                           )}
                         </div>
@@ -321,8 +364,10 @@ export default function UnreadMessages() {
                       <span className="text-background font-semibold">{selectedMessage.avatar}</span>
                     </div>
                     <div>
-                      <h2 className="text-base font-semibold text-foreground mb-1">{selectedMessage.subject}</h2>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <h2 className="text-base font-semibold text-foreground mb-1">
+                        {selectedMessage.subject}
+                      </h2>
+                      <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                         <span className="font-medium">{selectedMessage.sender}</span>
                         <span>•</span>
                         <span>{selectedMessage.email}</span>
@@ -347,122 +392,48 @@ export default function UnreadMessages() {
                     <Reply size={18} />
                     Reply
                   </button>
-                  <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors">
-                    <Forward size={18} />
-                    Forward
-                  </button>
                   <button
                     onClick={() => markAsRead(selectedMessage.id)}
-                    className="p-2 border border-border rounded-lg hover:bg-muted transition-colors"
-                    title="Mark as Read"
+                    className="px-3 py-2 border border-border rounded-lg hover:bg-muted transition-colors text-sm flex items-center gap-1.5"
                   >
-                    <MailOpen size={18} />
-                  </button>
-                  <button
-                    onClick={() => toggleStar(selectedMessage.id)}
-                    className="p-2 border border-border rounded-lg hover:bg-muted transition-colors"
-                    title="Star"
-                  >
-                    <Star
-                      size={18}
-                      className={selectedMessage.starred ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}
-                    />
-                  </button>
-                  <button className="p-2 border border-border rounded-lg hover:bg-muted transition-colors" title="More">
-                    <MoreVertical size={18} />
+                    <MailOpen size={16} />
+                    Mark as Read
                   </button>
                 </div>
               </div>
 
               <div className="p-6">
-                <div className="prose max-w-none">
-                  <p className="text-foreground leading-relaxed mb-4">
-                    {selectedMessage.preview}
-                  </p>
-                  <p className="text-foreground leading-relaxed mb-4">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  </p>
-                  <p className="text-foreground leading-relaxed mb-4">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                  </p>
-
-                  {selectedMessage.hasAttachment && (
-                    <div className="mt-6 p-4 bg-muted rounded-lg border border-border">
-                      <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                        <Paperclip size={18} />
-                        Attachments (2)
-                      </h4>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between p-3 bg-card rounded border border-border hover:border-blue-300 transition-colors">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 rounded">
-                              <FileText size={20} className="text-blue-600" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-foreground">Q4_Report.pdf</p>
-                              <p className="text-sm text-muted-foreground">2.4 MB</p>
-                            </div>
-                          </div>
-                          <button className="px-3 py-1 text-sm text-blue-600 hover:bg-muted rounded transition-colors">
-                            Download
-                          </button>
-                        </div>
-                        <div className="flex items-center justify-between p-3 bg-card rounded border border-border hover:border-blue-300 transition-colors">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 bg-green-100 rounded">
-                              <FileText size={20} className="text-green-600" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-foreground">Budget_Spreadsheet.xlsx</p>
-                              <p className="text-sm text-muted-foreground">1.8 MB</p>
-                            </div>
-                          </div>
-                          <button className="px-3 py-1 text-sm text-blue-600 hover:bg-muted rounded transition-colors">
-                            Download
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <p className="text-foreground leading-relaxed whitespace-pre-line">
+                  {selectedMessage.preview}
+                </p>
 
                 {showReplyBox && (
                   <div className="mt-6 border-t border-border pt-6">
-                    <h3 className="font-semibold text-foreground mb-3">Reply to {selectedMessage.sender}</h3>
+                    <h3 className="font-semibold text-foreground mb-3">
+                      Reply to {selectedMessage.sender}
+                    </h3>
                     <textarea
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
                       placeholder="Type your reply..."
-                      rows={6}
-                      className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring resize-none"
+                      rows={4}
+                      className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring resize-none"
                     />
-                    <div className="flex items-center justify-between mt-3">
-                      <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-muted rounded transition-colors" title="Emoji">
-                          <Smile size={20} className="text-muted-foreground" />
-                        </button>
-                        <button className="p-2 hover:bg-muted rounded transition-colors" title="Attach">
-                          <Paperclip size={20} className="text-muted-foreground" />
-                        </button>
-                        <button className="p-2 hover:bg-muted rounded transition-colors" title="Image">
-                          <ImageIcon size={20} className="text-muted-foreground" />
-                        </button>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setShowReplyBox(false)}
-                          className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={handleReply}
-                          className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors"
-                        >
-                          <Send size={18} />
-                          Send Reply
-                        </button>
-                      </div>
+                    <div className="flex justify-end gap-2 mt-3">
+                      <button
+                        onClick={() => setShowReplyBox(false)}
+                        className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleReply}
+                        disabled={sending}
+                        className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-colors"
+                      >
+                        <Send size={16} />
+                        {sending ? 'Sending...' : 'Send Reply'}
+                      </button>
                     </div>
                   </div>
                 )}
@@ -471,6 +442,69 @@ export default function UnreadMessages() {
           )}
         </div>
       </div>
+
+      {/* Compose Broadcast Modal */}
+      {showComposeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-card border border-border rounded-xl max-w-md w-full p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h2 className="text-lg font-semibold text-foreground">Broadcast New Message</h2>
+              <button onClick={() => setShowComposeModal(false)} className="p-1 hover:bg-muted rounded">
+                <X size={18} />
+              </button>
+            </div>
+            <form onSubmit={handleComposeSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Subject / Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={composeData.title}
+                  onChange={(e) => setComposeData({ ...composeData, title: e.target.value })}
+                  placeholder="e.g. Server Maintenance Tonight"
+                  className="input w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Priority</label>
+                <select
+                  value={composeData.priority}
+                  onChange={(e) => setComposeData({ ...composeData, priority: e.target.value })}
+                  className="input w-full"
+                >
+                  <option value="normal">Normal</option>
+                  <option value="high">High Priority</option>
+                  <option value="low">Low Priority</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Message Body *</label>
+                <textarea
+                  rows={4}
+                  required
+                  value={composeData.message}
+                  onChange={(e) => setComposeData({ ...composeData, message: e.target.value })}
+                  placeholder="Write your announcement or message..."
+                  className="input w-full py-2"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2 border-t border-border">
+                <button
+                  type="button"
+                  onClick={() => setShowComposeModal(false)}
+                  className="btn btn-outline"
+                >
+                  Cancel
+                </button>
+                <button type="submit" disabled={sending} className="btn btn-primary">
+                  <Send size={15} className="mr-2" />
+                  {sending ? 'Sending...' : 'Send Broadcast'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
