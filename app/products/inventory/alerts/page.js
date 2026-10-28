@@ -1,498 +1,286 @@
+// app/products/inventory/alerts/page.js
 'use client';
-import { useState } from 'react';
-import { AlertTriangle, XCircle, TrendingDown, Package, ShoppingCart, Clock, Zap, Bell, RefreshCw, ShoppingBag, Phone, Mail, FileText, CheckCircle, AlertCircle, Truck, DollarSign, Calendar, Percent } from 'lucide-react';
 
-export default function LowStockLevelsPage() {
-  const [urgencyFilter, setUrgencyFilter] = useState('all');
-  const [selectedProducts, setSelectedProducts] = useState([]);
+import { useState, useMemo } from 'react';
+import {
+  AlertTriangle,
+  XCircle,
+  Search,
+  Filter,
+  RefreshCw,
+  ArrowRight,
+  Package,
+  Check,
+  X,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useProducts } from '@/hooks/useProducts';
 
-  const urgencyFilters = [
-    { value: 'all', label: 'All Priority Levels', count: 33 },
-    { value: 'critical', label: 'Critical (0 stock)', count: 5 },
-    { value: 'urgent', label: 'Urgent (<7 days)', count: 12 },
-    { value: 'warning', label: 'Warning (<14 days)', count: 16 },
-  ];
+export default function InventoryAlertsPage() {
+  const router = useRouter();
+  const { products, loading, error, refreshData, adjustStock } = useProducts();
 
-  const criticalStats = [
-    { 
-      label: 'Critical Items', 
-      value: '5', 
-      subtext: 'Out of stock now',
-      icon: XCircle, 
-      color: 'from-red-500 to-pink-600', 
-      bgColor: 'bg-muted', 
-      textColor: 'text-red-600',
-      trend: '+2 from yesterday'
-    },
-    { 
-      label: 'Urgent Restock', 
-      value: '12', 
-      subtext: 'Less than 7 days',
-      icon: AlertTriangle, 
-      color: 'from-orange-500 to-amber-600', 
-      bgColor: 'bg-muted', 
-      textColor: 'text-orange-600',
-      trend: '+4 this week'
-    },
-    { 
-      label: 'Potential Revenue Loss', 
-      value: '₹8.4L', 
-      subtext: 'From stockouts',
-      icon: DollarSign, 
-      color: 'from-purple-500 to-pink-600', 
-      bgColor: 'bg-muted', 
-      textColor: 'text-purple-600',
-      trend: 'Per week estimate'
-    },
-    { 
-      label: 'Pending Orders', 
-      value: '247', 
-      subtext: 'Awaiting stock',
-      icon: ShoppingBag, 
-      color: 'from-blue-500 to-indigo-600', 
-      bgColor: 'bg-muted', 
-      textColor: 'text-blue-600',
-      trend: 'Backlog orders'
-    },
-  ];
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all');
 
-  const lowStockProducts = [
-    {
-      id: 1,
-      name: 'Premium Running Shoes',
-      sku: 'SPT-001',
-      category: 'Sports',
-      image: '👟',
-      currentStock: 0,
-      reorderPoint: 40,
-      minStock: 20,
-      dailySales: 6,
-      daysRemaining: 0,
-      urgency: 'critical',
-      lastRestocked: '12 days ago',
-      supplier: 'SportGear Inc.',
-      supplierContact: '+91-9876543210',
-      leadTime: '3-5 days',
-      orderCost: 69980,
-      lostSales: 18,
-      pendingOrders: 34,
-      recommendedOrder: 100
-    },
-    {
-      id: 2,
-      name: 'Wireless Headphones Ultra',
-      sku: 'ELC-002',
-      category: 'Electronics',
-      image: '🎧',
-      currentStock: 0,
-      reorderPoint: 80,
-      minStock: 30,
-      dailySales: 8,
-      daysRemaining: 0,
-      urgency: 'critical',
-      lastRestocked: '8 days ago',
-      supplier: 'TechSupply Co.',
-      supplierContact: '+91-9876543211',
-      leadTime: '2-4 days',
-      orderCost: 138000,
-      lostSales: 24,
-      pendingOrders: 56,
-      recommendedOrder: 150
-    },
-    {
-      id: 3,
-      name: 'Designer Backpack',
-      sku: 'FSH-001',
-      category: 'Fashion',
-      image: '🎒',
-      currentStock: 18,
-      reorderPoint: 50,
-      minStock: 25,
-      dailySales: 4,
-      daysRemaining: 5,
-      urgency: 'urgent',
-      lastRestocked: '7 days ago',
-      supplier: 'Fashion Depot',
-      supplierContact: '+91-9876543212',
-      leadTime: '4-6 days',
-      orderCost: 45980,
-      lostSales: 0,
-      pendingOrders: 12,
-      recommendedOrder: 80
-    },
-    {
-      id: 4,
-      name: 'Bluetooth Speaker Mini',
-      sku: 'ELC-003',
-      category: 'Electronics',
-      image: '🔊',
-      currentStock: 23,
-      reorderPoint: 75,
-      minStock: 40,
-      dailySales: 5,
-      daysRemaining: 5,
-      urgency: 'urgent',
-      lastRestocked: '10 days ago',
-      supplier: 'AudioMax Ltd.',
-      supplierContact: '+91-9876543213',
-      leadTime: '3-5 days',
-      orderCost: 37485,
-      lostSales: 0,
-      pendingOrders: 18,
-      recommendedOrder: 120
-    },
-    {
-      id: 5,
-      name: 'Yoga Mat Premium',
-      sku: 'SPT-002',
-      category: 'Sports',
-      image: '🧘',
-      currentStock: 34,
-      reorderPoint: 60,
-      minStock: 30,
-      dailySales: 3,
-      daysRemaining: 11,
-      urgency: 'warning',
-      lastRestocked: '5 days ago',
-      supplier: 'FitLife Supplies',
-      supplierContact: '+91-9876543214',
-      leadTime: '5-7 days',
-      orderCost: 25974,
-      lostSales: 0,
-      pendingOrders: 8,
-      recommendedOrder: 90
-    },
-    {
-      id: 6,
-      name: 'Gaming Mouse RGB',
-      sku: 'ELC-004',
-      category: 'Electronics',
-      image: '🖱️',
-      currentStock: 41,
-      reorderPoint: 80,
-      minStock: 35,
-      dailySales: 4,
-      daysRemaining: 10,
-      urgency: 'warning',
-      lastRestocked: '6 days ago',
-      supplier: 'GamerHub Pro',
-      supplierContact: '+91-9876543215',
-      leadTime: '2-3 days',
-      orderCost: 37980,
-      lostSales: 0,
-      pendingOrders: 15,
-      recommendedOrder: 100
-    },
-  ];
+  // Restock Modal State
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [restockQty, setRestockQty] = useState(50);
+  const [submittingModal, setSubmittingModal] = useState(false);
 
-  const quickActions = [
-    { label: 'Bulk Reorder', icon: ShoppingCart, color: 'from-emerald-500 to-teal-600', count: selectedProducts.length },
-    { label: 'Contact Suppliers', icon: Phone, color: 'from-blue-500 to-indigo-600', count: 6 },
-    { label: 'Generate PO', icon: FileText, color: 'from-purple-500 to-pink-600', count: selectedProducts.length },
-    { label: 'Schedule Delivery', icon: Truck, color: 'from-orange-500 to-amber-600', count: 3 },
-  ];
+  const alertItems = useMemo(() => {
+    return products.filter((p) => {
+      const stock = Number(p.stock ?? 0);
+      const minStock = Number(p.minStock ?? 10);
+      return stock <= minStock;
+    });
+  }, [products]);
 
-  const getUrgencyConfig = (urgency) => {
-    const configs = {
-      'critical': {
-        badge: 'bg-red-100 text-red-700 border-red-300',
-        icon: XCircle,
-        iconColor: 'text-red-600',
-        text: 'CRITICAL',
-        bgHighlight: 'bg-muted/50',
-        pulse: true
-      },
-      'urgent': {
-        badge: 'bg-orange-100 text-orange-700 border-orange-300',
-        icon: AlertTriangle,
-        iconColor: 'text-orange-600',
-        text: 'URGENT',
-        bgHighlight: 'bg-muted/50',
-        pulse: false
-      },
-      'warning': {
-        badge: 'bg-yellow-100 text-yellow-700 border-yellow-300',
-        icon: AlertCircle,
-        iconColor: 'text-yellow-600',
-        text: 'WARNING',
-        bgHighlight: 'bg-muted/50',
-        pulse: false
-      }
-    };
-    return configs[urgency] || configs.warning;
-  };
+  const outOfStockCount = alertItems.filter((p) => Number(p.stock ?? 0) === 0).length;
+  const lowStockCount = alertItems.filter((p) => Number(p.stock ?? 0) > 0).length;
 
-  const toggleProductSelection = (productId) => {
-    setSelectedProducts(prev => 
-      prev.includes(productId) 
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    );
+  const filteredAlerts = useMemo(() => {
+    return alertItems
+      .filter((p) => {
+        const stock = Number(p.stock ?? 0);
+        const isOut = stock === 0;
+
+        const matchesSearch =
+          p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.sku?.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesType =
+          filterType === 'all' ||
+          (filterType === 'out-of-stock' && isOut) ||
+          (filterType === 'low-stock' && !isOut);
+
+        return matchesSearch && matchesType;
+      })
+      .sort((a, b) => Number(a.stock ?? 0) - Number(b.stock ?? 0));
+  }, [alertItems, searchQuery, filterType]);
+
+  const handleRestockSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedProduct) return;
+
+    try {
+      setSubmittingModal(true);
+      const newStock = Number(selectedProduct.stock ?? 0) + Number(restockQty);
+      await adjustStock(selectedProduct.id, newStock);
+      setSelectedProduct(null);
+    } catch (err) {
+      alert('Error updating stock: ' + err.message);
+    } finally {
+      setSubmittingModal(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-orange-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-5">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="page-container max-w-7xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
+            <AlertTriangle className="text-amber-500" />
+            Inventory Alerts
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Items requiring immediate attention or restocking in Supabase (`public.products`)
+          </p>
+        </div>
+        <button onClick={refreshData} className="btn btn-outline">
+          <RefreshCw size={16} className={loading ? 'animate-spin mr-2' : 'mr-2'} />
+          Sync Alerts
+        </button>
+      </div>
+
+      {error && (
+        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm">
+          <strong>Database Error:</strong> {error}
+        </div>
+      )}
+
+      {/* Alert Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="card p-5 shadow-card border-l-4 border-l-destructive flex items-start gap-4">
+          <div className="p-3 bg-destructive/10 rounded-lg">
+            <XCircle size={24} className="text-destructive" />
+          </div>
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-                Low Stock Alert
-              </h1>
-              <div className="flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full">
-                <div className="w-2 h-2 bg-muted0 rounded-full animate-pulse"></div>
-                <span className="text-sm font-semibold">33 ITEMS</span>
-              </div>
+            <h3 className="text-2xl font-bold text-foreground">
+              {loading ? '…' : outOfStockCount}
+            </h3>
+            <p className="text-sm font-medium text-foreground">Out of Stock</p>
+            <p className="text-xs text-muted-foreground mt-1">Zero inventory available</p>
+          </div>
+        </div>
+
+        <div className="card p-5 shadow-card border-l-4 border-l-amber-500 flex items-start gap-4">
+          <div className="p-3 bg-amber-500/10 rounded-lg">
+            <AlertTriangle size={24} className="text-amber-600" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-foreground">
+              {loading ? '…' : lowStockCount}
+            </h3>
+            <p className="text-sm font-medium text-foreground">Low Stock Warnings</p>
+            <p className="text-xs text-muted-foreground mt-1">Below minimum threshold (≤ 10)</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="card p-4 shadow-card flex flex-col sm:flex-row gap-3">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search alerts by product or SKU..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="input pl-9 w-full"
+          />
+        </div>
+        <div className="relative">
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="input pl-9 pr-8 w-full sm:w-auto"
+          >
+            <option value="all">All Alerts</option>
+            <option value="out-of-stock">Out of Stock Only</option>
+            <option value="low-stock">Low Stock Only</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Alert List */}
+      <div className="space-y-3">
+        {loading ? (
+          <div className="card p-12 text-center text-muted-foreground flex flex-col items-center">
+            <RefreshCw className="animate-spin mb-3" size={24} />
+            Checking stock levels...
+          </div>
+        ) : filteredAlerts.length === 0 ? (
+          <div className="card p-12 text-center flex flex-col items-center">
+            <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4">
+              <Check className="text-emerald-500" size={32} />
             </div>
-            <p className="text-muted-foreground">Immediate attention required for inventory restocking</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 bg-card text-foreground px-4 py-3 rounded-xl hover:shadow-card transition-all duration-300 border border-border">
-              <Bell className="w-5 h-5" />
-              <span className="hidden sm:inline">Set Alerts</span>
+            <h3 className="text-lg font-medium text-foreground">All Good!</h3>
+            <p className="text-muted-foreground mb-4">
+              All {products.length} products in your catalog are well-stocked above minimum thresholds.
+            </p>
+            <button
+              onClick={() => router.push('/products/inventory/stock')}
+              className="btn btn-outline text-xs"
+            >
+              Manage Stock Levels →
             </button>
-            <button className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-600 text-background px-6 py-3 rounded-xl hover:shadow-card transition-all duration-300">
-              <RefreshCw className="w-5 h-5" />
-              <span>Refresh</span>
-            </button>
           </div>
-        </div>
-
-        {/* Critical Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {criticalStats.map((stat, index) => {
-            const Icon = stat.icon;
+        ) : (
+          filteredAlerts.map((product) => {
+            const isOut = Number(product.stock ?? 0) === 0;
             return (
-              <div key={index} className="bg-card rounded-lg p-6 shadow-card border-2 border-border hover:shadow-dropdown transition-all duration-300">
-                <div className={`${stat.bgColor} w-12 h-12 rounded-xl flex items-center justify-center mb-4`}>
-                  <Icon className={`w-6 h-6 ${stat.textColor}`} />
-                </div>
-                <p className="text-muted-foreground text-sm mb-1">{stat.label}</p>
-                <p className="text-lg sm:text-xl font-semibold tracking-tight text-foreground mb-1">{stat.value}</p>
-                <p className="text-xs text-muted-foreground mb-2">{stat.subtext}</p>
-                <p className="text-xs text-muted-foreground">{stat.trend}</p>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-card border border-border rounded-lg shadow-card">
-          <h2 className="text-base font-semibold text-foreground mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {quickActions.map((action, index) => {
-              const Icon = action.icon;
-              return (
-                <button
-                  key={index}
-                  className={`bg-gradient-to-r ${action.color} text-background rounded-xl p-4 hover:shadow-card transition-all duration-300 hover:-translate-y-1 ${
-                    action.count === 0 ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
-                  disabled={action.count === 0}
-                >
-                  <Icon className="w-6 h-6 mb-2" />
-                  <p className="font-bold">{action.label}</p>
-                  {action.count > 0 && (
-                    <p className="text-sm text-background/80 mt-1">{action.count} selected</p>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Urgency Filter */}
-        <div className="bg-card border border-border rounded-lg shadow-card">
-          <div className="flex flex-wrap gap-3">
-            {urgencyFilters.map((filter) => (
-              <button
-                key={filter.value}
-                onClick={() => setUrgencyFilter(filter.value)}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                  urgencyFilter === filter.value
-                    ? 'bg-gradient-to-r from-red-600 to-orange-600 text-background shadow-card'
-                    : 'bg-muted text-foreground hover:bg-muted'
+              <div
+                key={product.id}
+                className={`card p-4 border-l-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                  isOut ? 'border-l-destructive' : 'border-l-amber-500'
                 }`}
               >
-                {filter.label}
-                <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-card/20">
-                  {filter.count}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Low Stock Products - Detailed Cards */}
-        <div className="space-y-4">
-          {lowStockProducts.map((product) => {
-            const urgencyConfig = getUrgencyConfig(product.urgency);
-            const UrgencyIcon = urgencyConfig.icon;
-            const isSelected = selectedProducts.includes(product.id);
-
-            return (
-              <div 
-                key={product.id} 
-                className={`bg-card rounded-lg shadow-card border-2 overflow-hidden transition-all duration-300 hover:shadow-dropdown ${
-                  urgencyConfig.bgHighlight
-                } ${
-                  product.urgency === 'critical' ? 'border-red-300' : 
-                  product.urgency === 'urgent' ? 'border-orange-300' : 
-                  'border-yellow-300'
-                } ${isSelected ? 'ring-4 ring-blue-300' : ''}`}
-              >
-                <div className="p-6">
-                  <div className="flex flex-col lg:flex-row gap-6">
-                    {/* Left Section - Product Info */}
-                    <div className="flex-1">
-                      <div className="flex items-start gap-4 mb-4">
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleProductSelection(product.id)}
-                          className="mt-1 w-5 h-5 rounded cursor-pointer"
-                        />
-                        <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-orange-100 rounded-xl flex items-center justify-center text-4xl">
-                          {product.image}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-bold text-foreground text-xl">{product.name}</h3>
-                            <span className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border-2 ${urgencyConfig.badge} ${
-                              urgencyConfig.pulse ? 'animate-pulse' : ''
-                            }`}>
-                              <UrgencyIcon className="w-4 h-4" />
-                              {urgencyConfig.text}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span className="font-mono">{product.sku}</span>
-                            <span>•</span>
-                            <span>{product.category}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Stock Status Bar */}
-                      <div className="mb-4">
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-muted-foreground">Current Stock Level</span>
-                          <span className={`font-bold ${
-                            product.currentStock === 0 ? 'text-red-600' : 'text-orange-600'
-                          }`}>
-                            {product.currentStock} / {product.reorderPoint} units
-                          </span>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-4 overflow-hidden">
-                          <div 
-                            className={`h-full rounded-full ${
-                              product.currentStock === 0 ? 'bg-gradient-to-r from-red-500 to-pink-600' :
-                              product.currentStock < product.minStock ? 'bg-gradient-to-r from-orange-500 to-amber-600' :
-                              'bg-gradient-to-r from-yellow-500 to-orange-500'
-                            }`}
-                            style={{ width: `${(product.currentStock / product.reorderPoint) * 100}%` }}
-                          ></div>
-                        </div>
-                      </div>
-
-                      {/* Metrics Grid */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="bg-muted rounded-lg p-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <ShoppingCart className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">Daily Sales</span>
-                          </div>
-                          <p className="font-bold text-foreground">{product.dailySales}/day</p>
-                        </div>
-                        <div className="bg-muted rounded-lg p-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Clock className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">Days Left</span>
-                          </div>
-                          <p className={`font-bold ${
-                            product.daysRemaining === 0 ? 'text-red-600' : 
-                            product.daysRemaining < 7 ? 'text-orange-600' : 
-                            'text-foreground'
-                          }`}>
-                            {product.daysRemaining === 0 ? 'OUT NOW' : `${product.daysRemaining} days`}
-                          </p>
-                        </div>
-                        <div className="bg-muted rounded-lg p-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <TrendingDown className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">Lost Sales</span>
-                          </div>
-                          <p className="font-bold text-red-600">{product.lostSales} units</p>
-                        </div>
-                        <div className="bg-muted rounded-lg p-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <ShoppingBag className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">Pending</span>
-                          </div>
-                          <p className="font-bold text-purple-600">{product.pendingOrders} orders</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right Section - Supplier & Action */}
-                    <div className="lg:w-80 border-t lg:border-t-0 lg:border-l border-border pt-4 lg:pt-0 lg:pl-6">
-                      <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 mb-4">
-                        <h4 className="font-bold text-foreground mb-3">Supplier Info</h4>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex items-center gap-2">
-                            <Package className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-foreground">{product.supplier}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Phone className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-foreground">{product.supplierContact}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-foreground">Lead: {product.leadTime}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 mb-4">
-                        <h4 className="font-bold text-foreground mb-2">Recommended Order</h4>
-                        <p className="text-lg sm:text-xl font-semibold tracking-tight text-blue-600 mb-1">{product.recommendedOrder} units</p>
-                        <p className="text-sm text-muted-foreground">Est. Cost: ₹{product.orderCost.toLocaleString()}</p>
-                      </div>
-
-                      <button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-background py-3 rounded-xl hover:shadow-card transition-all duration-300 font-bold flex items-center justify-center gap-2">
-                        <ShoppingCart className="w-5 h-5" />
-                        Place Order Now
-                      </button>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center text-2xl flex-shrink-0">
+                    {product.image}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground">{product.name}</h4>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      SKU: {product.sku} • Category: {product.category}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-sm font-bold ${
+                          isOut ? 'text-destructive' : 'text-amber-600'
+                        }`}
+                      >
+                        {product.stock} units left
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        (Min required: {product.minStock || 10})
+                      </span>
                     </div>
                   </div>
                 </div>
+
+                <div className="flex sm:flex-col items-center sm:items-end gap-2 shrink-0">
+                  <button
+                    onClick={() => {
+                      setSelectedProduct(product);
+                      setRestockQty(50);
+                    }}
+                    className="btn btn-primary w-full sm:w-auto"
+                  >
+                    <Package size={14} className="mr-2" /> Quick Restock
+                  </button>
+                  <button
+                    onClick={() => router.push('/products/inventory/stock')}
+                    className="text-xs text-muted-foreground hover:text-foreground font-medium flex items-center"
+                  >
+                    View Stock Table <ArrowRight size={12} className="ml-1" />
+                  </button>
+                </div>
               </div>
             );
-          })}
-        </div>
-
-        {/* Summary Bar */}
-        {selectedProducts.length > 0 && (
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-background px-8 py-4 rounded-lg shadow-card flex items-center gap-6">
-            <div>
-              <p className="text-sm text-background/70">Selected Products</p>
-              <p className="text-lg font-semibold tracking-tight">{selectedProducts.length} items</p>
-            </div>
-            <div className="h-12 w-px bg-card/20"></div>
-            <button className="bg-card text-blue-600 px-6 py-3 rounded-xl font-bold hover:shadow-card transition-all duration-300">
-              Bulk Reorder All
-            </button>
-            <button 
-              onClick={() => setSelectedProducts([])}
-              className="bg-card/20 text-background px-4 py-3 rounded-xl font-bold hover:bg-card/30 transition-all duration-300"
-            >
-              Clear
-            </button>
-          </div>
+          })
         )}
       </div>
+
+      {/* Restock Modal */}
+      {selectedProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="card w-full max-w-sm p-6 shadow-modal space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h2 className="text-lg font-semibold text-foreground">Restock Item</h2>
+              <button
+                onClick={() => setSelectedProduct(null)}
+                className="btn btn-ghost h-8 w-8 p-0"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div>
+              <p className="font-medium text-foreground">{selectedProduct.name}</p>
+              <p className="text-xs text-muted-foreground">
+                Current Stock: {selectedProduct.stock} units
+              </p>
+            </div>
+
+            <form onSubmit={handleRestockSubmit} className="space-y-4">
+              <div>
+                <label className="label block mb-1.5">Units to Add</label>
+                <input
+                  type="number"
+                  min="1"
+                  required
+                  value={restockQty}
+                  onChange={(e) => setRestockQty(e.target.value)}
+                  className="input w-full"
+                />
+              </div>
+              <div className="p-3 bg-muted rounded-md text-sm">
+                New Total Stock:{' '}
+                <strong className="text-emerald-600">
+                  {Number(selectedProduct.stock ?? 0) + Number(restockQty)}
+                </strong>
+              </div>
+              <button type="submit" disabled={submittingModal} className="btn btn-primary w-full">
+                {submittingModal ? 'Restocking...' : 'Confirm Restock'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

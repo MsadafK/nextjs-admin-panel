@@ -34,13 +34,18 @@ export function useProducts() {
     fetchData();
   }, [fetchData]);
 
-  // Enrich categories with live product counts and inventory revenue
-  const enrichedCategories = useMemo(() => {
+  // Enrich categories with live product counts, stock units, and inventory revenue
+  // Enrich categories with live product counts, stock units, and inventory revenue
+  const categoriesWithStats = useMemo(() => {
     return categories.map((cat, index) => {
       const catProducts = products.filter(
         (p) => p.category_id === cat.id || p.category?.toLowerCase() === cat.name?.toLowerCase()
       );
-      const revenueVal = catProducts.reduce((sum, p) => sum + p.price * (p.stock || 0), 0);
+      const totalStock = catProducts.reduce((sum, p) => sum + Number(p.stock ?? 0), 0);
+      const totalValue = catProducts.reduce(
+        (sum, p) => sum + Number(p.price ?? 0) * Number(p.stock ?? 0),
+        0
+      );
       const slug =
         cat.slug ||
         (cat.name || 'category')
@@ -48,17 +53,28 @@ export function useProducts() {
           .replace(/\s+/g, '-')
           .replace(/[^a-z0-9-]/g, '');
 
-      const isActive = cat.is_active !== false && (cat.status || 'active') !== 'inactive';
+      const rawDesc = cat.description || '';
+      const hasInactiveMarker = rawDesc.includes('[INACTIVE]');
+      const cleanDescription = rawDesc.replace(/\s*\[INACTIVE\]\s*/g, '').trim();
+
+      const isActive =
+        !hasInactiveMarker &&
+        cat.is_active !== false &&
+        (cat.status || 'active').toLowerCase() !== 'inactive';
 
       return {
+        ...cat,
         id: cat.id,
         name: cat.name,
         slug,
-        description: cat.description || '',
+        description: cleanDescription,
         products: catProducts.length,
+        productCount: catProducts.length,
         subcategories: Math.max(1, Math.min(8, catProducts.length + 1)),
-        revenueValue: revenueVal,
-        revenue: `₹${revenueVal.toLocaleString()}`,
+        totalStock,
+        totalValue,
+        revenueValue: totalValue,
+        revenue: `₹${totalValue.toLocaleString('en-IN')}`,
         growth: `+${10 + ((index * 5) % 18)}%`,
         icon: getCategoryIcon(cat.name),
         status: isActive ? 'active' : 'inactive',
@@ -80,8 +96,8 @@ export function useProducts() {
     return updated;
   };
 
-  const updateStock = async (id, newStock) => {
-    const updated = await productService.updateProductStock(id, newStock);
+  const adjustStock = async (id, newStock) => {
+    const updated = await productService.updateStock(id, newStock);
     setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
     return updated;
   };
@@ -112,13 +128,15 @@ export function useProducts() {
   return {
     products,
     dbCategories: categories,
-    enrichedCategories,
+    categoriesWithStats,
+    enrichedCategories: categoriesWithStats,
     loading,
     error,
     refreshData: fetchData,
     addProduct,
     editProduct,
-    updateStock,
+    adjustStock,
+    updateStock: adjustStock,
     removeProduct,
     addCategory,
     editCategory,

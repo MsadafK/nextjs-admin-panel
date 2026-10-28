@@ -1,7 +1,7 @@
 // services/productService.js
 import { supabase } from '@/lib/supabase';
 
-const getCategoryIcon = (categoryName = '', productName = '') => {
+export const getCategoryIcon = (categoryName = '', productName = '') => {
   const name = (productName || '').toLowerCase();
   const cat = (categoryName || '').toLowerCase();
 
@@ -131,6 +131,11 @@ export const productService = {
     return mapProductFromDB(data);
   },
 
+  // Alias in case any page calls updateProductStock
+  async updateProductStock(id, newStockQuantity) {
+    return this.updateStock(id, newStockQuantity);
+  },
+
   async deleteProduct(id) {
     const { error } = await supabase
       .from('products')
@@ -141,6 +146,7 @@ export const productService = {
     return true;
   },
 
+  /* ── Categories CRUD ── */
   /* ── Categories CRUD ── */
   async getCategories() {
     const { data, error } = await supabase
@@ -156,6 +162,16 @@ export const productService = {
     const { data: sample } = await supabase.from('categories').select('*').limit(1);
     const cols = sample && sample[0] ? Object.keys(sample[0]) : null;
 
+    const isInactive = (catData.status || 'active').toLowerCase() === 'inactive';
+    const cleanDesc = (catData.description || '').replace(/\s*\[INACTIVE\]\s*/g, '').trim();
+    const hasStatusCol = cols && (cols.includes('status') || cols.includes('is_active'));
+
+    // Agar DB me status column nahi hai, toh description me [INACTIVE] marker store karein
+    const finalDescription =
+      !hasStatusCol && isInactive
+        ? `${cleanDesc} [INACTIVE]`.trim()
+        : cleanDesc;
+
     const slug =
       catData.slug ||
       catData.name
@@ -166,12 +182,12 @@ export const productService = {
     const payload = { name: catData.name.trim() };
 
     if (cols) {
-      if (cols.includes('description')) payload.description = catData.description || '';
+      if (cols.includes('description')) payload.description = finalDescription;
       if (cols.includes('slug')) payload.slug = slug;
-      if (cols.includes('status')) payload.status = (catData.status || 'active').toLowerCase();
-      if (cols.includes('is_active')) payload.is_active = (catData.status || 'active').toLowerCase() === 'active';
+      if (cols.includes('status')) payload.status = isInactive ? 'inactive' : 'active';
+      if (cols.includes('is_active')) payload.is_active = !isInactive;
     } else {
-      payload.description = catData.description || '';
+      payload.description = finalDescription;
     }
 
     const { data, error } = await supabase
@@ -181,27 +197,45 @@ export const productService = {
       .single();
 
     if (error) throw error;
-    return data;
+    return {
+      ...data,
+      status: isInactive ? 'inactive' : 'active',
+    };
   },
 
   async updateCategory(id, updates) {
     const { data: sample } = await supabase.from('categories').select('*').limit(1);
     const cols = sample && sample[0] ? Object.keys(sample[0]) : null;
 
+    const isInactive = (updates.status || 'active').toLowerCase() === 'inactive';
+    const cleanDesc = (updates.description || '').replace(/\s*\[INACTIVE\]\s*/g, '').trim();
+    const hasStatusCol = cols && (cols.includes('status') || cols.includes('is_active'));
+
+    const finalDescription =
+      !hasStatusCol && isInactive
+        ? `${cleanDesc} [INACTIVE]`.trim()
+        : cleanDesc;
+
     const payload = { name: updates.name?.trim() };
+
     if (cols) {
-      if (cols.includes('description') && updates.description !== undefined) {
-        payload.description = updates.description;
+      if (cols.includes('description')) {
+        payload.description = finalDescription;
       }
       if (cols.includes('slug') && updates.slug) {
         payload.slug = updates.slug;
       }
       if (cols.includes('status') && updates.status) {
-        payload.status = updates.status.toLowerCase();
+        payload.status = isInactive ? 'inactive' : 'active';
+      }
+      if (cols.includes('is_active') && updates.status !== undefined) {
+        payload.is_active = !isInactive;
       }
       if (cols.includes('updated_at')) {
         payload.updated_at = new Date().toISOString();
       }
+    } else {
+      payload.description = finalDescription;
     }
 
     const { data, error } = await supabase
@@ -212,7 +246,10 @@ export const productService = {
       .single();
 
     if (error) throw error;
-    return data;
+    return {
+      ...data,
+      status: isInactive ? 'inactive' : 'active',
+    };
   },
 
   async deleteCategory(id) {
@@ -224,4 +261,4 @@ export const productService = {
     if (error) throw error;
     return true;
   },
-};
+}

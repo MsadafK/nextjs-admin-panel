@@ -1,3 +1,4 @@
+// app/products/inventory/stock/page.js
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -25,18 +26,17 @@ export default function InventoryStockPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [stockFilter, setStockFilter] = useState('all'); // 'all' | 'in-stock' | 'low-stock' | 'out-of-stock'
-  const [sortBy, setSortBy] = useState('stock-asc'); // 'stock-asc' | 'stock-desc' | 'value-desc' | 'name-asc'
+  const [stockFilter, setStockFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('stock-asc');
   const [updatingId, setUpdatingId] = useState(null);
 
   // Stock Adjustment Modal State
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [adjustmentType, setAdjustmentType] = useState('add'); // 'add' | 'subtract' | 'set'
+  const [adjustmentType, setAdjustmentType] = useState('add');
   const [adjustmentQty, setAdjustmentQty] = useState(10);
   const [adjustmentNote, setAdjustmentNote] = useState('');
   const [submittingModal, setSubmittingModal] = useState(false);
 
-  // Helper to classify stock status
   const getStockState = (product) => {
     const stock = Number(product.stock ?? 0);
     const minStock = Number(product.minStock ?? 10);
@@ -45,7 +45,6 @@ export default function InventoryStockPage() {
     return 'in-stock';
   };
 
-  // 1. Dynamic Categories from Live Products
   const categories = useMemo(() => {
     const map = { all: { value: 'all', label: 'All Categories', count: products.length } };
     products.forEach((p) => {
@@ -58,7 +57,6 @@ export default function InventoryStockPage() {
     return Object.values(map);
   }, [products]);
 
-  // 2. Live Inventory KPIs
   const stats = useMemo(() => {
     const totalUnits = products.reduce((sum, p) => sum + Number(p.stock ?? 0), 0);
     const totalValuation = products.reduce(
@@ -100,7 +98,6 @@ export default function InventoryStockPage() {
     ];
   }, [products]);
 
-  // 3. Filter and Sort Products
   const filteredProducts = useMemo(() => {
     const q = searchQuery.toLowerCase();
 
@@ -126,7 +123,6 @@ export default function InventoryStockPage() {
     });
   }, [products, searchQuery, selectedCategory, stockFilter, sortBy]);
 
-  // Quick +1 / -1 / +10 Inline Handler
   const handleQuickStockChange = async (product, delta) => {
     const nextStock = Math.max(0, Number(product.stock ?? 0) + delta);
     try {
@@ -139,7 +135,6 @@ export default function InventoryStockPage() {
     }
   };
 
-  // Open Adjust Stock Modal
   const openAdjustModal = (product) => {
     setSelectedProduct(product);
     setAdjustmentType('add');
@@ -147,7 +142,6 @@ export default function InventoryStockPage() {
     setAdjustmentNote('');
   };
 
-  // Calculate preview stock inside modal
   const previewNewStock = useMemo(() => {
     if (!selectedProduct) return 0;
     const current = Number(selectedProduct.stock ?? 0);
@@ -157,7 +151,6 @@ export default function InventoryStockPage() {
     return qty;
   }, [selectedProduct, adjustmentType, adjustmentQty]);
 
-  // Save Modal Stock Adjustment to Supabase
   const handleModalSubmit = async (e) => {
     e.preventDefault();
     if (!selectedProduct) return;
@@ -173,7 +166,6 @@ export default function InventoryStockPage() {
     }
   };
 
-  // Export CSV
   const handleExportCSV = () => {
     const headers = ['SKU,Product Name,Category,Unit Price,Stock Quantity,Stock Value,Status'];
     const rows = filteredProducts.map((p) => {
@@ -226,11 +218,7 @@ export default function InventoryStockPage() {
           </p>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            onClick={refreshData}
-            className="btn btn-outline"
-            title="Refresh Inventory"
-          >
+          <button onClick={refreshData} className="btn btn-outline" title="Refresh Inventory">
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             <span className="hidden sm:inline ml-2">Sync DB</span>
           </button>
@@ -283,7 +271,6 @@ export default function InventoryStockPage() {
       {/* Search & Filters Toolbar */}
       <div className="card p-3 sm:p-4 shadow-card">
         <div className="flex flex-col lg:flex-row gap-3">
-          {/* Search */}
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -295,7 +282,6 @@ export default function InventoryStockPage() {
             />
           </div>
 
-          {/* Category Filter */}
           <div className="relative">
             <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <select
@@ -311,7 +297,6 @@ export default function InventoryStockPage() {
             </select>
           </div>
 
-          {/* Stock Level Filter */}
           <div>
             <select
               value={stockFilter}
@@ -325,7 +310,6 @@ export default function InventoryStockPage() {
             </select>
           </div>
 
-          {/* Sort By */}
           <div className="relative">
             <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <select
@@ -396,7 +380,6 @@ export default function InventoryStockPage() {
 
                   return (
                     <tr key={product.id} className="hover:bg-muted/30 transition-colors">
-                      {/* Product & SKU */}
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3 min-w-[220px]">
                           <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/40 dark:to-pink-900/40 rounded-md flex items-center justify-center text-xl flex-shrink-0">
@@ -409,17 +392,14 @@ export default function InventoryStockPage() {
                         </div>
                       </td>
 
-                      {/* Category */}
                       <td className="py-3.5 px-4 text-foreground whitespace-nowrap">
                         {product.category}
                       </td>
 
-                      {/* Unit Price */}
                       <td className="py-3.5 px-4 text-foreground whitespace-nowrap">
                         ₹{Number(product.price).toLocaleString('en-IN')}
                       </td>
 
-                      {/* Stock Level + Progress Bar */}
                       <td className="py-3.5 px-4 min-w-[160px]">
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between text-xs">
@@ -437,19 +417,16 @@ export default function InventoryStockPage() {
                         </div>
                       </td>
 
-                      {/* Total Stock Value */}
                       <td className="py-3.5 px-4 font-semibold text-foreground whitespace-nowrap">
                         ₹{(Number(product.price) * Number(product.stock)).toLocaleString('en-IN', {
                           maximumFractionDigits: 2,
                         })}
                       </td>
 
-                      {/* Status Badge */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         {renderStockBadge(product)}
                       </td>
 
-                      {/* Quick Adjust Buttons */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
@@ -488,7 +465,7 @@ export default function InventoryStockPage() {
         )}
       </div>
 
-      {/* ── Stock Restock / Adjustment Modal ── */}
+      {/* Stock Restock Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="card w-full max-w-md p-6 shadow-modal space-y-5">
@@ -508,7 +485,6 @@ export default function InventoryStockPage() {
             </div>
 
             <form onSubmit={handleModalSubmit} className="space-y-4">
-              {/* Adjustment Mode */}
               <div>
                 <label className="label block mb-1.5">Adjustment Type</label>
                 <div className="grid grid-cols-3 gap-2">
@@ -533,7 +509,6 @@ export default function InventoryStockPage() {
                 </div>
               </div>
 
-              {/* Quantity Input */}
               <div>
                 <label className="label block mb-1.5">
                   {adjustmentType === 'set' ? 'New Stock Quantity' : 'Quantity to Adjust'}
@@ -548,7 +523,6 @@ export default function InventoryStockPage() {
                 />
               </div>
 
-              {/* Reason / Note */}
               <div>
                 <label className="label block mb-1.5">Reason / Reference (Optional)</label>
                 <input
@@ -560,7 +534,6 @@ export default function InventoryStockPage() {
                 />
               </div>
 
-              {/* Live Stock Preview Box */}
               <div className="p-3.5 rounded-lg bg-muted/60 border border-border flex items-center justify-between text-sm">
                 <div>
                   <span className="text-muted-foreground">Current Stock: </span>
