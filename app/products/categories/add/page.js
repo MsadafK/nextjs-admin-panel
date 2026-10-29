@@ -1,398 +1,304 @@
+// app/products/categories/add/page.js
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import {
-  FolderPlus, Tag, FileText, Layers, Star, Eye, EyeOff,
-  Check, AlertCircle, Sparkles, Palette, Link as LinkIcon, ArrowLeft
+  Tag,
+  FileText,
+  Hash,
+  Check,
+  AlertCircle,
+  ArrowLeft,
+  Sparkles,
+  Layers,
+  Eye,
 } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
+import { getCategoryIcon } from '@/services/productService';
 
 export default function AddCategoryPage() {
   const router = useRouter();
-  const { dbCategories, addCategory } = useProducts();
+  const { addCategory, categoriesWithStats, loading } = useProducts();
 
-  const [categoryName, setCategoryName]   = useState('');
-  const [slug, setSlug]                   = useState('');
-  const [description, setDescription]     = useState('');
-  const [selectedColor, setSelectedColor] = useState('from-blue-500 to-cyan-500');
-  const [selectedIcon, setSelectedIcon]   = useState('📦');
-  const [isVisible, setIsVisible]         = useState(true);
-  const [isFeatured, setIsFeatured]       = useState(false);
-  const [parentCategory, setParentCategory] = useState('none');
-  const [metaTitle, setMetaTitle]         = useState('');
-  const [metaDesc, setMetaDesc]           = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    slug: '',
+    description: '',
+    status: 'active',
+  });
+  const [autoSlug, setAutoSlug] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
-  const [submitting, setSubmitting]       = useState(false);
-  const [errorMsg, setErrorMsg]           = useState('');
-  const [successMsg, setSuccessMsg]       = useState('');
+  const generateSlug = (value) =>
+    value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-');
 
-  const colorOptions = [
-    { name: 'Blue', gradient: 'from-blue-500 to-cyan-500' },
-    { name: 'Purple', gradient: 'from-purple-500 to-pink-500' },
-    { name: 'Green', gradient: 'from-green-500 to-emerald-500' },
-    { name: 'Orange', gradient: 'from-orange-500 to-red-500' },
-    { name: 'Indigo', gradient: 'from-indigo-500 to-purple-500' },
-    { name: 'Pink', gradient: 'from-pink-500 to-rose-500' },
-    { name: 'Yellow', gradient: 'from-yellow-500 to-orange-500' },
-    { name: 'Slate', gradient: 'from-slate-500 to-gray-500' },
-    { name: 'Teal', gradient: 'from-teal-500 to-cyan-500' },
-    { name: 'Violet', gradient: 'from-violet-500 to-purple-500' },
-  ];
-
-  const iconOptions = ['📦', '💻', '👕', '🏡', '⚽', '📚', '💄', '🎮', '🚗', '🍔', '✈️', '🎨', '🎵', '📱', '⌚', '🎯'];
-
-  const handleNameChange = (value) => {
-    setCategoryName(value);
-    const autoSlug = value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-    setSlug(autoSlug);
+  const handleNameChange = (e) => {
+    const name = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      name,
+      slug: autoSlug ? generateSlug(name) : prev.slug,
+    }));
   };
 
-  const handleCreateCategory = async (e) => {
-    if (e) e.preventDefault();
-    if (!categoryName.trim()) {
-      setErrorMsg('Category Name is required.');
+  const handleSlugChange = (e) => {
+    setAutoSlug(false);
+    setFormData((prev) => ({
+      ...prev,
+      slug: generateSlug(e.target.value),
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(false);
+
+    if (!formData.name.trim()) {
+      setError('Category name is required.');
       return;
     }
 
     try {
       setSubmitting(true);
-      setErrorMsg('');
       await addCategory({
-        name: categoryName.trim(),
-        slug: slug.trim(),
-        description: description.trim() || metaDesc.trim(),
-        parent_id: parentCategory !== 'none' ? parentCategory : null,
-        status: isVisible ? 'active' : 'inactive',
+        name: formData.name.trim(),
+        slug: formData.slug || generateSlug(formData.name),
+        description: formData.description.trim(),
+        status: formData.status,
       });
 
-      setSuccessMsg(`Category "${categoryName}" saved to Supabase successfully!`);
-      setCategoryName('');
-      setSlug('');
-      setDescription('');
-      setMetaTitle('');
-      setMetaDesc('');
+      setSuccess(true);
+      setFormData({ name: '', slug: '', description: '', status: 'active' });
+      setAutoSlug(true);
     } catch (err) {
       console.error('Error creating category:', err);
-      setErrorMsg(err.message || 'Failed to create category in Supabase.');
+      setError(err.message || 'Failed to create category in Supabase.');
     } finally {
       setSubmitting(false);
     }
   };
 
+  const previewIcon = getCategoryIcon(formData.name || 'Category');
+
   return (
-    <div className="min-h-screen bg-muted/30 p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+    <div className="page-container max-w-6xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
+            <Tag size={22} className="text-blue-500" />
+            Add New Category
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Create a new product category in Supabase (`public.categories`)
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => router.push('/products/categories/manage')}
+          className="btn btn-outline self-start sm:self-auto"
         >
-          <div>
-            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-foreground flex items-center gap-3">
-              <FolderPlus size={28} />
-              Add New Category
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Create a new product category in Supabase (`public.categories`)
-            </p>
+          <ArrowLeft size={15} className="mr-2" />
+          Manage Categories
+        </button>
+      </div>
+
+      {/* Alerts */}
+      {error && (
+        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm flex items-center gap-2">
+          <AlertCircle size={16} />
+          <span>
+            <strong>Error:</strong> {error}
+          </span>
+        </div>
+      )}
+
+      {success && (
+        <div className="card p-4 border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Check size={16} />
+            <span>
+              <strong>Success!</strong> Category has been saved to Supabase.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => router.push('/products/categories/manage')}
+            className="btn btn-primary h-8 text-xs self-start sm:self-auto"
+          >
+            View All Categories →
+          </button>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Form Column */}
+        <form onSubmit={handleSubmit} className="lg:col-span-2 card p-6 space-y-5 shadow-card">
+          <div className="flex items-center gap-2 border-b border-border pb-3">
+            <Layers size={18} className="text-muted-foreground" />
+            <h2 className="text-base font-semibold text-foreground">Category Details</h2>
           </div>
 
-          <div className="flex gap-3">
+          {/* Category Name */}
+          <div className="space-y-1.5">
+            <label className="label block">
+              Category Name <span className="text-destructive">*</span>
+            </label>
+            <div className="relative">
+              <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={handleNameChange}
+                placeholder="e.g. Electronics, Home & Kitchen, Fitness"
+                className="input pl-9 w-full"
+              />
+            </div>
+          </div>
+
+          {/* Category Slug */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="label block">URL Slug</label>
+              <span className="text-xs text-muted-foreground">Auto-generated from name</span>
+            </div>
+            <div className="relative">
+              <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="text"
+                value={formData.slug}
+                onChange={handleSlugChange}
+                placeholder="e.g. electronics"
+                className="input pl-9 w-full font-mono text-xs"
+              />
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="space-y-1.5">
+            <label className="label block">Description</label>
+            <div className="relative">
+              <FileText className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+              <textarea
+                rows={4}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Describe what types of products belong in this category..."
+                className="input pl-9 py-2 w-full"
+              />
+            </div>
+          </div>
+
+          {/* Status */}
+          <div className="space-y-1.5">
+            <label className="label block">Visibility Status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="input w-full"
+            >
+              <option value="active">Active (Visible in Catalog)</option>
+              <option value="inactive">Inactive (Hidden)</option>
+            </select>
+          </div>
+
+          {/* Submit Actions */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
             <button
               type="button"
               onClick={() => router.push('/products/categories/manage')}
-              className="px-4 py-2 bg-card border border-border rounded-lg text-foreground hover:bg-muted transition-all flex items-center gap-2 text-sm"
+              className="btn btn-outline"
             >
-              <ArrowLeft size={16} />
-              Back to Categories
+              Cancel
             </button>
-            <button
-              type="button"
-              onClick={handleCreateCategory}
-              disabled={submitting}
-              className="px-6 py-2 bg-foreground text-background rounded-lg hover:opacity-90 transition-all flex items-center gap-2 text-sm font-medium disabled:opacity-50"
-            >
-              <Check size={18} />
-              {submitting ? 'Creating...' : 'Create Category'}
+            <button type="submit" disabled={submitting} className="btn btn-primary">
+              <Check size={16} className="mr-2" />
+              {submitting ? 'Creating in Supabase...' : 'Create Category'}
             </button>
           </div>
-        </motion.div>
+        </form>
 
-        {errorMsg && (
-          <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm flex items-center gap-2">
-            <AlertCircle size={18} />
-            <span>{errorMsg}</span>
-          </div>
-        )}
-
-        {successMsg && (
-          <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 text-sm flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Check size={18} />
-              <span>{successMsg}</span>
-            </div>
-            <button
-              onClick={() => router.push('/products/categories/manage')}
-              className="btn btn-primary h-8 text-xs"
-            >
-              View Categories →
-            </button>
-          </div>
-        )}
-
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Main Form */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Basic Information */}
-            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="p-2 bg-muted rounded-lg">
-                  <FileText className="text-foreground" size={20} />
-                </div>
-                <h2 className="text-base font-semibold text-foreground">Basic Information</h2>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">
-                    Category Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={categoryName}
-                    onChange={(e) => handleNameChange(e.target.value)}
-                    placeholder="e.g., Electronics, Fashion, Home Decor"
-                    className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">
-                    URL Slug *
-                  </label>
-                  <div className="relative">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                    <input
-                      type="text"
-                      value={slug}
-                      onChange={(e) => setSlug(e.target.value)}
-                      placeholder="e.g., electronics"
-                      className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    rows="4"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Write a brief description about this category..."
-                    className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring resize-none"
-                  />
-                </div>
-              </div>
+        {/* Live Preview & Existing Categories Column */}
+        <div className="space-y-6">
+          {/* Live Card Preview */}
+          <div className="card p-5 shadow-card space-y-4">
+            <div className="flex items-center gap-2 border-b border-border pb-3">
+              <Eye size={16} className="text-muted-foreground" />
+              <h3 className="text-sm font-semibold text-foreground">Live Preview</h3>
             </div>
 
-            {/* Appearance */}
-            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="p-2 bg-muted rounded-lg">
-                  <Palette className="text-foreground" size={20} />
-                </div>
-                <h2 className="text-base font-semibold text-foreground">Appearance</h2>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-3">
-                    Category Color
-                  </label>
-                  <div className="grid grid-cols-5 gap-3">
-                    {colorOptions.map((color) => (
-                      <button
-                        type="button"
-                        key={color.name}
-                        onClick={() => setSelectedColor(color.gradient)}
-                        className={`relative h-12 rounded-lg bg-gradient-to-br ${color.gradient} transition-all hover:scale-105 ${
-                          selectedColor === color.gradient ? 'ring-2 ring-foreground ring-offset-2' : ''
-                        }`}
-                      >
-                        {selectedColor === color.gradient && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Check className="text-white" size={20} />
-                          </div>
-                        )}
-                      </button>
-                    ))}
+            <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-card border border-border flex items-center justify-center text-xl">
+                    {previewIcon}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground">
+                      {formData.name || 'Category Name'}
+                    </h4>
+                    <p className="text-xs text-muted-foreground font-mono">
+                      /{formData.slug || 'category-slug'}
+                    </p>
                   </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-3">
-                    Category Icon
-                  </label>
-                  <div className="grid grid-cols-8 gap-3">
-                    {iconOptions.map((icon) => (
-                      <button
-                        type="button"
-                        key={icon}
-                        onClick={() => setSelectedIcon(icon)}
-                        className={`h-12 rounded-lg bg-muted hover:bg-muted/80 transition-all text-2xl flex items-center justify-center ${
-                          selectedIcon === icon ? 'ring-2 ring-foreground ring-offset-2' : ''
-                        }`}
-                      >
-                        {icon}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Hierarchy (Connected to Live Categories) */}
-            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="p-2 bg-muted rounded-lg">
-                  <Layers className="text-foreground" size={20} />
-                </div>
-                <h2 className="text-base font-semibold text-foreground">Category Hierarchy</h2>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
-                  Parent Category (from Supabase)
-                </label>
-                <select
-                  value={parentCategory}
-                  onChange={(e) => setParentCategory(e.target.value)}
-                  className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
+                <span
+                  className={`px-2 py-0.5 rounded text-xs font-medium border ${
+                    formData.status === 'active'
+                      ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                      : 'bg-muted text-muted-foreground border-border'
+                  }`}
                 >
-                  <option value="none">None (Top Level Category)</option>
-                  {dbCategories.map((parent) => (
-                    <option key={parent.id} value={parent.id}>
-                      {parent.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* SEO Settings */}
-            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="p-2 bg-muted rounded-lg">
-                  <Tag className="text-foreground" size={20} />
-                </div>
-                <h2 className="text-base font-semibold text-foreground">SEO Settings</h2>
+                  {formData.status === 'active' ? 'Active' : 'Inactive'}
+                </span>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">
-                    Meta Title
-                  </label>
-                  <input
-                    type="text"
-                    value={metaTitle}
-                    onChange={(e) => setMetaTitle(e.target.value)}
-                    placeholder="Optimize for search engines"
-                    className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-foreground mb-2">
-                    Meta Description
-                  </label>
-                  <textarea
-                    rows="3"
-                    value={metaDesc}
-                    onChange={(e) => setMetaDesc(e.target.value)}
-                    placeholder="Brief description for search results..."
-                    className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-ring resize-none"
-                  />
-                </div>
-              </div>
+              <p className="text-xs text-muted-foreground line-clamp-2">
+                {formData.description || 'Category description will appear here...'}
+              </p>
             </div>
           </div>
 
-          {/* Sidebar - Preview & Settings */}
-          <div className="space-y-6">
-            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="text-purple-600" size={20} />
-                <h3 className="font-bold text-foreground">Live Preview</h3>
-              </div>
-
-              <div className="bg-muted/40 rounded-lg p-4 border border-border">
-                <div className={`h-32 bg-gradient-to-br ${selectedColor} rounded-lg relative overflow-hidden mb-4`}>
-                  <div className="absolute inset-0 bg-black/10" />
-                  <div className="absolute bottom-3 left-3 text-5xl">{selectedIcon}</div>
-                </div>
-
-                <h3 className="text-lg font-bold text-foreground mb-1">
-                  {categoryName || 'Category Name'}
+          {/* Existing Categories in DB */}
+          <div className="card p-5 shadow-card space-y-3">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles size={16} className="text-amber-500" />
+                <h3 className="text-sm font-semibold text-foreground">
+                  Existing Categories ({categoriesWithStats.length})
                 </h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  /{slug || 'category-slug'}
-                </p>
+              </div>
+            </div>
 
-                <div className="flex gap-2 text-xs">
-                  <span className="px-2 py-1 bg-muted rounded-full text-foreground">
-                    0 Products
-                  </span>
-                  {isFeatured && (
-                    <span className="px-2 py-1 bg-yellow-100 rounded-full text-yellow-700 flex items-center gap-1">
-                      <Star size={12} className="fill-yellow-500" />
-                      Featured
+            {loading ? (
+              <p className="text-xs text-muted-foreground py-3">Loading from Supabase...</p>
+            ) : (
+              <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                {categoriesWithStats.map((cat) => (
+                  <div
+                    key={cat.id}
+                    className="flex items-center justify-between p-2.5 rounded-md bg-muted/40 text-xs"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span>{cat.icon}</span>
+                      <span className="font-medium text-foreground truncate">{cat.name}</span>
+                    </div>
+                    <span className="text-muted-foreground flex-shrink-0">
+                      {cat.productCount} SKUs
                     </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <h3 className="font-bold text-foreground mb-4">Category Settings</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                  <div className="flex items-center gap-3">
-                    {isVisible ? <Eye size={18} className="text-green-600" /> : <EyeOff size={18} className="text-muted-foreground" />}
-                    <div>
-                      <p className="font-medium text-foreground text-sm">Visibility</p>
-                      <p className="text-xs text-muted-foreground">Active in catalog</p>
-                    </div>
                   </div>
-                  <input
-                    type="checkbox"
-                    checked={isVisible}
-                    onChange={() => setIsVisible(!isVisible)}
-                    className="w-5 h-5 accent-foreground cursor-pointer"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Star size={18} className={isFeatured ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'} />
-                    <div>
-                      <p className="font-medium text-foreground text-sm">Featured</p>
-                      <p className="text-xs text-muted-foreground">Highlight category</p>
-                    </div>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={isFeatured}
-                    onChange={() => setIsFeatured(!isFeatured)}
-                    className="w-5 h-5 accent-foreground cursor-pointer"
-                  />
-                </div>
+                ))}
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
