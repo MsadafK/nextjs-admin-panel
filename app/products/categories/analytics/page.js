@@ -67,11 +67,10 @@ export default function CategoryAnalyticsPage() {
 
   return (
     <div className="page-container max-w-7xl mx-auto space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <PieChart className="text-purple-500" size={24} />
+            <PieChart size={22} />
             Category Analytics
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -83,7 +82,7 @@ export default function CategoryAnalyticsPage() {
             <RefreshCw size={16} className={loading ? 'animate-spin mr-2' : 'mr-2'} />
             Sync
           </button>
-          <button onClick={handleExportCSV} className="btn btn-primary">
+          <button onClick={handleExportCSV} className="btn btn-primary bg-foreground text-background hover:bg-foreground/90">
             <Download size={16} className="mr-2" />
             Export Report
           </button>
@@ -91,14 +90,13 @@ export default function CategoryAnalyticsPage() {
       </div>
 
       {error && (
-        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm">
+        <div className="card p-4 border-foreground bg-muted text-foreground text-sm">
           <strong>Database Error:</strong> {error}
         </div>
       )}
 
-      {/* Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card p-5 shadow-card flex items-start justify-between">
+        <div className="card p-5 shadow-card border border-border flex items-start justify-between">
           <div>
             <p className="text-xs font-medium text-muted-foreground uppercase">Total Categories</p>
             <p className="text-2xl font-semibold text-foreground mt-1">
@@ -108,27 +106,27 @@ export default function CategoryAnalyticsPage() {
               {products.length} total mapped SKUs
             </p>
           </div>
-          <div className="p-2.5 rounded-lg bg-muted">
-            <Layers size={20} className="text-blue-500" />
+          <div className="p-2.5 rounded-lg bg-muted border border-border">
+            <Layers size={20} className="text-foreground" />
           </div>
         </div>
 
-        <div className="card p-5 shadow-card flex items-start justify-between">
+        <div className="card p-5 shadow-card border border-border flex items-start justify-between">
           <div>
             <p className="text-xs font-medium text-muted-foreground uppercase">Top Category</p>
             <p className="text-xl font-semibold text-foreground mt-1 truncate">
               {loading ? '…' : analyticsData.topCategory?.name || 'N/A'}
             </p>
-            <p className="text-xs text-emerald-600 font-medium mt-1">
+            <p className="text-xs text-foreground font-medium mt-1 underline">
               {analyticsData.topCategory ? `${analyticsData.topCategory.valueShare}% of total value` : ''}
             </p>
           </div>
-          <div className="p-2.5 rounded-lg bg-muted">
-            <Award size={20} className="text-amber-500" />
+          <div className="p-2.5 rounded-lg bg-muted border border-border">
+            <Award size={20} className="text-foreground" />
           </div>
         </div>
 
-        <div className="card p-5 shadow-card flex items-start justify-between">
+        <div className="card p-5 shadow-card border border-border flex items-start justify-between">
           <div>
             <p className="text-xs font-medium text-muted-foreground uppercase">Total Valuation</p>
             <p className="text-2xl font-semibold text-foreground mt-1">
@@ -138,12 +136,12 @@ export default function CategoryAnalyticsPage() {
             </p>
             <p className="text-xs text-muted-foreground mt-1">Combined category value</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-muted">
-            <DollarSign size={20} className="text-emerald-500" />
+          <div className="p-2.5 rounded-lg bg-muted border border-border">
+            <DollarSign size={20} className="text-foreground" />
           </div>
         </div>
 
-        <div className="card p-5 shadow-card flex items-start justify-between">
+        <div className="card p-5 shadow-card border border-border flex items-start justify-between">
           <div>
             <p className="text-xs font-medium text-muted-foreground uppercase">Total Stock Units</p>
             <p className="text-2xl font-semibold text-foreground mt-1">
@@ -151,14 +149,13 @@ export default function CategoryAnalyticsPage() {
             </p>
             <p className="text-xs text-muted-foreground mt-1">Across all active categories</p>
           </div>
-          <div className="p-2.5 rounded-lg bg-muted">
-            <Package size={20} className="text-purple-500" />
+          <div className="p-2.5 rounded-lg bg-muted border border-border">
+            <Package size={20} className="text-foreground" />
           </div>
         </div>
       </div>
 
-      {/* Visual Distribution Bars */}
-      <div className="card p-6 shadow-card space-y-5">
+      <div className="card p-6 shadow-card space-y-5 border border-border">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-semibold text-foreground">
             Category Valuation Share (Live Distribution)
@@ -184,9 +181,9 @@ export default function CategoryAnalyticsPage() {
                   <span className="text-xs text-muted-foreground ml-2">({cat.valueShare}%)</span>
                 </div>
               </div>
-              <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden">
+              <div className="w-full h-2.5 bg-muted border border-border rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transition-all duration-500"
+                  className="h-full bg-foreground rounded-full transition-all duration-500"
                   style={{ width: `${Math.max(4, cat.valueShare)}%` }}
                 />
               </div>
@@ -195,15 +192,14 @@ export default function CategoryAnalyticsPage() {
         </div>
       </div>
 
-      {/* Detailed Category Breakdown Table */}
-      <div className="card p-0 overflow-hidden shadow-card">
-        <div className="px-5 py-4 border-b border-border">
+      <div className="card p-0 overflow-hidden shadow-card border border-border">
+        <div className="px-5 py-4 border-b border-border bg-muted">
           <h3 className="text-sm font-semibold text-foreground">Category Breakdown Table</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-muted/50 border-b border-border">
+              <tr className="bg-muted border-b border-border">
                 <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
                   Category
                 </th>
@@ -226,7 +222,7 @@ export default function CategoryAnalyticsPage() {
             </thead>
             <tbody className="divide-y divide-border">
               {analyticsData.list.map((cat) => (
-                <tr key={cat.id} className="hover:bg-muted/30 transition-colors">
+                <tr key={cat.id} className="hover:bg-muted/50 transition-colors">
                   <td className="py-3.5 px-4 font-semibold text-foreground">
                     <span className="mr-2">{cat.icon}</span>
                     {cat.name}
@@ -238,10 +234,10 @@ export default function CategoryAnalyticsPage() {
                   <td className="py-3.5 px-4 text-right text-foreground">
                     ₹{cat.avgUnitValue.toLocaleString('en-IN')}
                   </td>
-                  <td className="py-3.5 px-4 text-right font-bold text-emerald-600">
+                  <td className="py-3.5 px-4 text-right font-bold text-foreground">
                     ₹{Number(cat.totalValue ?? 0).toLocaleString('en-IN')}
                   </td>
-                  <td className="py-3.5 px-4 text-right font-medium text-emerald-600">
+                  <td className="py-3.5 px-4 text-right font-medium text-foreground">
                     <span className="inline-flex items-center gap-1">
                       <TrendingUp size={13} />
                       {cat.growth}

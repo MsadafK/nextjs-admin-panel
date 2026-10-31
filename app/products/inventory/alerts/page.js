@@ -23,7 +23,6 @@ export default function InventoryAlertsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
 
-  // Restock Modal State
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [restockQty, setRestockQty] = useState(50);
   const [submittingModal, setSubmittingModal] = useState(false);
@@ -77,11 +76,10 @@ export default function InventoryAlertsPage() {
 
   return (
     <div className="page-container max-w-7xl mx-auto space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <AlertTriangle className="text-amber-500" />
+            <AlertTriangle className="text-foreground" size={22} />
             Inventory Alerts
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -95,16 +93,15 @@ export default function InventoryAlertsPage() {
       </div>
 
       {error && (
-        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm">
+        <div className="card p-4 border-foreground bg-muted text-foreground text-sm">
           <strong>Database Error:</strong> {error}
         </div>
       )}
 
-      {/* Alert Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="card p-5 shadow-card border-l-4 border-l-destructive flex items-start gap-4">
-          <div className="p-3 bg-destructive/10 rounded-lg">
-            <XCircle size={24} className="text-destructive" />
+        <div className="card p-5 shadow-card border-l-4 border-l-foreground flex items-start gap-4">
+          <div className="p-3 bg-muted border border-border rounded-lg">
+            <XCircle size={24} className="text-foreground" />
           </div>
           <div>
             <h3 className="text-2xl font-bold text-foreground">
@@ -115,9 +112,9 @@ export default function InventoryAlertsPage() {
           </div>
         </div>
 
-        <div className="card p-5 shadow-card border-l-4 border-l-amber-500 flex items-start gap-4">
-          <div className="p-3 bg-amber-500/10 rounded-lg">
-            <AlertTriangle size={24} className="text-amber-600" />
+        <div className="card p-5 shadow-card border-l-4 border-l-muted-foreground flex items-start gap-4">
+          <div className="p-3 bg-muted border border-border rounded-lg">
+            <AlertTriangle size={24} className="text-foreground" />
           </div>
           <div>
             <h3 className="text-2xl font-bold text-foreground">
@@ -129,8 +126,7 @@ export default function InventoryAlertsPage() {
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="card p-4 shadow-card flex flex-col sm:flex-row gap-3">
+      <div className="card p-4 shadow-card border border-border flex flex-col sm:flex-row gap-3">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
@@ -155,20 +151,19 @@ export default function InventoryAlertsPage() {
         </div>
       </div>
 
-      {/* Alert List */}
       <div className="space-y-3">
         {loading ? (
-          <div className="card p-12 text-center text-muted-foreground flex flex-col items-center">
+          <div className="card p-12 text-center text-muted-foreground flex flex-col items-center border border-border">
             <RefreshCw className="animate-spin mb-3" size={24} />
             Checking stock levels...
           </div>
         ) : filteredAlerts.length === 0 ? (
-          <div className="card p-12 text-center flex flex-col items-center">
-            <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4">
-              <Check className="text-emerald-500" size={32} />
+          <div className="card p-12 text-center flex flex-col items-center border border-border">
+            <div className="w-16 h-16 bg-muted border border-border rounded-full flex items-center justify-center mb-4">
+              <Check className="text-foreground" size={28} />
             </div>
             <h3 className="text-lg font-medium text-foreground">All Good!</h3>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-muted-foreground mb-4 text-sm">
               All {products.length} products in your catalog are well-stocked above minimum thresholds.
             </p>
             <button
@@ -184,12 +179,10 @@ export default function InventoryAlertsPage() {
             return (
               <div
                 key={product.id}
-                className={`card p-4 border-l-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                  isOut ? 'border-l-destructive' : 'border-l-amber-500'
-                }`}
+                className="card p-4 border-l-4 border-l-foreground shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-border"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center text-2xl flex-shrink-0">
+                  <div className="w-12 h-12 rounded-lg bg-muted border border-border flex items-center justify-center text-2xl flex-shrink-0">
                     {product.image}
                   </div>
                   <div>
@@ -198,11 +191,7 @@ export default function InventoryAlertsPage() {
                       SKU: {product.sku} • Category: {product.category}
                     </p>
                     <div className="flex items-center gap-2">
-                      <span
-                        className={`text-sm font-bold ${
-                          isOut ? 'text-destructive' : 'text-amber-600'
-                        }`}
-                      >
+                      <span className="text-sm font-bold text-foreground">
                         {product.stock} units left
                       </span>
                       <span className="text-xs text-muted-foreground">
@@ -218,7 +207,7 @@ export default function InventoryAlertsPage() {
                       setSelectedProduct(product);
                       setRestockQty(50);
                     }}
-                    className="btn btn-primary w-full sm:w-auto"
+                    className="btn btn-primary bg-foreground text-background hover:bg-foreground/90 w-full sm:w-auto"
                   >
                     <Package size={14} className="mr-2" /> Quick Restock
                   </button>
@@ -235,16 +224,12 @@ export default function InventoryAlertsPage() {
         )}
       </div>
 
-      {/* Restock Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="card w-full max-w-sm p-6 shadow-modal space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="card w-full max-w-sm p-6 shadow-modal space-y-4 border border-border bg-background">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h2 className="text-lg font-semibold text-foreground">Restock Item</h2>
-              <button
-                onClick={() => setSelectedProduct(null)}
-                className="btn btn-ghost h-8 w-8 p-0"
-              >
+              <button onClick={() => setSelectedProduct(null)} className="btn btn-ghost h-8 w-8 p-0">
                 <X size={16} />
               </button>
             </div>
@@ -258,7 +243,7 @@ export default function InventoryAlertsPage() {
 
             <form onSubmit={handleRestockSubmit} className="space-y-4">
               <div>
-                <label className="label block mb-1.5">Units to Add</label>
+                <label className="label block mb-1.5 text-xs font-semibold uppercase">Units to Add</label>
                 <input
                   type="number"
                   min="1"
@@ -268,13 +253,13 @@ export default function InventoryAlertsPage() {
                   className="input w-full"
                 />
               </div>
-              <div className="p-3 bg-muted rounded-md text-sm">
+              <div className="p-3 bg-muted border border-border rounded-md text-sm">
                 New Total Stock:{' '}
-                <strong className="text-emerald-600">
+                <strong className="text-foreground underline">
                   {Number(selectedProduct.stock ?? 0) + Number(restockQty)}
                 </strong>
               </div>
-              <button type="submit" disabled={submittingModal} className="btn btn-primary w-full">
+              <button type="submit" disabled={submittingModal} className="btn btn-primary bg-foreground text-background hover:bg-foreground/90 w-full">
                 {submittingModal ? 'Restocking...' : 'Confirm Restock'}
               </button>
             </form>

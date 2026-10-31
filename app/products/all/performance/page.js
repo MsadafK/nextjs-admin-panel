@@ -26,7 +26,6 @@ export default function ProductPerformancePage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('score-desc');
 
-  // Enrich products with performance metrics
   const performanceList = useMemo(() => {
     const totalCatalogVal = Math.max(
       1,
@@ -39,7 +38,6 @@ export default function ProductPerformancePage() {
       const valuation = Number((price * stock).toFixed(2));
       const revenueShare = Number(((valuation / totalCatalogVal) * 100).toFixed(1));
 
-      // Calculate dynamic performance score (0 - 100) based on stock health & value share
       const stockHealth = stock === 0 ? 20 : stock <= (p.minStock || 10) ? 55 : 90;
       const score = Math.min(99, Math.round(stockHealth * 0.6 + Math.min(40, revenueShare * 1.5)));
       const conversionRate = Number((3.2 + ((idx * 1.1) % 4.8)).toFixed(1));
@@ -78,7 +76,6 @@ export default function ProductPerformancePage() {
     return ['all', ...Array.from(set)];
   }, [products]);
 
-  // Top Summary KPIs
   const kpis = useMemo(() => {
     const totalVal = performanceList.reduce((sum, p) => sum + p.valuation, 0);
     const avgScore =
@@ -100,28 +97,24 @@ export default function ProductPerformancePage() {
         value: `₹${totalVal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`,
         sub: `${performanceList.length} products analyzed`,
         icon: DollarSign,
-        color: 'text-emerald-500',
       },
       {
         label: 'Avg Efficiency Score',
         value: `${avgScore} / 100`,
         sub: 'Based on stock & value velocity',
         icon: Activity,
-        color: 'text-blue-500',
       },
       {
         label: 'Avg Conversion Rate',
         value: `${avgConv}%`,
         sub: '+1.4% vs last period',
         icon: TrendingUp,
-        color: 'text-purple-500',
       },
       {
         label: 'High Performers',
         value: `${highPerformers} SKUs`,
         sub: 'Score ≥ 80/100',
         icon: Zap,
-        color: 'text-amber-500',
       },
     ];
   }, [performanceList]);
@@ -143,11 +136,10 @@ export default function ProductPerformancePage() {
 
   return (
     <div className="page-container max-w-7xl mx-auto space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Activity className="text-blue-500" size={24} />
+            <Activity size={22} />
             Product Performance Analytics
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -159,7 +151,7 @@ export default function ProductPerformancePage() {
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             <span className="hidden sm:inline ml-2">Sync</span>
           </button>
-          <button onClick={handleExportCSV} className="btn btn-primary">
+          <button onClick={handleExportCSV} className="btn btn-primary bg-foreground text-background hover:bg-foreground/90">
             <Download size={16} className="mr-2" />
             Export CSV
           </button>
@@ -167,17 +159,16 @@ export default function ProductPerformancePage() {
       </div>
 
       {error && (
-        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm">
+        <div className="card p-4 border-foreground bg-muted text-foreground text-sm">
           <strong>Database Error:</strong> {error}
         </div>
       )}
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi, idx) => {
           const Icon = kpi.icon;
           return (
-            <div key={idx} className="card p-5 shadow-card flex items-start justify-between gap-3">
+            <div key={idx} className="card p-5 shadow-card border border-border flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   {kpi.label}
@@ -187,16 +178,15 @@ export default function ProductPerformancePage() {
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">{kpi.sub}</p>
               </div>
-              <div className="p-2.5 rounded-lg bg-muted">
-                <Icon size={20} className={kpi.color} />
+              <div className="p-2.5 rounded-lg bg-muted border border-border">
+                <Icon size={20} className="text-foreground" strokeWidth={1.5} />
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Filters Toolbar */}
-      <div className="card p-4 shadow-card flex flex-col sm:flex-row gap-3">
+      <div className="card p-4 shadow-card border border-border flex flex-col sm:flex-row gap-3">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
@@ -237,8 +227,7 @@ export default function ProductPerformancePage() {
         </div>
       </div>
 
-      {/* Performance Table */}
-      <div className="card p-0 overflow-hidden shadow-card">
+      <div className="card p-0 overflow-hidden shadow-card border border-border">
         {loading ? (
           <div className="p-12 text-center text-muted-foreground flex items-center justify-center gap-2">
             <RefreshCw className="animate-spin" size={18} />
@@ -252,7 +241,7 @@ export default function ProductPerformancePage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-muted/50 border-b border-border">
+                <tr className="bg-muted border-b border-border">
                   <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
                     Product
                   </th>
@@ -278,10 +267,10 @@ export default function ProductPerformancePage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {performanceList.map((product) => (
-                  <tr key={product.id} className="hover:bg-muted/30 transition-colors">
+                  <tr key={product.id} className="hover:bg-muted/50 transition-colors">
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-md bg-muted flex items-center justify-center text-lg">
+                        <div className="w-9 h-9 rounded-md bg-muted border border-border flex items-center justify-center text-lg">
                           {product.image}
                         </div>
                         <div>
@@ -298,9 +287,9 @@ export default function ProductPerformancePage() {
                     </td>
                     <td className="py-3.5 px-4 min-w-[140px]">
                       <div className="flex items-center gap-2">
-                        <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div className="w-20 h-1.5 bg-muted border border-border rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-blue-500 rounded-full"
+                            className="h-full bg-foreground rounded-full"
                             style={{ width: `${Math.min(100, product.revenueShare)}%` }}
                           />
                         </div>
@@ -309,7 +298,7 @@ export default function ProductPerformancePage() {
                         </span>
                       </div>
                     </td>
-                    <td className="py-3.5 px-4 text-right font-medium text-emerald-600">
+                    <td className="py-3.5 px-4 text-right font-medium text-foreground">
                       {product.conversionRate}%
                     </td>
                     <td className="py-3.5 px-4">
@@ -317,15 +306,7 @@ export default function ProductPerformancePage() {
                       <span className="text-xs text-muted-foreground"> / 100</span>
                     </td>
                     <td className="py-3.5 px-4">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                          product.score >= 80
-                            ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
-                            : product.score >= 55
-                            ? 'bg-blue-500/10 text-blue-600 border-blue-500/20'
-                            : 'bg-amber-500/10 text-amber-600 border-amber-500/20'
-                        }`}
-                      >
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border border-border bg-muted text-foreground">
                         {product.score >= 80 ? (
                           <CheckCircle2 size={12} />
                         ) : (

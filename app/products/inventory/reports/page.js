@@ -66,11 +66,10 @@ export default function InventoryReportsPage() {
 
   return (
     <div className="page-container max-w-7xl mx-auto space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <FileText className="text-emerald-500" size={24} />
+            <FileText size={22} />
             Inventory Valuation & Audit Report
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -86,7 +85,7 @@ export default function InventoryReportsPage() {
             <Printer size={16} className="mr-2" />
             Print
           </button>
-          <button onClick={handleExportCSV} className="btn btn-primary">
+          <button onClick={handleExportCSV} className="btn btn-primary bg-foreground text-background hover:bg-foreground/90">
             <Download size={16} className="mr-2" />
             Export Audit CSV
           </button>
@@ -94,19 +93,18 @@ export default function InventoryReportsPage() {
       </div>
 
       {error && (
-        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm">
+        <div className="card p-4 border-foreground bg-muted text-foreground text-sm">
           <strong>Database Error:</strong> {error}
         </div>
       )}
 
-      {/* Executive Valuation Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card p-5 shadow-card">
+        <div className="card p-5 shadow-card border border-border">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-muted-foreground uppercase">
               Total Asset Valuation
             </span>
-            <DollarSign size={18} className="text-emerald-500" />
+            <DollarSign size={18} className="text-foreground" />
           </div>
           <p className="text-2xl font-bold text-foreground">
             {loading
@@ -118,12 +116,12 @@ export default function InventoryReportsPage() {
           </p>
         </div>
 
-        <div className="card p-5 shadow-card">
+        <div className="card p-5 shadow-card border border-border">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-muted-foreground uppercase">
               Total Stock Volume
             </span>
-            <Package size={18} className="text-blue-500" />
+            <Package size={18} className="text-foreground" />
           </div>
           <p className="text-2xl font-bold text-foreground">
             {loading ? '…' : `${auditSummary.totalUnits.toLocaleString('en-IN')} units`}
@@ -133,14 +131,14 @@ export default function InventoryReportsPage() {
           </p>
         </div>
 
-        <div className="card p-5 shadow-card">
+        <div className="card p-5 shadow-card border border-border">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-muted-foreground uppercase">
               Inventory Health Rate
             </span>
-            <CheckCircle2 size={18} className="text-emerald-500" />
+            <CheckCircle2 size={18} className="text-foreground" />
           </div>
-          <p className="text-2xl font-bold text-emerald-600">
+          <p className="text-2xl font-bold text-foreground underline">
             {loading ? '…' : `${auditSummary.healthRate}%`}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -148,12 +146,12 @@ export default function InventoryReportsPage() {
           </p>
         </div>
 
-        <div className="card p-5 shadow-card">
+        <div className="card p-5 shadow-card border border-border">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-muted-foreground uppercase">
               Restock Risk Items
             </span>
-            <AlertTriangle size={18} className="text-amber-500" />
+            <AlertTriangle size={18} className="text-foreground" />
           </div>
           <p className="text-2xl font-bold text-foreground">
             {loading ? '…' : auditSummary.lowStockCount + auditSummary.outOfStockCount}
@@ -164,8 +162,7 @@ export default function InventoryReportsPage() {
         </div>
       </div>
 
-      {/* Category Valuation Summary */}
-      <div className="card p-6 shadow-card space-y-4">
+      <div className="card p-6 shadow-card space-y-4 border border-border">
         <div className="flex items-center gap-2 border-b border-border pb-3">
           <Layers size={18} className="text-muted-foreground" />
           <h2 className="text-base font-semibold text-foreground">
@@ -174,14 +171,14 @@ export default function InventoryReportsPage() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {categoriesWithStats.map((cat) => (
-            <div key={cat.id} className="p-4 rounded-lg bg-muted/50 border border-border">
+            <div key={cat.id} className="p-4 rounded-lg bg-muted border border-border">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold text-foreground flex items-center gap-1.5">
                   <span>{cat.icon}</span> {cat.name}
                 </span>
                 <span className="text-xs text-muted-foreground">{cat.productCount} SKUs</span>
               </div>
-              <p className="text-lg font-bold text-emerald-600">
+              <p className="text-lg font-bold text-foreground">
                 ₹{Number(cat.totalValue ?? 0).toLocaleString('en-IN')}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">{cat.totalStock} total units</p>
@@ -190,16 +187,15 @@ export default function InventoryReportsPage() {
         </div>
       </div>
 
-      {/* Complete SKU Audit Table */}
-      <div className="card p-0 overflow-hidden shadow-card">
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+      <div className="card p-0 overflow-hidden shadow-card border border-border">
+        <div className="px-5 py-4 border-b border-border bg-muted flex items-center justify-between">
           <h3 className="text-sm font-semibold text-foreground">Complete SKU Valuation Ledger</h3>
           <span className="text-xs text-muted-foreground">{products.length} items</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-muted/50 border-b border-border">
+              <tr className="bg-muted border-b border-border">
                 <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
                   SKU
                 </th>
@@ -230,7 +226,7 @@ export default function InventoryReportsPage() {
                 const isLow = !isOut && Number(p.stock ?? 0) <= (p.minStock || 10);
 
                 return (
-                  <tr key={p.id} className="hover:bg-muted/30 transition-colors">
+                  <tr key={p.id} className="hover:bg-muted/50 transition-colors">
                     <td className="py-3.5 px-4 font-mono text-xs text-muted-foreground">{p.sku}</td>
                     <td className="py-3.5 px-4 font-semibold text-foreground">{p.name}</td>
                     <td className="py-3.5 px-4 text-foreground">{p.category}</td>
@@ -245,15 +241,15 @@ export default function InventoryReportsPage() {
                     </td>
                     <td className="py-3.5 px-4">
                       {isOut ? (
-                        <span className="badge bg-destructive/10 text-destructive border-destructive/20 inline-flex items-center gap-1">
+                        <span className="badge bg-background text-foreground border border-foreground inline-flex items-center gap-1 font-mono text-[11px]">
                           <XCircle size={12} /> Depleted
                         </span>
                       ) : isLow ? (
-                        <span className="badge bg-amber-500/10 text-amber-600 border-amber-500/20 inline-flex items-center gap-1">
+                        <span className="badge bg-muted text-foreground border border-border inline-flex items-center gap-1 font-mono text-[11px]">
                           <AlertTriangle size={12} /> Reorder Soon
                         </span>
                       ) : (
-                        <span className="badge bg-emerald-500/10 text-emerald-600 border-emerald-500/20 inline-flex items-center gap-1">
+                        <span className="badge bg-foreground text-background inline-flex items-center gap-1 font-mono text-[11px]">
                           <CheckCircle2 size={12} /> Healthy
                         </span>
                       )}
