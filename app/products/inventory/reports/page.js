@@ -1,321 +1,268 @@
+// app/products/inventory/reports/page.js
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Package, 
-  TrendingDown, 
-  TrendingUp, 
-  AlertTriangle,
-  Download,
-  Calendar,
-  Filter,
-  Search,
+import { useMemo } from 'react';
+import {
   FileText,
-  BarChart3,
-  PieChart,
-  Activity
+  Download,
+  Printer,
+  RefreshCw,
+  DollarSign,
+  Package,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  Layers,
 } from 'lucide-react';
+import { useProducts } from '@/hooks/useProducts';
 
 export default function InventoryReportsPage() {
-  const [selectedPeriod, setSelectedPeriod] = useState('month');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const { products, categoriesWithStats, loading, error, refreshData } = useProducts();
 
-  const reportCards = [
-    {
-      title: 'Stock Turnover Rate',
-      value: '8.5x',
-      change: '+12%',
-      trend: 'up',
-      icon: Activity,
-      color: 'from-blue-500 to-cyan-500'
-    },
-    {
-      title: 'Out of Stock Items',
-      value: '23',
-      change: '-8 items',
-      trend: 'down',
-      icon: AlertTriangle,
-      color: 'from-orange-500 to-red-500'
-    },
-    {
-      title: 'Slow Moving Items',
-      value: '47',
-      change: '+5 items',
-      trend: 'up',
-      icon: TrendingDown,
-      color: 'from-purple-500 to-pink-500'
-    },
-    {
-      title: 'Fast Moving Items',
-      value: '156',
-      change: '+23 items',
-      trend: 'up',
-      icon: TrendingUp,
-      color: 'from-green-500 to-emerald-500'
-    }
-  ];
+  const auditSummary = useMemo(() => {
+    const totalSKUs = products.length;
+    const totalUnits = products.reduce((sum, p) => sum + Number(p.stock ?? 0), 0);
+    const totalValuation = products.reduce(
+      (sum, p) => sum + Number(p.price ?? 0) * Number(p.stock ?? 0),
+      0
+    );
 
-  const inventoryReports = [
-    {
-      id: 1,
-      name: 'Monthly Inventory Valuation',
-      category: 'Valuation',
-      date: '2025-10-01',
-      size: '2.4 MB',
-      items: 1234,
-      status: 'completed'
-    },
-    {
-      id: 2,
-      name: 'Stock Movement Analysis',
-      category: 'Movement',
-      date: '2025-10-15',
-      size: '1.8 MB',
-      items: 856,
-      status: 'completed'
-    },
-    {
-      id: 3,
-      name: 'Dead Stock Report',
-      category: 'Analysis',
-      date: '2025-10-20',
-      size: '956 KB',
-      items: 45,
-      status: 'completed'
-    },
-    {
-      id: 4,
-      name: 'Reorder Point Analysis',
-      category: 'Planning',
-      date: '2025-10-25',
-      size: '1.2 MB',
-      items: 234,
-      status: 'processing'
-    },
-    {
-      id: 5,
-      name: 'ABC Analysis Report',
-      category: 'Analysis',
-      date: '2025-10-28',
-      size: '3.1 MB',
-      items: 1456,
-      status: 'completed'
-    }
-  ];
+    const healthyItems = products.filter((p) => Number(p.stock ?? 0) > (p.minStock || 10));
+    const lowStockItems = products.filter(
+      (p) => Number(p.stock ?? 0) > 0 && Number(p.stock ?? 0) <= (p.minStock || 10)
+    );
+    const outOfStockItems = products.filter((p) => Number(p.stock ?? 0) === 0);
 
-  const categoryBreakdown = [
-    { name: 'Electronics', percentage: 35, value: '$245,000', items: 456 },
-    { name: 'Clothing', percentage: 28, value: '$196,000', items: 892 },
-    { name: 'Home & Garden', percentage: 18, value: '$126,000', items: 234 },
-    { name: 'Sports', percentage: 12, value: '$84,000', items: 178 },
-    { name: 'Others', percentage: 7, value: '$49,000', items: 145 }
-  ];
+    const avgUnitCost = totalUnits > 0 ? Number((totalValuation / totalUnits).toFixed(2)) : 0;
+
+    return {
+      totalSKUs,
+      totalUnits,
+      totalValuation,
+      avgUnitCost,
+      healthyCount: healthyItems.length,
+      lowStockCount: lowStockItems.length,
+      outOfStockCount: outOfStockItems.length,
+      healthRate: totalSKUs > 0 ? Math.round((healthyItems.length / totalSKUs) * 100) : 100,
+    };
+  }, [products]);
+
+  const handleExportCSV = () => {
+    const headers = ['SKU,Product Name,Category,Unit Price,Stock Units,Min Stock,Total Valuation,Audit Status'];
+    const rows = products.map((p) => {
+      const val = (Number(p.price ?? 0) * Number(p.stock ?? 0)).toFixed(2);
+      const status =
+        p.stock === 0 ? 'Out of Stock' : p.stock <= (p.minStock || 10) ? 'Low Stock' : 'Healthy';
+      return `"${p.sku}","${p.name}","${p.category}",${p.price},${p.stock},${p.minStock || 10},${val},"${status}"`;
+    });
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers, ...rows].join('\n');
+    const link = document.createElement('a');
+    link.setAttribute('href', encodeURI(csvContent));
+    link.setAttribute('download', 'inventory_valuation_audit.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-5">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
-        >
-          <div>
-            <h1 className="text-lg sm:text-xl font-semibold tracking-tight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-              Inventory Reports
-            </h1>
-            <p className="text-muted-foreground mt-1">Comprehensive inventory analysis and insights</p>
-          </div>
+    <div className="page-container max-w-7xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
+            <FileText className="text-emerald-500" size={24} />
+            Inventory Valuation & Audit Report
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Complete stock valuation, health breakdown, and SKU audit synced with Supabase
+          </p>
+        </div>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button onClick={refreshData} className="btn btn-outline">
+            <RefreshCw size={16} className={loading ? 'animate-spin mr-2' : 'mr-2'} />
+            Sync
+          </button>
+          <button onClick={() => window.print()} className="btn btn-outline">
+            <Printer size={16} className="mr-2" />
+            Print
+          </button>
+          <button onClick={handleExportCSV} className="btn btn-primary">
+            <Download size={16} className="mr-2" />
+            Export Audit CSV
+          </button>
+        </div>
+      </div>
 
-          <div className="flex gap-3">
-            <button className="px-4 py-2 bg-card rounded-lg border border-border hover:border-border transition-all flex items-center gap-2 text-foreground hover:shadow-card">
-              <Filter size={18} />
-              <span>Filters</span>
-            </button>
-            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-background rounded-lg hover:shadow-card transition-all flex items-center gap-2">
-              <Download size={18} />
-              <span>Export All</span>
-            </button>
-          </div>
-        </motion.div>
+      {error && (
+        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm">
+          <strong>Database Error:</strong> {error}
+        </div>
+      )}
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {reportCards.map((card, index) => (
-            <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-card rounded-xl p-6 shadow-sm hover:shadow-card transition-all border border-border"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-lg bg-gradient-to-br ${card.color}`}>
-                  <card.icon className="text-background" size={24} />
-                </div>
-                <span className={`text-sm font-semibold px-2 py-1 rounded-full ${
-                  card.trend === 'up' 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'bg-red-100 text-red-700'
-                }`}>
-                  {card.change}
-                </span>
-              </div>
-              <h3 className="text-lg font-semibold tracking-tight text-foreground mb-1">{card.value}</h3>
-              <p className="text-muted-foreground text-sm">{card.title}</p>
-            </motion.div>
-          ))}
+      {/* Executive Valuation Summary */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="card p-5 shadow-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium text-muted-foreground uppercase">
+              Total Asset Valuation
+            </span>
+            <DollarSign size={18} className="text-emerald-500" />
+          </div>
+          <p className="text-2xl font-bold text-foreground">
+            {loading
+              ? '…'
+              : `₹${auditSummary.totalValuation.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Avg unit value: ₹{auditSummary.avgUnitCost.toLocaleString('en-IN')}
+          </p>
         </div>
 
-        {/* Period Selector */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-card rounded-xl p-4 shadow-sm border border-border"
-        >
-          <div className="flex items-center gap-2 mb-3">
-            <Calendar size={20} className="text-muted-foreground" />
-            <span className="font-semibold text-foreground">Report Period</span>
+        <div className="card p-5 shadow-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium text-muted-foreground uppercase">
+              Total Stock Volume
+            </span>
+            <Package size={18} className="text-blue-500" />
           </div>
-          <div className="flex gap-2">
-            {['week', 'month', 'quarter', 'year'].map((period) => (
-              <button
-                key={period}
-                onClick={() => setSelectedPeriod(period)}
-                className={`px-4 py-2 rounded-lg font-medium capitalize transition-all ${
-                  selectedPeriod === period
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-background shadow-card'
-                    : 'bg-muted text-muted-foreground hover:bg-muted'
-                }`}
-              >
-                {period}
-              </button>
-            ))}
-          </div>
-        </motion.div>
+          <p className="text-2xl font-bold text-foreground">
+            {loading ? '…' : `${auditSummary.totalUnits.toLocaleString('en-IN')} units`}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Across {auditSummary.totalSKUs} active SKUs
+          </p>
+        </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Reports List */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="lg:col-span-2 bg-card rounded-xl shadow-sm border border-border"
-          >
-            <div className="p-6 border-b border-border">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-semibold text-foreground">Generated Reports</h2>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                  <input
-                    type="text"
-                    placeholder="Search reports..."
-                    className="pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:outline-none focus:ring-1 focus:ring-ring focus:border-transparent"
-                  />
-                </div>
+        <div className="card p-5 shadow-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium text-muted-foreground uppercase">
+              Inventory Health Rate
+            </span>
+            <CheckCircle2 size={18} className="text-emerald-500" />
+          </div>
+          <p className="text-2xl font-bold text-emerald-600">
+            {loading ? '…' : `${auditSummary.healthRate}%`}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {auditSummary.healthyCount} of {auditSummary.totalSKUs} SKUs above min stock
+          </p>
+        </div>
+
+        <div className="card p-5 shadow-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium text-muted-foreground uppercase">
+              Restock Risk Items
+            </span>
+            <AlertTriangle size={18} className="text-amber-500" />
+          </div>
+          <p className="text-2xl font-bold text-foreground">
+            {loading ? '…' : auditSummary.lowStockCount + auditSummary.outOfStockCount}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {auditSummary.lowStockCount} Low • {auditSummary.outOfStockCount} Out of Stock
+          </p>
+        </div>
+      </div>
+
+      {/* Category Valuation Summary */}
+      <div className="card p-6 shadow-card space-y-4">
+        <div className="flex items-center gap-2 border-b border-border pb-3">
+          <Layers size={18} className="text-muted-foreground" />
+          <h2 className="text-base font-semibold text-foreground">
+            Valuation by Category (`public.categories`)
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {categoriesWithStats.map((cat) => (
+            <div key={cat.id} className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-semibold text-foreground flex items-center gap-1.5">
+                  <span>{cat.icon}</span> {cat.name}
+                </span>
+                <span className="text-xs text-muted-foreground">{cat.productCount} SKUs</span>
               </div>
+              <p className="text-lg font-bold text-emerald-600">
+                ₹{Number(cat.totalValue ?? 0).toLocaleString('en-IN')}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">{cat.totalStock} total units</p>
             </div>
+          ))}
+        </div>
+      </div>
 
-            <div className="divide-y divide-border">
-              {inventoryReports.map((report, index) => (
-                <motion.div
-                  key={report.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 + index * 0.05 }}
-                  className="p-6 hover:bg-muted transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex gap-4 flex-1">
-                      <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg">
-                        <FileText className="text-blue-600" size={24} />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground mb-1">{report.name}</h3>
-                        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Package size={14} />
-                            {report.items} items
-                          </span>
-                          <span>•</span>
-                          <span>{report.date}</span>
-                          <span>•</span>
-                          <span>{report.size}</span>
-                        </div>
-                        <div className="mt-2">
-                          <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                            {report.category}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {report.status === 'completed' ? (
-                        <button className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-blue-600">
-                          <Download size={20} />
-                        </button>
+      {/* Complete SKU Audit Table */}
+      <div className="card p-0 overflow-hidden shadow-card">
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-foreground">Complete SKU Valuation Ledger</h3>
+          <span className="text-xs text-muted-foreground">{products.length} items</span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-muted/50 border-b border-border">
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
+                  SKU
+                </th>
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
+                  Product Name
+                </th>
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
+                  Category
+                </th>
+                <th className="text-right py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
+                  Unit Price
+                </th>
+                <th className="text-right py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
+                  On-Hand Stock
+                </th>
+                <th className="text-right py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
+                  Total Asset Value
+                </th>
+                <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
+                  Audit Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {products.map((p) => {
+                const val = Number(p.price ?? 0) * Number(p.stock ?? 0);
+                const isOut = Number(p.stock ?? 0) === 0;
+                const isLow = !isOut && Number(p.stock ?? 0) <= (p.minStock || 10);
+
+                return (
+                  <tr key={p.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="py-3.5 px-4 font-mono text-xs text-muted-foreground">{p.sku}</td>
+                    <td className="py-3.5 px-4 font-semibold text-foreground">{p.name}</td>
+                    <td className="py-3.5 px-4 text-foreground">{p.category}</td>
+                    <td className="py-3.5 px-4 text-right text-foreground">
+                      ₹{Number(p.price).toLocaleString('en-IN')}
+                    </td>
+                    <td className="py-3.5 px-4 text-right font-medium text-foreground">
+                      {p.stock} units
+                    </td>
+                    <td className="py-3.5 px-4 text-right font-bold text-foreground">
+                      ₹{val.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      {isOut ? (
+                        <span className="badge bg-destructive/10 text-destructive border-destructive/20 inline-flex items-center gap-1">
+                          <XCircle size={12} /> Depleted
+                        </span>
+                      ) : isLow ? (
+                        <span className="badge bg-amber-500/10 text-amber-600 border-amber-500/20 inline-flex items-center gap-1">
+                          <AlertTriangle size={12} /> Reorder Soon
+                        </span>
                       ) : (
-                        <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
-                          Processing
+                        <span className="badge bg-emerald-500/10 text-emerald-600 border-emerald-500/20 inline-flex items-center gap-1">
+                          <CheckCircle2 size={12} /> Healthy
                         </span>
                       )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Category Breakdown */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="space-y-6"
-          >
-            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <div className="flex items-center gap-2 mb-6">
-                <PieChart size={20} className="text-muted-foreground" />
-                <h2 className="text-base font-semibold text-foreground">Category Breakdown</h2>
-              </div>
-              
-              <div className="space-y-4">
-                {categoryBreakdown.map((category, index) => (
-                  <div key={category.name} className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="font-medium text-foreground">{category.name}</span>
-                      <span className="text-muted-foreground">{category.percentage}%</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${category.percentage}%` }}
-                        transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-                        className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
-                      />
-                    </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{category.items} items</span>
-                      <span className="font-semibold text-foreground">{category.value}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl p-6 text-background shadow-card">
-              <BarChart3 size={32} className="mb-4 opacity-80" />
-              <h3 className="text-base font-semibold mb-2">Generate Custom Report</h3>
-              <p className="text-background/70 text-sm mb-4">
-                Create detailed reports based on your specific requirements
-              </p>
-              <button className="w-full px-4 py-3 bg-card text-blue-600 rounded-lg font-semibold hover:shadow-card transition-all">
-                Start Building
-              </button>
-            </div>
-          </motion.div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
