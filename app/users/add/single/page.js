@@ -1,623 +1,280 @@
+// app/users/add/single/page.js
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  User, Mail, Phone, MapPin, Briefcase, Calendar, Upload,
-  X, Check, AlertCircle, Eye, EyeOff, Shield, Building, Globe, Lock, ArrowLeft
+  UserPlus,
+  User,
+  Mail,
+  Phone,
+  Briefcase,
+  Shield,
+  Lock,
+  Check,
+  ArrowLeft,
+  AlertCircle,
 } from 'lucide-react';
-import NextImage from 'next/image';
 import { userService } from '@/services/userService';
 
-/* ── Helper Components (Moved outside to prevent input focus loss on typing) ── */
-
-const FormSection = ({ title, icon: Icon, children }) => (
-  <div className="card space-y-6">
-    <div className="flex items-center space-x-3">
-      <div className="p-2 bg-muted rounded-lg">
-        <Icon size={20} className="text-foreground" />
-      </div>
-      <h3 className="text-lg font-semibold tracking-tight text-foreground">{title}</h3>
-    </div>
-    <div className="space-y-4">{children}</div>
-  </div>
-);
-
-const InputField = ({
-  label,
-  name,
-  type = 'text',
-  placeholder,
-  icon: Icon,
-  required = false,
-  error,
-  value,
-  onChange,
-  ...props
-}) => (
-  <div className="space-y-1.5">
-    <label className="label block">
-      {label} {required && <span className="text-destructive">*</span>}
-    </label>
-    <div className="relative">
-      {Icon && (
-        <div className="absolute left-3 top-1/2 -translate-y-1/2">
-          <Icon size={16} className="text-muted-foreground" />
-        </div>
-      )}
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`input ${Icon ? 'pl-9' : ''} ${
-          error ? 'border-destructive focus:border-destructive ring-destructive/20' : ''
-        }`}
-        {...props}
-      />
-    </div>
-    {error && (
-      <div className="flex items-center space-x-1 text-destructive text-xs mt-1">
-        <AlertCircle size={12} />
-        <span>{error}</span>
-      </div>
-    )}
-  </div>
-);
-
-const SelectField = ({ label, name, options, required = false, error, value, onChange }) => (
-  <div className="space-y-1.5">
-    <label className="label block">
-      {label} {required && <span className="text-destructive">*</span>}
-    </label>
-    <select
-      name={name}
-      value={value}
-      onChange={onChange}
-      className={`input w-full ${
-        error ? 'border-destructive focus:border-destructive ring-destructive/20' : ''
-      }`}
-    >
-      <option value="">Select {label}</option>
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
-    {error && (
-      <div className="flex items-center space-x-1 text-destructive text-xs mt-1">
-        <AlertCircle size={12} />
-        <span>{error}</span>
-      </div>
-    )}
-  </div>
-);
-
-const PasswordField = ({
-  label,
-  name,
-  placeholder,
-  showPassword,
-  onToggle,
-  required = false,
-  error,
-  value,
-  onChange,
-}) => (
-  <div className="space-y-1.5">
-    <label className="label block">
-      {label} {required && <span className="text-destructive">*</span>}
-    </label>
-    <div className="relative">
-      <div className="absolute left-3 top-1/2 -translate-y-1/2">
-        <Lock size={16} className="text-muted-foreground" />
-      </div>
-      <input
-        type={showPassword ? 'text' : 'password'}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`input pl-9 pr-10 ${
-          error ? 'border-destructive focus:border-destructive ring-destructive/20' : ''
-        }`}
-      />
-      <button
-        type="button"
-        onClick={onToggle}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-      >
-        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-      </button>
-    </div>
-    {error && (
-      <div className="flex items-center space-x-1 text-destructive text-xs mt-1">
-        <AlertCircle size={12} />
-        <span>{error}</span>
-      </div>
-    )}
-  </div>
-);
-
-const INITIAL_FORM = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  dateOfBirth: '',
-  gender: '',
-  address: '',
-  city: '',
-  country: '',
-  zipCode: '',
-  department: '',
-  position: '',
-  employeeId: '',
-  joiningDate: '',
-  role: 'user',
-  password: '',
-  confirmPassword: '',
-  profileImage: null,
-};
-
-export default function AddSingleUser() {
+export default function AddSingleUserPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState(INITIAL_FORM);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [errors, setErrors] = useState({});
-  const [serverError, setServerError] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors((prev) => ({ ...prev, profileImage: 'Image size should be less than 5MB' }));
-        return;
-      }
-      setFormData((prev) => ({ ...prev, profileImage: file }));
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-      setErrors((prev) => ({ ...prev, profileImage: '' }));
-    }
-  };
-
-  const removeImage = () => {
-    setFormData((prev) => ({ ...prev, profileImage: null }));
-    setImagePreview(null);
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone is required';
-    } else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) {
-      newErrors.phone = 'Phone number is invalid';
-    }
-    if (!formData.department) newErrors.department = 'Department is required';
-    if (!formData.position.trim()) newErrors.position = 'Position is required';
-    if (!formData.role) newErrors.role = 'Role is required';
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    }
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    department: 'Engineering',
+    position: '',
+    employeeId: '',
+    role: 'user',
+    status: 'active',
+    password: '',
+    confirmPassword: '',
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setServerError(null);
-    if (!validateForm()) return;
+    setError(null);
+    setSuccess(false);
+
+    if (formData.password && formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
 
     try {
-      setIsSubmitting(true);
-
-      const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`;
-      const deptLabel =
-        formData.department.charAt(0).toUpperCase() + formData.department.slice(1);
-
-      // Build rich bio metadata from extra fields
-      const bioParts = [
-        formData.position ? `Position: ${formData.position}` : null,
-        formData.employeeId ? `Emp ID: ${formData.employeeId}` : null,
-        formData.city || formData.country
-          ? `Location: ${[formData.city, formData.country].filter(Boolean).join(', ')}`
-          : null,
-      ].filter(Boolean);
-
+      setSubmitting(true);
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
       await userService.createUser({
-        name: fullName,
+        name: fullName || formData.email.split('@')[0],
         email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        department: deptLabel,
+        phone: formData.phone,
+        department: formData.department,
         role: formData.role,
-        status: 'Active',
-        bio: bioParts.join(' | '),
+        status: formData.status,
       });
 
-      setSubmitSuccess(true);
-      setFormData(INITIAL_FORM);
-      setImagePreview(null);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setSuccess(true);
+      setTimeout(() => router.push('/users/all/list'), 900);
     } catch (err) {
-      console.error('Error creating user:', err);
-      setServerError(err.message || 'Failed to save user in Supabase');
+      setError(err.message || 'Failed to create user in Supabase');
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="page-container max-w-5xl mx-auto">
-      {/* Header */}
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div className="page-container max-w-4xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground mb-1">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
+            <UserPlus size={22} className="text-foreground" />
             Add New User
           </h1>
           <p className="text-sm text-muted-foreground">
-            Create a new user account directly in Supabase (`public.users`)
+            Create a new user record directly in Supabase (`public.users`)
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => router.push('/users/all/list')}
-          className="btn btn-outline self-start sm:self-auto"
-        >
+        <button onClick={() => router.push('/users/all/list')} className="btn btn-outline">
           <ArrowLeft size={15} className="mr-2" />
           Back to User List
         </button>
       </div>
 
-      {/* Database Error Banner */}
-      {serverError && (
-        <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-center justify-between text-destructive text-sm">
-          <div className="flex items-center gap-2">
-            <AlertCircle size={16} />
-            <span><strong>Database Error:</strong> {serverError}</span>
-          </div>
-          <button onClick={() => setServerError(null)} className="text-xs underline">
-            Dismiss
-          </button>
+      {error && (
+        <div className="card p-4 border border-foreground bg-muted text-foreground text-sm flex items-center gap-2">
+          <AlertCircle size={16} />
+          <span>{error}</span>
         </div>
       )}
 
-      {/* Success Message */}
-      {submitSuccess && (
-        <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-emerald-500 rounded-full">
-              <Check size={16} className="text-white" />
-            </div>
-            <div>
-              <h4 className="font-semibold text-emerald-700 dark:text-emerald-400">Success!</h4>
-              <p className="text-sm text-emerald-600 dark:text-emerald-500">
-                User has been saved to Supabase PostgreSQL successfully.
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => router.push('/users/all/list')}
-            className="btn btn-primary h-8 text-xs self-start sm:self-auto"
-          >
-            View in User List →
-          </button>
+      {success && (
+        <div className="card p-4 border border-foreground bg-foreground text-background text-sm flex items-center gap-2">
+          <Check size={16} />
+          <span>User created in Supabase! Redirecting to User List...</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Profile Image Upload */}
-        <FormSection title="Profile Picture" icon={User}>
-          <div className="flex items-start space-x-6">
-            <div className="flex-shrink-0">
-              {imagePreview ? (
-                <div className="relative">
-                  <NextImage
-                    src={imagePreview}
-                    alt="Profile preview"
-                    width={128}
-                    height={128}
-                    unoptimized
-                    className="w-32 h-32 rounded-full object-cover border-4 border-background shadow-sm"
-                  />
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="absolute -top-2 -right-2 p-1.5 bg-destructive text-destructive-foreground rounded-full hover:opacity-90 transition-opacity shadow-md"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ) : (
-                <div className="w-32 h-32 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-border">
-                  <User size={40} className="text-muted-foreground" />
-                </div>
-              )}
-            </div>
-            <div className="flex-1">
-              <label className="label block mb-2">Upload Profile Picture</label>
+        {/* Personal Info */}
+        <div className="card p-6 shadow-card border border-border space-y-4">
+          <div className="flex items-center gap-2 border-b border-border pb-3">
+            <User size={18} className="text-foreground" />
+            <h2 className="text-base font-semibold text-foreground">Personal Information</h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label block mb-1.5">First Name *</label>
               <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-                id="profile-upload"
+                type="text"
+                required
+                value={formData.firstName}
+                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                placeholder="Mohd"
+                className="input w-full"
               />
-              <label htmlFor="profile-upload" className="btn btn-outline cursor-pointer w-fit">
-                <Upload size={16} className="mr-2" /> Choose Image
-              </label>
-              <p className="mt-2 text-xs text-muted-foreground">
-                Recommended: Square image, at least 400x400px. Max size: 5MB
-              </p>
-              {errors.profileImage && (
-                <div className="flex items-center space-x-1 text-destructive text-xs mt-2">
-                  <AlertCircle size={12} />
-                  <span>{errors.profileImage}</span>
-                </div>
-              )}
+            </div>
+            <div>
+              <label className="label block mb-1.5">Last Name *</label>
+              <input
+                type="text"
+                required
+                value={formData.lastName}
+                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                placeholder="Sadaf"
+                className="input w-full"
+              />
+            </div>
+            <div>
+              <label className="label block mb-1.5">Email Address *</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="user@example.com"
+                  className="input pl-9 w-full"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="label block mb-1.5">Phone Number</label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="+91 98765 43210"
+                  className="input pl-9 w-full"
+                />
+              </div>
             </div>
           </div>
-        </FormSection>
+        </div>
 
-        {/* Personal Information */}
-        <FormSection title="Personal Information" icon={User}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField
-              label="First Name"
-              name="firstName"
-              placeholder="Enter first name"
-              icon={User}
-              required
-              value={formData.firstName}
-              onChange={handleInputChange}
-              error={errors.firstName}
-            />
-            <InputField
-              label="Last Name"
-              name="lastName"
-              placeholder="Enter last name"
-              icon={User}
-              required
-              value={formData.lastName}
-              onChange={handleInputChange}
-              error={errors.lastName}
-            />
-            <InputField
-              label="Email Address"
-              name="email"
-              type="email"
-              placeholder="example@company.com"
-              icon={Mail}
-              required
-              value={formData.email}
-              onChange={handleInputChange}
-              error={errors.email}
-            />
-            <InputField
-              label="Phone Number"
-              name="phone"
-              type="tel"
-              placeholder="+91 98765 43210"
-              icon={Phone}
-              required
-              value={formData.phone}
-              onChange={handleInputChange}
-              error={errors.phone}
-            />
-            <InputField
-              label="Date of Birth"
-              name="dateOfBirth"
-              type="date"
-              icon={Calendar}
-              value={formData.dateOfBirth}
-              onChange={handleInputChange}
-            />
-            <SelectField
-              label="Gender"
-              name="gender"
-              value={formData.gender}
-              onChange={handleInputChange}
-              options={[
-                { value: 'male', label: 'Male' },
-                { value: 'female', label: 'Female' },
-                { value: 'other', label: 'Other' },
-                { value: 'prefer_not_to_say', label: 'Prefer not to say' },
-              ]}
-            />
+        {/* Professional Info */}
+        <div className="card p-6 shadow-card border border-border space-y-4">
+          <div className="flex items-center gap-2 border-b border-border pb-3">
+            <Briefcase size={18} className="text-foreground" />
+            <h2 className="text-base font-semibold text-foreground">Professional Information</h2>
           </div>
-        </FormSection>
 
-        {/* Address Information */}
-        <FormSection title="Address Information" icon={MapPin}>
-          <div className="grid grid-cols-1 gap-4">
-            <InputField
-              label="Street Address"
-              name="address"
-              placeholder="123 Main Street"
-              icon={MapPin}
-              value={formData.address}
-              onChange={handleInputChange}
-            />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <InputField
-                label="City"
-                name="city"
-                placeholder="Lucknow"
-                icon={Building}
-                value={formData.city}
-                onChange={handleInputChange}
-              />
-              <InputField
-                label="Country"
-                name="country"
-                placeholder="India"
-                icon={Globe}
-                value={formData.country}
-                onChange={handleInputChange}
-              />
-              <InputField
-                label="Zip Code"
-                name="zipCode"
-                placeholder="226001"
-                value={formData.zipCode}
-                onChange={handleInputChange}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label block mb-1.5">Department *</label>
+              <select
+                value={formData.department}
+                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                className="input w-full"
+              >
+                <option value="Engineering">Engineering</option>
+                <option value="Management">Management</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Support">Support</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+            <div>
+              <label className="label block mb-1.5">Position</label>
+              <input
+                type="text"
+                value={formData.position}
+                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                placeholder="Frontend Engineer"
+                className="input w-full"
               />
             </div>
           </div>
-        </FormSection>
-
-        {/* Professional Information */}
-        <FormSection title="Professional Information" icon={Briefcase}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SelectField
-              label="Department"
-              name="department"
-              required
-              value={formData.department}
-              onChange={handleInputChange}
-              error={errors.department}
-              options={[
-                { value: 'engineering', label: 'Engineering' },
-                { value: 'marketing', label: 'Marketing' },
-                { value: 'sales', label: 'Sales' },
-                { value: 'support', label: 'Support' },
-                { value: 'management', label: 'Management' },
-                { value: 'hr', label: 'Human Resources' },
-                { value: 'finance', label: 'Finance' },
-                { value: 'operations', label: 'Operations' },
-              ]}
-            />
-            <InputField
-              label="Position"
-              name="position"
-              placeholder="Software Engineer"
-              icon={Briefcase}
-              required
-              value={formData.position}
-              onChange={handleInputChange}
-              error={errors.position}
-            />
-            <InputField
-              label="Employee ID"
-              name="employeeId"
-              placeholder="EMP-001"
-              icon={User}
-              value={formData.employeeId}
-              onChange={handleInputChange}
-            />
-            <InputField
-              label="Joining Date"
-              name="joiningDate"
-              type="date"
-              icon={Calendar}
-              value={formData.joiningDate}
-              onChange={handleInputChange}
-            />
-          </div>
-        </FormSection>
+        </div>
 
         {/* Account Settings */}
-        <FormSection title="Account Settings" icon={Shield}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SelectField
-              label="User Role"
-              name="role"
-              required
-              value={formData.role}
-              onChange={handleInputChange}
-              error={errors.role}
-              options={[
-                { value: 'user', label: 'User' },
-                { value: 'admin', label: 'Admin' },
-                { value: 'manager', label: 'Manager' },
-              ]}
-            />
-            <div></div>
-            <PasswordField
-              label="Password"
-              name="password"
-              placeholder="Enter password"
-              showPassword={showPassword}
-              onToggle={() => setShowPassword(!showPassword)}
-              required
-              value={formData.password}
-              onChange={handleInputChange}
-              error={errors.password}
-            />
-            <PasswordField
-              label="Confirm Password"
-              name="confirmPassword"
-              placeholder="Re-enter password"
-              showPassword={showConfirmPassword}
-              onToggle={() => setShowConfirmPassword(!showConfirmPassword)}
-              required
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              error={errors.confirmPassword}
-            />
+        <div className="card p-6 shadow-card border border-border space-y-4">
+          <div className="flex items-center gap-2 border-b border-border pb-3">
+            <Shield size={18} className="text-foreground" />
+            <h2 className="text-base font-semibold text-foreground">Account Settings</h2>
           </div>
-          <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 mt-4">
-            <p className="text-sm text-blue-700 dark:text-blue-400">
-              <strong>Password Requirements:</strong> Minimum 8 characters
-            </p>
-          </div>
-        </FormSection>
 
-        {/* Form Actions */}
-        <div className="flex items-center justify-end space-x-4 pt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label block mb-1.5">User Role *</label>
+              <select
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                className="input w-full"
+              >
+                <option value="user">User</option>
+                <option value="manager">Manager</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div>
+              <label className="label block mb-1.5">Account Status</label>
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="input w-full"
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            <div>
+              <label className="label block mb-1.5">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder="Enter password"
+                  className="input pl-9 w-full"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="label block mb-1.5">Confirm Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  placeholder="Re-enter password"
+                  className="input pl-9 w-full"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded-lg bg-muted border border-border text-xs text-foreground">
+            <strong>Password Requirements:</strong> Minimum 8 characters recommended for administrative accounts.
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-3">
           <button
             type="button"
             onClick={() => router.push('/users/all/list')}
-            className="btn btn-outline px-6"
+            className="btn btn-outline"
           >
             Cancel
           </button>
           <button
             type="submit"
-            disabled={isSubmitting}
-            className="btn btn-primary px-6 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={submitting}
+            className="btn btn-primary bg-foreground text-background hover:bg-foreground/90"
           >
-            {isSubmitting ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                Creating...
-              </>
-            ) : (
-              <>
-                <Check size={16} className="mr-2" />
-                Create User
-              </>
-            )}
+            <Check size={16} className="mr-2" />
+            {submitting ? 'Creating User...' : 'Create User'}
           </button>
         </div>
       </form>
