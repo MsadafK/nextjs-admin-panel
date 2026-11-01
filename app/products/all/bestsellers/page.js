@@ -4,16 +4,13 @@
 import { useState, useMemo } from 'react';
 import {
   Trophy,
-  TrendingUp,
   DollarSign,
-  Package,
   Star,
   Search,
   Filter,
   Download,
   RefreshCw,
   ArrowUpRight,
-  Award,
   ShoppingCart,
 } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
@@ -23,12 +20,10 @@ export default function BestsellersPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [rankMetric, setRankMetric] = useState('revenue'); // 'revenue' | 'units' | 'price'
+  const [rankMetric, setRankMetric] = useState('revenue');
 
-  // Build ranked bestseller list from live Supabase products
   const rankedProducts = useMemo(() => {
     const enriched = products.map((p, idx) => {
-      // Use sold count if > 0, else active stock units for live portfolio ranking
       const unitsMoved = Number(p.sold > 0 ? p.sold : p.stock ?? 0);
       const revenue = Number((Number(p.price ?? 0) * unitsMoved).toFixed(2));
       const conversion = (4.2 + ((idx * 1.3) % 4.5)).toFixed(1);
@@ -65,7 +60,6 @@ export default function BestsellersPage() {
     return ['all', ...Array.from(set)];
   }, [products]);
 
-  // Top KPI Stats
   const stats = useMemo(() => {
     const totalRevenue = rankedProducts.reduce((sum, p) => sum + p.revenue, 0);
     const totalUnits = rankedProducts.reduce((sum, p) => sum + p.unitsMoved, 0);
@@ -77,28 +71,24 @@ export default function BestsellersPage() {
         value: topItem ? topItem.name : 'N/A',
         sub: topItem ? `₹${topItem.revenue.toLocaleString('en-IN')} value` : 'No data',
         icon: Trophy,
-        color: 'text-amber-500',
       },
       {
         label: 'Total Catalog Value / Revenue',
         value: `₹${totalRevenue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`,
         sub: `Across ${rankedProducts.length} ranked products`,
         icon: DollarSign,
-        color: 'text-emerald-500',
       },
       {
         label: 'Total Units Tracked',
         value: totalUnits.toLocaleString('en-IN'),
         sub: 'Active inventory & sales volume',
         icon: ShoppingCart,
-        color: 'text-blue-500',
       },
       {
         label: 'Avg Product Rating',
         value: '4.6 / 5.0',
         sub: 'Verified catalog score',
         icon: Star,
-        color: 'text-purple-500',
       },
     ];
   }, [rankedProducts]);
@@ -122,11 +112,10 @@ export default function BestsellersPage() {
 
   return (
     <div className="page-container max-w-7xl mx-auto space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Trophy className="text-amber-500" size={24} />
+            <Trophy className="text-foreground" size={22} />
             Bestselling Products
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -138,7 +127,10 @@ export default function BestsellersPage() {
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             <span className="hidden sm:inline ml-2">Sync</span>
           </button>
-          <button onClick={handleExportCSV} className="btn btn-primary">
+          <button
+            onClick={handleExportCSV}
+            className="btn btn-primary bg-foreground text-background hover:bg-foreground/90"
+          >
             <Download size={16} className="mr-2" />
             Export CSV
           </button>
@@ -146,17 +138,19 @@ export default function BestsellersPage() {
       </div>
 
       {error && (
-        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm">
+        <div className="card p-4 border-foreground bg-muted text-foreground text-sm">
           <strong>Database Error:</strong> {error}
         </div>
       )}
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, idx) => {
           const Icon = stat.icon;
           return (
-            <div key={idx} className="card p-5 shadow-card flex items-start justify-between gap-3">
+            <div
+              key={idx}
+              className="card p-5 shadow-card border border-border flex items-start justify-between gap-3"
+            >
               <div className="min-w-0">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   {stat.label}
@@ -166,36 +160,35 @@ export default function BestsellersPage() {
                 </p>
                 <p className="text-xs text-muted-foreground mt-1 truncate">{stat.sub}</p>
               </div>
-              <div className="p-2.5 rounded-lg bg-muted flex-shrink-0">
-                <Icon size={20} className={stat.color} />
+              <div className="p-2.5 rounded-lg bg-muted border border-border flex-shrink-0">
+                <Icon size={20} className="text-foreground" strokeWidth={1.5} />
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Top 3 Podium Cards */}
       {!loading && rankedProducts.length >= 3 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {rankedProducts.slice(0, 3).map((item, index) => {
-            const medals = ['🥇 #1 Top Performer', '🥈 #2 Runner Up', '🥉 #3 Top Seller'];
+            const labels = ['#1 Top Performer', '#2 Runner Up', '#3 Top Seller'];
             return (
               <div
                 key={item.id}
-                className="card p-5 shadow-card border-t-4 border-t-amber-500 flex flex-col justify-between space-y-4"
+                className="card p-5 shadow-card border border-border border-t-4 border-t-foreground flex flex-col justify-between space-y-4"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">
-                    {medals[index]}
+                  <span className="px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-foreground text-background">
+                    {labels[index]}
                   </span>
-                  <span className="text-xs font-semibold text-emerald-600 flex items-center gap-0.5">
+                  <span className="text-xs font-semibold text-foreground flex items-center gap-0.5">
                     <ArrowUpRight size={14} />
                     {item.growth}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center text-2xl flex-shrink-0">
+                  <div className="w-12 h-12 rounded-lg bg-muted border border-border flex items-center justify-center text-2xl flex-shrink-0">
                     {item.image}
                   </div>
                   <div className="min-w-0">
@@ -224,8 +217,7 @@ export default function BestsellersPage() {
         </div>
       )}
 
-      {/* Filters Toolbar */}
-      <div className="card p-4 shadow-card flex flex-col sm:flex-row gap-3">
+      <div className="card p-4 shadow-card border border-border flex flex-col sm:flex-row gap-3">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
@@ -265,8 +257,7 @@ export default function BestsellersPage() {
         </div>
       </div>
 
-      {/* Rankings Table */}
-      <div className="card p-0 overflow-hidden shadow-card">
+      <div className="card p-0 overflow-hidden shadow-card border border-border">
         {loading ? (
           <div className="p-12 text-center text-muted-foreground flex items-center justify-center gap-2">
             <RefreshCw className="animate-spin" size={18} />
@@ -280,7 +271,7 @@ export default function BestsellersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-muted/50 border-b border-border">
+                <tr className="bg-muted border-b border-border">
                   <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
                     Rank
                   </th>
@@ -308,17 +299,13 @@ export default function BestsellersPage() {
                 {rankedProducts.map((product, index) => {
                   const sharePct = Math.min(100, Math.round((product.revenue / maxRevenue) * 100));
                   return (
-                    <tr key={product.id} className="hover:bg-muted/30 transition-colors">
+                    <tr key={product.id} className="hover:bg-muted/50 transition-colors">
                       <td className="py-3.5 px-4 font-bold text-foreground">
                         <span
-                          className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs ${
-                            index === 0
-                              ? 'bg-amber-500 text-white'
-                              : index === 1
-                              ? 'bg-zinc-400 text-white'
-                              : index === 2
-                              ? 'bg-amber-700 text-white'
-                              : 'bg-muted text-muted-foreground'
+                          className={`inline-flex items-center justify-center w-7 h-7 rounded-md font-mono text-xs border ${
+                            index < 3
+                              ? 'bg-foreground text-background border-foreground'
+                              : 'bg-muted text-foreground border-border'
                           }`}
                         >
                           #{index + 1}
@@ -326,7 +313,7 @@ export default function BestsellersPage() {
                       </td>
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-md bg-muted flex items-center justify-center text-lg">
+                          <div className="w-9 h-9 rounded-md bg-muted border border-border flex items-center justify-center text-lg">
                             {product.image}
                           </div>
                           <div>
@@ -342,14 +329,14 @@ export default function BestsellersPage() {
                       <td className="py-3.5 px-4 text-right font-medium text-foreground">
                         {product.unitsMoved}
                       </td>
-                      <td className="py-3.5 px-4 text-right font-bold text-emerald-600">
+                      <td className="py-3.5 px-4 text-right font-bold text-foreground">
                         ₹{product.revenue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
                       </td>
                       <td className="py-3.5 px-4 min-w-[150px]">
                         <div className="flex items-center gap-2">
-                          <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div className="w-24 h-1.5 bg-muted border border-border rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-emerald-500 rounded-full"
+                              className="h-full bg-foreground rounded-full"
                               style={{ width: `${sharePct}%` }}
                             />
                           </div>

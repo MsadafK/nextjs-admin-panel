@@ -17,7 +17,7 @@ export default function ManageCategoriesPage() {
   } = useProducts();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [modalMode, setModalMode] = useState(null); // 'edit' | 'add' | null
+  const [modalMode, setModalMode] = useState(null);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -72,11 +72,10 @@ export default function ManageCategoriesPage() {
 
   return (
     <div className="page-container max-w-7xl mx-auto space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Tag size={24} className="text-blue-500" />
+            <Tag size={22} className="text-foreground" />
             Manage Categories
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -87,20 +86,22 @@ export default function ManageCategoriesPage() {
           <button onClick={refreshData} className="btn btn-outline" title="Refresh DB">
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
           </button>
-          <button onClick={() => handleOpenModal(null, 'add')} className="btn btn-primary">
+          <button
+            onClick={() => handleOpenModal(null, 'add')}
+            className="btn btn-primary bg-foreground text-background hover:bg-foreground/90"
+          >
             <Plus size={16} className="mr-2" /> Add Category
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm">
+        <div className="card p-4 border-foreground bg-muted text-foreground text-sm">
           <strong>Database Error:</strong> {error}
         </div>
       )}
 
-      {/* Toolbar */}
-      <div className="card p-4 shadow-card">
+      <div className="card p-4 shadow-card border border-border">
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
@@ -113,8 +114,7 @@ export default function ManageCategoriesPage() {
         </div>
       </div>
 
-      {/* Categories Table */}
-      <div className="card p-0 overflow-hidden shadow-card">
+      <div className="card p-0 overflow-hidden shadow-card border border-border">
         {loading ? (
           <div className="flex flex-col items-center justify-center p-12 text-muted-foreground">
             <RefreshCw className="animate-spin mb-2" size={24} />
@@ -128,7 +128,7 @@ export default function ManageCategoriesPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-muted/50 border-b border-border">
+                <tr className="bg-muted border-b border-border">
                   <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
                     Category Name
                   </th>
@@ -151,7 +151,7 @@ export default function ManageCategoriesPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {filteredCategories.map((cat) => (
-                  <tr key={cat.id} className="hover:bg-muted/30 transition-colors">
+                  <tr key={cat.id} className="hover:bg-muted/50 transition-colors">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2.5">
                         <span className="text-lg">{cat.icon}</span>
@@ -165,16 +165,18 @@ export default function ManageCategoriesPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-4 font-medium">{cat.productCount ?? cat.products ?? 0} SKUs</td>
-                    <td className="py-3 px-4">{cat.totalStock ?? 0} units</td>
-                    <td className="py-3 px-4 font-semibold text-emerald-600">
+                    <td className="py-3 px-4 font-medium text-foreground">
+                      {cat.productCount ?? cat.products ?? 0} SKUs
+                    </td>
+                    <td className="py-3 px-4 text-foreground">{cat.totalStock ?? 0} units</td>
+                    <td className="py-3 px-4 font-bold text-foreground">
                       ₹{Number(cat.totalValue ?? cat.revenueValue ?? 0).toLocaleString('en-IN')}
                     </td>
                     <td className="py-3 px-4">
                       <span
-                        className={`inline-flex px-2 py-1 rounded-md text-xs font-medium border ${
+                        className={`inline-flex px-2.5 py-0.5 rounded-md text-xs font-mono font-medium border ${
                           cat.status === 'active'
-                            ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                            ? 'bg-foreground text-background border-foreground'
                             : 'bg-muted text-muted-foreground border-border'
                         }`}
                       >
@@ -185,14 +187,14 @@ export default function ManageCategoriesPage() {
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => handleOpenModal(cat, 'edit')}
-                          className="btn btn-ghost h-8 w-8 p-0"
+                          className="btn btn-ghost h-8 w-8 p-0 text-foreground hover:bg-muted"
                           title="Edit"
                         >
                           <Edit size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(cat.id, cat.name)}
-                          className="btn btn-ghost h-8 w-8 p-0 text-destructive hover:bg-destructive/10"
+                          className="btn btn-ghost h-8 w-8 p-0 text-foreground hover:bg-muted"
                           title="Delete"
                         >
                           <Trash2 size={16} />
@@ -207,10 +209,9 @@ export default function ManageCategoriesPage() {
         )}
       </div>
 
-      {/* Add / Edit Modal */}
       {modalMode && currentCategory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="card w-full max-w-md p-6 shadow-modal space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="card w-full max-w-md p-6 shadow-modal space-y-4 border border-border bg-background">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h2 className="text-lg font-semibold text-foreground">
                 {modalMode === 'add' ? 'Create New Category' : 'Edit Category'}
@@ -222,7 +223,9 @@ export default function ManageCategoriesPage() {
 
             <form onSubmit={handleSaveCategory} className="space-y-4">
               <div>
-                <label className="label block mb-1.5">Category Name *</label>
+                <label className="label block mb-1.5 text-xs font-semibold uppercase">
+                  Category Name *
+                </label>
                 <input
                   type="text"
                   required
@@ -236,7 +239,9 @@ export default function ManageCategoriesPage() {
               </div>
 
               <div>
-                <label className="label block mb-1.5">Description (Optional)</label>
+                <label className="label block mb-1.5 text-xs font-semibold uppercase">
+                  Description (Optional)
+                </label>
                 <textarea
                   rows={2}
                   value={currentCategory.description || ''}
@@ -248,7 +253,7 @@ export default function ManageCategoriesPage() {
               </div>
 
               <div>
-                <label className="label block mb-1.5">Status</label>
+                <label className="label block mb-1.5 text-xs font-semibold uppercase">Status</label>
                 <select
                   value={currentCategory.status}
                   onChange={(e) =>
@@ -269,7 +274,11 @@ export default function ManageCategoriesPage() {
                 >
                   Cancel
                 </button>
-                <button type="submit" disabled={submitting} className="btn btn-primary">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="btn btn-primary bg-foreground text-background hover:bg-foreground/90"
+                >
                   <Check size={15} className="mr-1.5" />
                   {submitting ? 'Saving...' : 'Save Category'}
                 </button>

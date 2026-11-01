@@ -90,11 +90,10 @@ export default function AddCategoryPage() {
 
   return (
     <div className="page-container max-w-6xl mx-auto space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Tag size={22} className="text-blue-500" />
+            <Tag size={22} className="text-foreground" />
             Add New Category
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -111,9 +110,8 @@ export default function AddCategoryPage() {
         </button>
       </div>
 
-      {/* Alerts */}
       {error && (
-        <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm flex items-center gap-2">
+        <div className="card p-4 border-foreground bg-muted text-foreground text-sm flex items-center gap-2">
           <AlertCircle size={16} />
           <span>
             <strong>Error:</strong> {error}
@@ -122,7 +120,7 @@ export default function AddCategoryPage() {
       )}
 
       {success && (
-        <div className="card p-4 border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="card p-4 border-foreground bg-muted text-foreground text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Check size={16} />
             <span>
@@ -132,7 +130,7 @@ export default function AddCategoryPage() {
           <button
             type="button"
             onClick={() => router.push('/products/categories/manage')}
-            className="btn btn-primary h-8 text-xs self-start sm:self-auto"
+            className="btn btn-primary bg-foreground text-background hover:bg-foreground/90 h-8 text-xs self-start sm:self-auto"
           >
             View All Categories →
           </button>
@@ -140,17 +138,18 @@ export default function AddCategoryPage() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Form Column */}
-        <form onSubmit={handleSubmit} className="lg:col-span-2 card p-6 space-y-5 shadow-card">
+        <form
+          onSubmit={handleSubmit}
+          className="lg:col-span-2 card p-6 space-y-5 shadow-card border border-border"
+        >
           <div className="flex items-center gap-2 border-b border-border pb-3">
-            <Layers size={18} className="text-muted-foreground" />
+            <Layers size={18} className="text-foreground" />
             <h2 className="text-base font-semibold text-foreground">Category Details</h2>
           </div>
 
-          {/* Category Name */}
           <div className="space-y-1.5">
             <label className="label block">
-              Category Name <span className="text-destructive">*</span>
+              Category Name <span className="text-foreground">*</span>
             </label>
             <div className="relative">
               <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -165,7 +164,6 @@ export default function AddCategoryPage() {
             </div>
           </div>
 
-          {/* Category Slug */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="label block">URL Slug</label>
@@ -183,7 +181,6 @@ export default function AddCategoryPage() {
             </div>
           </div>
 
-          {/* Description */}
           <div className="space-y-1.5">
             <label className="label block">Description</label>
             <div className="relative">
@@ -198,7 +195,6 @@ export default function AddCategoryPage() {
             </div>
           </div>
 
-          {/* Status */}
           <div className="space-y-1.5">
             <label className="label block">Visibility Status</label>
             <select
@@ -211,7 +207,6 @@ export default function AddCategoryPage() {
             </select>
           </div>
 
-          {/* Submit Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
             <button
               type="button"
@@ -220,26 +215,28 @@ export default function AddCategoryPage() {
             >
               Cancel
             </button>
-            <button type="submit" disabled={submitting} className="btn btn-primary">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="btn btn-primary bg-foreground text-background hover:bg-foreground/90"
+            >
               <Check size={16} className="mr-2" />
               {submitting ? 'Creating in Supabase...' : 'Create Category'}
             </button>
           </div>
         </form>
 
-        {/* Live Preview & Existing Categories Column */}
         <div className="space-y-6">
-          {/* Live Card Preview */}
-          <div className="card p-5 shadow-card space-y-4">
+          <div className="card p-5 shadow-card space-y-4 border border-border">
             <div className="flex items-center gap-2 border-b border-border pb-3">
-              <Eye size={16} className="text-muted-foreground" />
+              <Eye size={16} className="text-foreground" />
               <h3 className="text-sm font-semibold text-foreground">Live Preview</h3>
             </div>
 
-            <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
+            <div className="p-4 rounded-lg bg-muted border border-border space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-card border border-border flex items-center justify-center text-xl">
+                  <div className="w-10 h-10 rounded-lg bg-background border border-border flex items-center justify-center text-xl">
                     {previewIcon}
                   </div>
                   <div>
@@ -252,10 +249,10 @@ export default function AddCategoryPage() {
                   </div>
                 </div>
                 <span
-                  className={`px-2 py-0.5 rounded text-xs font-medium border ${
+                  className={`px-2 py-0.5 rounded text-xs font-mono font-medium border ${
                     formData.status === 'active'
-                      ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
-                      : 'bg-muted text-muted-foreground border-border'
+                      ? 'bg-foreground text-background border-foreground'
+                      : 'bg-background text-muted-foreground border-border'
                   }`}
                 >
                   {formData.status === 'active' ? 'Active' : 'Inactive'}
@@ -268,11 +265,10 @@ export default function AddCategoryPage() {
             </div>
           </div>
 
-          {/* Existing Categories in DB */}
-          <div className="card p-5 shadow-card space-y-3">
+          <div className="card p-5 shadow-card space-y-3 border border-border">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-amber-500" />
+                <Sparkles size={16} className="text-foreground" />
                 <h3 className="text-sm font-semibold text-foreground">
                   Existing Categories ({categoriesWithStats.length})
                 </h3>
@@ -286,7 +282,7 @@ export default function AddCategoryPage() {
                 {categoriesWithStats.map((cat) => (
                   <div
                     key={cat.id}
-                    className="flex items-center justify-between p-2.5 rounded-md bg-muted/40 text-xs"
+                    className="flex items-center justify-between p-2.5 rounded-md bg-muted border border-border text-xs"
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <span>{cat.icon}</span>
