@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { Settings, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Shield } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { menuItems } from './MenuItems';
+import { notificationService } from '@/services/notificationService';
+import { supabase } from '@/lib/supabase';
 
 export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPositionChange, isDarkMode = false }) {
   const router = useRouter();
@@ -19,6 +21,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
   const [userName] = useState('John Doe');
   const [userEmail] = useState('john@nexstore.com');
   const [windowWidth, setWindowWidth] = useState(1024);
+  const [unreadCount, setUnreadCount] = useState(0);
   const { t } = useLanguage() || {};
 
   useEffect(() => {
@@ -34,24 +37,45 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
   };
 
   const ICON_SIZE = 20;
+  const getBadge = (item) => ['messages', 'inbox', 'unread_messages'].includes(item.label) ? unreadCount : item.badge;
 
-  const findPathByHref = (targetHref, items = menuItems, currentPath = []) => {
+  const findPathByHref = useCallback(function findPath(targetHref, items = menuItems, currentPath = []) {
     for (const item of items) {
       const newPath = [...currentPath, item.label];
       if (item.href === targetHref && !item.subItems && !item.childItems) {
         return newPath;
       }
       if (item.subItems) {
-        const subPath = findPathByHref(targetHref, item.subItems, newPath);
+        const subPath = findPath(targetHref, item.subItems, newPath);
         if (subPath) return subPath;
       }
       if (item.childItems) {
-        const childPath = findPathByHref(targetHref, item.childItems, newPath);
+        const childPath = findPath(targetHref, item.childItems, newPath);
         if (childPath) return childPath;
       }
     }
     return null;
-  };
+  }, []);
+
+  const refreshCounts = useCallback(async () => {
+    try { setUnreadCount(await notificationService.getUnreadCount()); }
+    catch (error) { console.error('Could not load unread message count:', error); }
+  }, []);
+
+  useEffect(() => {
+    const handleUpdated = () => { refreshCounts(); };
+    window.addEventListener('notifications:updated', handleUpdated);
+    const channel = supabase.channel('notifications-sync-sidebar')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, handleUpdated)
+      .subscribe();
+    refreshCounts();
+    const timer = setInterval(refreshCounts, 30000);
+    return () => {
+      window.removeEventListener('notifications:updated', handleUpdated);
+      clearInterval(timer);
+      supabase.removeChannel(channel);
+    };
+  }, [refreshCounts]);
 
   const findPathToItem = (targetLabel, items = menuItems, currentPath = []) => {
     for (const item of items) {
@@ -84,7 +108,7 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
       setExpandedMenus(newExpanded);
       localStorage.setItem('sidebarExpandedMenus', JSON.stringify(newExpanded));
     }
-  }, [pathname]);
+  }, [pathname, findPathByHref]);
 
   const isInActivePath = (itemLabel) => activePath.includes(itemLabel);
 
@@ -307,9 +331,9 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
             <span className={`font-medium text-sm capitalize ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`}>
               {translateText(hoveredItem.label)}
             </span>
-            {hoveredItem.badge && (
+            {getBadge(hoveredItem) > 0 && (
               <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
-                {hoveredItem.badge}
+                {getBadge(hoveredItem)}
               </span>
             )}
           </div>
@@ -333,9 +357,9 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                     <span className="flex-1 text-left capitalize">
                       {translateText(subItem.label)}
                     </span>
-                    {subItem.badge && (
+                    {getBadge(subItem) > 0 && (
                       <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
-                        {subItem.badge}
+                        {getBadge(subItem)}
                       </span>
                     )}
                     {subItem.childItems && (
@@ -378,9 +402,9 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                             <span className="text-left capitalize">
                               {translateText(childItem.label)}
                             </span>
-                            {childItem.badge && (
+                            {getBadge(childItem) > 0 && (
                               <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
-                                {childItem.badge}
+                                {getBadge(childItem)}
                               </span>
                             )}
                           </button>
@@ -573,9 +597,9 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                       <div className="flex items-center justify-between w-full h-10">
                         <span className="font-medium capitalize">{translatedLabel}</span>
                         <div className="flex items-center space-x-2">
-                          {item.badge && (
+                          {getBadge(item) > 0 && (
                             <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
-                              {item.badge}
+                              {getBadge(item)}
                             </span>
                           )}
                           {item.subItems && position !== 'bottom' && position !== 'top' && (
@@ -658,9 +682,9 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                                 <div className="flex items-center justify-between w-full">
                                   <span className="capitalize">{subTranslatedLabel}</span>
                                   <div className="flex items-center space-x-2">
-                                    {subItem.badge && (
+                                    {getBadge(subItem) > 0 && (
                                       <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
-                                        {subItem.badge}
+                                        {getBadge(subItem)}
                                       </span>
                                     )}
                                     {subItem.childItems && (
@@ -721,9 +745,9 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
                                             />
                                             <div className="flex items-center justify-between w-full">
                                               <span className="capitalize">{childTranslatedLabel}</span>
-                                              {childItem.badge && (
+                                              {getBadge(childItem) > 0 && (
                                                 <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
-                                                  {childItem.badge}
+                                                  {getBadge(childItem)}
                                                 </span>
                                               )}
                                             </div>

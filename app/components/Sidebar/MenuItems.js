@@ -165,17 +165,15 @@ export const menuItems = [
     icon: Mail, 
     label: 'messages', 
     href: '/messages', 
-    badge: '12',
     subItems: [
       { 
         icon: MessageSquare, 
         label: 'inbox', 
         href: '/messages/inbox', 
-        badge: '8',
         childItems: [
-          { icon: Mail, label: 'unread_messages', href: '/messages/inbox/unread', badge: '5' },
+          { icon: Mail, label: 'unread_messages', href: '/messages/inbox/unread' },
           { icon: Users, label: 'team_messages', href: '/messages/inbox/team' },
-          { icon: Bell, label: 'priority_messages', href: '/messages/inbox/priority', badge: '3' }
+          { icon: Bell, label: 'priority_messages', href: '/messages/inbox/priority' }
         ]
       },
       { 
@@ -197,7 +195,9 @@ export const menuItems = [
           { icon: Calendar, label: 'archived_by_date', href: '/messages/archived/date' },
           { icon: Tags, label: 'archived_by_tags', href: '/messages/archived/tags' }
         ]
-      }
+      },
+      { icon: FileText, label: 'drafts', href: '/messages/drafts' },
+      { icon: Mail, label: 'compose', href: '/messages/compose' }
     ]
   },
   { 

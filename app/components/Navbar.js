@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   Search, Bell, User, LogOut, Menu, Sun, Moon,
   Mail, FileText, CheckSquare, Pin, PinOff, ArrowRight
@@ -10,20 +10,8 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 import { menuItems } from './Sidebar/MenuItems';
 import { useRouter } from 'next/navigation';
 import NextImage from 'next/image';
-
-const INITIAL_NOTIFICATIONS = [
-  { id: 1, title: 'New user registered', time: '2 min ago', unread: true, i18nKey: 'notification_new_user', href: '/users/all/list' },
-  { id: 2, title: 'Server maintenance scheduled', time: '1 hour ago', unread: true, i18nKey: 'notification_maintenance', href: '/analytics/realtime/health' },
-  { id: 3, title: 'Backup completed successfully', time: '3 hours ago', unread: false, i18nKey: 'notification_backup', href: '/security/audit/system' },
-];
-
-const INITIAL_INBOX = [
-  { id: 1, name: 'Michell Flintoff', message: 'You: Yesterday was great…', time: 'just now', unread: true, avatarSeed: 'Michell', dotColor: 'bg-blue-500' },
-  { id: 2, name: 'Bianca Anderson', message: 'Nice looking dress you…', time: '5 mins ago', unread: true, avatarSeed: 'Bianca', dotColor: 'bg-blue-500' },
-  { id: 3, name: 'Andrew Johnson', message: 'Sent a photo', time: '10 mins ago', unread: true, avatarSeed: 'Andrew', dotColor: 'bg-violet-500' },
-  { id: 4, name: 'Jolly Cummins', message: "If I don't like something", time: '5 days ago', unread: false, avatarSeed: 'Jolly', dotColor: 'bg-amber-500' },
-  { id: 5, name: 'Josh Macklow', message: 'Good night. Catch you…', time: 'year ago', unread: false, avatarSeed: 'Josh', dotColor: 'bg-teal-500' },
-];
+import { notificationService } from '@/services/notificationService';
+import { supabase } from '@/lib/supabase';
 
 const languages = [
   { code: 'en', name: 'English', flagUrl: 'https://flagcdn.com/w40/us.png' },
@@ -88,8 +76,8 @@ const Z = {
 
 export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarDarkMode }) {
   const router = useRouter();
-  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
-  const [inboxMessages, setInboxMessages] = useState(INITIAL_INBOX);
+  const [notifications, setNotifications] = useState([]);
+  const [inboxMessages, setInboxMessages] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
 
@@ -106,6 +94,32 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const { language: currentLanguage, t, setLanguage: changeLanguage } = useLanguage() || {};
 
   const dark = isDark || sidebarDarkMode;
+
+  const refreshCounts = useCallback(async () => {
+    try {
+      const rows = await notificationService.getNotifications();
+      const inbox = rows.filter((row) => !row.archived && !row.draft && !row.sent).map((row) => ({
+        id: row.id, name: row.title, message: row.body, time: row.createdAt ? new Date(row.createdAt).toLocaleString() : '', unread: !row.isRead,
+      }));
+      setInboxMessages(inbox);
+      setNotifications(rows.map((row) => ({ id: row.id, title: row.title, time: row.createdAt ? new Date(row.createdAt).toLocaleString() : '', unread: !row.isRead, href: '/messages' })));
+    } catch (error) { console.error('Could not load notifications:', error); }
+  }, []);
+
+  useEffect(() => {
+    const handleUpdated = () => { refreshCounts(); };
+    window.addEventListener('notifications:updated', handleUpdated);
+    const channel = supabase.channel('notifications-sync-navbar')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, handleUpdated)
+      .subscribe();
+    refreshCounts();
+    const timer = setInterval(refreshCounts, 30000);
+    return () => {
+      window.removeEventListener('notifications:updated', handleUpdated);
+      clearInterval(timer);
+      supabase.removeChannel(channel);
+    };
+  }, [refreshCounts]);
 
   useEffect(() => {
     const savedSticky = localStorage.getItem('navbarSticky') === 'true';
@@ -420,7 +434,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
           <button onClick={() => setShowInbox(!showInbox)} className={`${iconBtn} relative`} aria-label="Inbox">
             <Mail size={18} />
             {unreadInboxCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 text-white text-[10px] rounded-full flex items-center justify-center font-semibold">
+              <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-foreground text-background text-[10px] rounded-full flex items-center justify-center font-semibold">
                 {unreadInboxCount}
               </span>
             )}
@@ -432,8 +446,8 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                 <h3 className={`text-sm font-semibold ${Z.textPrimary(dark)}`}>Inbox</h3>
                 {unreadInboxCount > 0 && (
                   <button
-                    onClick={() => setInboxMessages(prev => prev.map(m => ({ ...m, unread: false })))}
-                    className="text-xs text-blue-500 hover:underline font-medium"
+                    onClick={async () => { await Promise.all(inboxMessages.filter((m) => m.unread).map((m) => notificationService.updateMessage(m.id, { isRead: true }))); setInboxMessages(prev => prev.map(m => ({ ...m, unread: false }))); setNotifications(prev => prev.map(n => ({ ...n, unread: false }))); }}
+                    className="text-xs text-foreground hover:underline font-medium"
                   >
                     Mark all read
                   </button>
@@ -444,6 +458,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                   <div
                     key={msg.id}
                     onClick={() => {
+                      if (msg.unread) notificationService.updateMessage(msg.id, { isRead: true }).catch((error) => console.error(error));
                       setInboxMessages(prev => prev.map(m => m.id === msg.id ? { ...m, unread: false } : m));
                       setShowInbox(false);
                       router.push('/messages/inbox/unread');
@@ -451,10 +466,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                     className={`px-4 py-3 transition-colors ${Z.panelRow(dark)}`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="relative flex-shrink-0">
-                        <NextImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.avatarSeed}`} alt={msg.name} width={36} height={36} unoptimized className="rounded-full" />
-                        {msg.unread && <span className={`absolute top-0 right-0 w-2.5 h-2.5 ${msg.dotColor} rounded-full border-2 ${dark ? 'border-zinc-900' : 'border-white'}`} />}
-                      </div>
+                      <div className={`h-9 w-9 flex-shrink-0 rounded-full border border-border bg-muted flex items-center justify-center text-xs font-semibold ${Z.textPrimary(dark)}`}>{msg.name?.slice(0, 1)?.toUpperCase() || 'M'}</div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <p className={`text-sm font-medium truncate ${Z.textPrimary(dark)}`}>{msg.name}</p>
@@ -483,7 +495,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
           <button onClick={() => setShowNotifications(!showNotifications)} className={`${iconBtn} relative`} aria-label="Notifications">
             <Bell size={18} />
             {unreadNotifCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[10px] rounded-full flex items-center justify-center font-semibold">
+              <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-foreground text-background text-[10px] rounded-full flex items-center justify-center font-semibold">
                 {unreadNotifCount}
               </span>
             )}
@@ -495,8 +507,8 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                 <h3 className={`text-sm font-semibold ${Z.textPrimary(dark)}`}>Notifications</h3>
                 {unreadNotifCount > 0 && (
                   <button
-                    onClick={() => setNotifications(prev => prev.map(n => ({ ...n, unread: false })))}
-                    className="text-xs text-rose-500 hover:underline font-medium"
+                    onClick={async () => { await Promise.all(notifications.filter((n) => n.unread).map((n) => notificationService.updateMessage(n.id, { isRead: true }))); setNotifications(prev => prev.map(n => ({ ...n, unread: false }))); setInboxMessages(prev => prev.map(m => ({ ...m, unread: false }))); }}
+                    className="text-xs text-foreground hover:underline font-medium"
                   >
                     Mark all read
                   </button>
@@ -507,6 +519,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                   <div
                     key={n.id}
                     onClick={() => {
+                      if (n.unread) notificationService.updateMessage(n.id, { isRead: true }).catch((error) => console.error(error));
                       setNotifications(prev => prev.map(item => item.id === n.id ? { ...item, unread: false } : item));
                       setShowNotifications(false);
                       router.push(n.href);
@@ -514,8 +527,8 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
                     className={`px-4 py-3 transition-colors ${Z.panelRow(dark)}`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${n.unread ? 'bg-rose-500' : (dark ? 'bg-zinc-800' : 'bg-zinc-100')}`}>
-                        <Bell size={14} className={n.unread ? 'text-white' : Z.textSecondary(dark)} />
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${n.unread ? 'bg-foreground text-background' : (dark ? 'bg-zinc-800' : 'bg-zinc-100')}`}>
+                        <Bell size={14} className={n.unread ? 'text-background' : Z.textSecondary(dark)} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
@@ -529,7 +542,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
               </div>
               <div className={`p-3 border-t ${Z.panelHeader(dark)} flex-shrink-0`}>
                 <button
-                  onClick={() => { setShowNotifications(false); router.push('/security/audit/system'); }}
+                  onClick={() => { setShowNotifications(false); router.push('/messages'); }}
                   className={`w-full py-1.5 text-sm font-medium transition-colors ${Z.ctaBtn(dark)}`}
                 >
                   See all notifications

@@ -6,15 +6,6 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import SettingsModal from './SettingsModal';
 
-/* Map theme key → Tailwind bg class (safelist mein already hain) */
-const THEME_BG = {
-  emerald: 'bg-emerald-600 hover:bg-emerald-700',
-  blue:    'bg-blue-600    hover:bg-blue-700',
-  purple:  'bg-purple-600  hover:bg-purple-700',
-  orange:  'bg-orange-600  hover:bg-orange-700',
-  rose:    'bg-rose-600    hover:bg-rose-700',
-};
-
 export default function SettingsButton({
   sidebarPosition,
   onSidebarPositionChange,
@@ -22,11 +13,9 @@ export default function SettingsButton({
   onSidebarDarkModeToggle,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { currentTheme, changeTheme, getThemeColors } = useTheme();
+  const { currentTheme, changeTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
 
-  const colors = getThemeColors();
-  const bgClass = THEME_BG[currentTheme] ?? THEME_BG.emerald;
 
   return (
     <>
@@ -35,8 +24,7 @@ export default function SettingsButton({
         className={`
           fixed bottom-6 right-6 z-40
           w-12 h-12 rounded-full
-          text-white shadow-modal
-          ${bgClass}
+          border border-border bg-foreground text-background shadow-modal hover:opacity-90
           flex items-center justify-center
           transition-all duration-200
           hover:scale-105 hover:shadow-lg
