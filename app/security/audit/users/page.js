@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import SecurityManager from '@/app/SecurityManager';
 
-export default function UserAuditPage() {
-  redirect('/security/audit/system');
+export default function Page() {
+  return <SecurityManager mode="audit/users" />;
 }

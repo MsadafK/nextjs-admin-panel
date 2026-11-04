@@ -53,14 +53,12 @@ const mapUserFromDB = (row) => {
 
 export const userService = {
   async getUsers() {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('is_deleted', false)
-      .order('created_at', { ascending: false });
+    // Read rows first and apply optional soft-delete filtering in JavaScript so
+    // deployments without is_deleted or created_at columns still load users.
+    const { data, error } = await supabase.from('users').select('*');
 
     if (error) throw error;
-    return (data || []).map(mapUserFromDB);
+    return (data || []).filter((row) => row.is_deleted !== true).map(mapUserFromDB);
   },
 
   async createUser(userData) {

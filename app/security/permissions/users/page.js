@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import SecurityManager from '@/app/SecurityManager';
 
-export default function UserPermissionsPage() {
-  redirect('/security/permissions/access');
+export default function Page() {
+  return <SecurityManager mode="permissions/users" />;
 }
