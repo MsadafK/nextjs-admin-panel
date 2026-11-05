@@ -1,107 +1,88 @@
 'use client';
 
-import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import {
-  Search, Bell, User, LogOut, Menu, Sun, Moon,
-  Mail, FileText, CheckSquare, Pin, PinOff, ArrowRight
-} from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Activity, ArrowRight, Bell, Check, ChevronRight, Languages, LogOut, Mail, Menu, Moon, Search, Settings, Shield, Sun, User } from 'lucide-react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { menuItems } from './Sidebar/MenuItems';
-import { useRouter } from 'next/navigation';
-import NextImage from 'next/image';
 import { notificationService } from '@/services/notificationService';
 import { supabase } from '@/lib/supabase';
 
-const languages = [
-  { code: 'en', name: 'English', flagUrl: 'https://flagcdn.com/w40/us.png' },
-  { code: 'es', name: 'Español', flagUrl: 'https://flagcdn.com/w40/es.png' },
-  { code: 'fr', name: 'Français', flagUrl: 'https://flagcdn.com/w40/fr.png' },
-  { code: 'de', name: 'Deutsch', flagUrl: 'https://flagcdn.com/w40/de.png' },
-];
+const LABELS = {
+  dashboard: 'Dashboard', all_users: 'All Users', user_list: 'User List', add_user: 'Add User',
+  all_products: 'All Products', product_catalog: 'Product Catalog', inventory: 'Inventory', stock_levels: 'Stock Levels',
+  sales_trends: 'Sales Trends', user_trends: 'User Trends', product_trends: 'Product Trends',
+  real_time: 'Realtime', api_keys: 'API Keys', api_key: 'API Key', kras: 'KRAs',
+};
+const formatLabel = (label = '') => LABELS[label] || label.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+const normalizePath = (path = '') => path.replace(/\/$/, '') || '/';
 
-const profileMenuItems = [
-  { icon: User, label: 'My Profile', sub: 'Account settings', href: '/settings', lightBg: 'bg-blue-50', darkBg: 'bg-blue-950/40', ic: 'text-blue-500' },
-  { icon: FileText, label: 'My Notes', sub: 'My Daily Notes', href: '/calendar/reminders/active', lightBg: 'bg-teal-50', darkBg: 'bg-teal-950/40', ic: 'text-teal-500' },
-  { icon: CheckSquare, label: 'My Tasks', sub: 'To-do and daily tasks', href: '/performance/meetings/actions', lightBg: 'bg-violet-50', darkBg: 'bg-violet-950/40', ic: 'text-violet-500' },
-];
-
-/* Flatten all navigable routes from menuItems for Ctrl+K search */
-function getFlatRoutes(items = menuItems, parentTrail = []) {
-  let routes = [];
-  for (const item of items) {
-    const label = item.label.replace(/_/g, ' ');
-    const currentTrail = [...parentTrail, label];
-    if (item.href && !item.subItems && !item.childItems) {
-      routes.push({
-        label,
-        href: item.href,
-        category: parentTrail.join(' › ') || 'General',
-        icon: item.icon,
-      });
-    }
-    if (item.subItems) routes = routes.concat(getFlatRoutes(item.subItems, currentTrail));
-    if (item.childItems) routes = routes.concat(getFlatRoutes(item.childItems, currentTrail));
-  }
-  return routes;
+function flattenRoutes(items = menuItems, parents = []) {
+  return items.flatMap((item) => {
+    const trail = [...parents, item.label];
+    const children = item.subItems || item.childItems || [];
+    const current = item.href && !children.length ? [{ href: item.href, label: formatLabel(item.label), breadcrumbs: trail.map(formatLabel), category: parents.map(formatLabel).join(' / ') || 'Overview', icon: item.icon }] : [];
+    return [...current, ...flattenRoutes(children, trail)];
+  });
 }
 
-const ALL_ROUTES = getFlatRoutes();
-
-const Z = {
-  nav: (dark, isSticky) => dark
-    ? `bg-zinc-900 border-zinc-800 ${isSticky ? 'bg-zinc-900/80 backdrop-blur-md supports-[backdrop-filter]:bg-zinc-900/60' : ''}`
-    : `bg-white border-zinc-200 ${isSticky ? 'bg-white/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/60' : ''}`,
-  btn: (dark) => dark
-    ? 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 border border-transparent hover:border-zinc-700 rounded-md'
-    : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 border border-transparent rounded-md',
-  panel: (dark) => dark
-    ? 'bg-zinc-900 border border-zinc-800 shadow-dropdown rounded-lg'
-    : 'bg-white border border-zinc-200 shadow-dropdown rounded-lg',
-  panelHeader: (dark) => dark ? 'border-zinc-800' : 'border-zinc-200',
-  panelDivide: (dark) => dark ? 'divide-zinc-800' : 'divide-zinc-100',
-  panelRow: (dark) => dark ? 'hover:bg-zinc-800 cursor-pointer' : 'hover:bg-zinc-50 cursor-pointer',
-  textPrimary: (dark) => dark ? 'text-zinc-100' : 'text-zinc-900',
-  textSecondary: (dark) => dark ? 'text-zinc-400' : 'text-zinc-500',
-  input: (dark) => dark
-    ? 'bg-zinc-800 border-zinc-700 text-zinc-200 placeholder:text-zinc-500 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500'
-    : 'bg-zinc-50 border-zinc-300 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400',
-  menuItem: (dark, active) => active
-    ? (dark ? 'bg-zinc-800 text-zinc-100 font-medium' : 'bg-zinc-100 text-zinc-900 font-medium')
-    : (dark ? 'text-zinc-300 hover:bg-zinc-800' : 'text-zinc-700 hover:bg-zinc-50'),
-  ctaBtn: (dark) => dark
-    ? 'border border-zinc-700 text-zinc-300 hover:bg-zinc-800 rounded-md'
-    : 'border border-zinc-300 text-zinc-600 hover:bg-zinc-50 rounded-md',
-};
+const ROUTES = flattenRoutes();
+const QUICK_LINKS = [
+  { href: '/', label: 'Dashboard', category: 'Overview' },
+  { href: '/users/all/list', label: 'User List', category: 'Users' },
+  { href: '/users/add/single', label: 'Add User', category: 'Users' },
+  { href: '/products/all/catalog', label: 'Product Catalog', category: 'Products' },
+  { href: '/products/inventory/stock', label: 'Inventory', category: 'Products' },
+  { href: '/analytics/trends/sales', label: 'Sales Trends', category: 'Analytics' },
+  { href: '/calendar/events/upcoming', label: 'Calendar', category: 'Workspace' },
+  { href: '/messages', label: 'Messages', category: 'Workspace' },
+  { href: '/security/audit/security', label: 'Security', category: 'System' },
+  { href: '/performance/skills', label: 'Performance', category: 'System' },
+  { href: '/settings', label: 'Settings', category: 'System' },
+];
+const COMMAND_ROUTES = [...QUICK_LINKS, ...ROUTES.filter((route) => !QUICK_LINKS.some((quick) => quick.href === route.href))];
+const COMMAND_ACTIONS = [
+  { id: 'toggle-theme', label: 'Toggle Dark / Light Theme', category: 'Quick Actions', action: 'toggle-theme' },
+  { id: 'go-settings', label: 'Go to Settings', category: 'Quick Actions', href: '/settings' },
+  { id: 'compose-message', label: 'Compose Message', category: 'Quick Actions', href: '/messages/compose' },
+];
+const LANGUAGES = [
+  { code: 'en', name: 'English' }, { code: 'es', name: 'Español' },
+  { code: 'fr', name: 'Français' }, { code: 'de', name: 'Deutsch' },
+];
+const LANGUAGE_CODES = { en: 'EN', es: 'ES', fr: 'FR', de: 'DE' };
+const panelClass = 'z-[100] rounded-xl border border-border bg-background bg-white dark:bg-zinc-950 opacity-100 shadow-xl ring-1 ring-black/5';
+const iconButtonClass = 'relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-transparent text-muted-foreground transition-colors hover:border-border hover:bg-muted/60 hover:text-foreground';
 
 export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarDarkMode }) {
+  const pathname = usePathname();
   const router = useRouter();
+  const { isDark, toggleDarkMode } = useTheme();
+  const { language, t, setLanguage } = useLanguage() || {};
   const [notifications, setNotifications] = useState([]);
   const [inboxMessages, setInboxMessages] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
-
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
-  const [showThemeMenu, setShowThemeMenu] = useState(false);
-  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-  const [showTopSearch, setShowTopSearch] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [commandQuery, setCommandQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [showInbox, setShowInbox] = useState(false);
-  const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const [isSticky, setIsSticky] = useState(false);
-
-  const { isDark, toggleDarkMode, currentTheme, changeTheme, themes } = useTheme();
-  const { language: currentLanguage, t, setLanguage: changeLanguage } = useLanguage() || {};
-
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showLanguage, setShowLanguage] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const dark = isDark || sidebarDarkMode;
+
+  const commandInputRef = useRef(null);
+  const inboxRef = useRef(null);
+  const notificationsRef = useRef(null);
+  const languageRef = useRef(null);
+  const profileRef = useRef(null);
 
   const refreshCounts = useCallback(async () => {
     try {
       const rows = await notificationService.getNotifications();
-      const inbox = rows.filter((row) => !row.archived && !row.draft && !row.sent).map((row) => ({
-        id: row.id, name: row.title, message: row.body, time: row.createdAt ? new Date(row.createdAt).toLocaleString() : '', unread: !row.isRead,
-      }));
-      setInboxMessages(inbox);
+      setInboxMessages(rows.filter((row) => !row.archived && !row.draft && !row.sent).map((row) => ({
+        id: row.id, title: row.title, body: row.body, time: row.createdAt ? new Date(row.createdAt).toLocaleString() : '', unread: !row.isRead,
+      })));
       setNotifications(rows.map((row) => ({ id: row.id, title: row.title, time: row.createdAt ? new Date(row.createdAt).toLocaleString() : '', unread: !row.isRead, href: '/messages' })));
     } catch (error) { console.error('Could not load notifications:', error); }
   }, []);
@@ -121,490 +102,149 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
     };
   }, [refreshCounts]);
 
+  const unreadInboxCount = inboxMessages.filter((message) => message.unread).length;
+  const unreadNotificationCount = notifications.filter((notification) => notification.unread).length;
+  const commandResults = useMemo(() => {
+    const all = [...COMMAND_ROUTES, ...COMMAND_ACTIONS];
+    const query = commandQuery.trim().toLowerCase();
+    const results = query ? all.filter((item) => `${item.label} ${item.category}`.toLowerCase().includes(query)) : all;
+    return results.slice(0, 12);
+  }, [commandQuery]);
+
+  const activeRoute = useMemo(() => ROUTES.find((route) => normalizePath(route.href) === normalizePath(pathname)), [pathname]);
+  const breadcrumbs = useMemo(() => {
+    if (activeRoute) return activeRoute.breadcrumbs;
+    if (normalizePath(pathname) === '/') return ['Dashboard'];
+    return normalizePath(pathname).split('/').filter(Boolean).map(formatLabel);
+  }, [activeRoute, pathname]);
+  const currentTitle = breadcrumbs.at(-1) || 'Dashboard';
+
+  const openCommand = useCallback(() => {
+    setShowInbox(false); setShowNotifications(false); setShowLanguage(false); setShowProfile(false);
+    setCommandQuery(''); setSelectedIndex(0); setCommandOpen(true);
+  }, []);
+  const closeCommand = useCallback(() => setCommandOpen(false), []);
+
   useEffect(() => {
-    const savedSticky = localStorage.getItem('navbarSticky') === 'true';
-    setIsSticky(savedSticky);
+    const onKeyDown = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault(); openCommand();
+      } else if (event.key === 'Escape') {
+        closeCommand(); setShowInbox(false); setShowNotifications(false); setShowLanguage(false); setShowProfile(false);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [openCommand, closeCommand]);
+
+  useEffect(() => {
+    if (!commandOpen) return undefined;
+    const frame = requestAnimationFrame(() => commandInputRef.current?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, [commandOpen]);
+
+  useEffect(() => {
+    const onOutside = (event) => {
+      if (inboxRef.current && !inboxRef.current.contains(event.target)) setShowInbox(false);
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) setShowNotifications(false);
+      if (languageRef.current && !languageRef.current.contains(event.target)) setShowLanguage(false);
+      if (profileRef.current && !profileRef.current.contains(event.target)) setShowProfile(false);
+    };
+    document.addEventListener('mousedown', onOutside);
+    return () => document.removeEventListener('mousedown', onOutside);
   }, []);
 
-  const toggleSticky = () => {
-    const v = !isSticky;
-    setIsSticky(v);
-    localStorage.setItem('navbarSticky', v.toString());
+  const navigate = (href) => { closeCommand(); router.push(href); };
+  const activateResult = (result) => {
+    if (result.action === 'toggle-theme') { toggleDarkMode(); closeCommand(); return; }
+    if (result.href) navigate(result.href);
+  };
+  const markRead = async (id) => {
+    try { await notificationService.updateMessage(id, { isRead: true }); }
+    catch (error) { console.error('Could not mark notification as read:', error); }
+  };
+  const markAllInboxRead = async () => {
+    await Promise.all(inboxMessages.filter((message) => message.unread).map((message) => markRead(message.id)));
+  };
+  const markAllNotificationsRead = async () => {
+    await Promise.all(notifications.filter((notification) => notification.unread).map((notification) => markRead(notification.id)));
+  };
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setShowProfile(false);
+    router.push('/');
   };
 
-  const currentLang = languages.find(l => l.code === currentLanguage) || languages[0];
-  const unreadInboxCount = inboxMessages.filter(m => m.unread).length;
-  const unreadNotifCount = notifications.filter(n => n.unread).length;
-
-  const filteredRoutes = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return ALL_ROUTES.slice(0, 6);
-    return ALL_ROUTES.filter(
-      r => r.label.toLowerCase().includes(q) || r.category.toLowerCase().includes(q)
-    ).slice(0, 8);
-  }, [searchQuery]);
-
-  const searchRef = useRef(null);
-  const searchContainerRef = useRef(null);
-  const topSearchRef = useRef(null);
-  const themeMenuRef = useRef(null);
-  const languageMenuRef = useRef(null);
-  const inboxRef = useRef(null);
-  const notificationsRef = useRef(null);
-  const profileRef = useRef(null);
-
-  useEffect(() => {
-    const onKey = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        if (sidebarPosition === 'top') setShowTopSearch(true);
-        setShowSearchDropdown(true);
-        setTimeout(() => searchRef.current?.focus(), 0);
-      }
-      if (e.key === 'Escape') {
-        setShowTopSearch(false);
-        setShowSearchDropdown(false);
-        searchRef.current?.blur();
-      }
-    };
-
-    const onOutside = (e) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target)) setShowSearchDropdown(false);
-      if (themeMenuRef.current && !themeMenuRef.current.contains(e.target)) setShowThemeMenu(false);
-      if (languageMenuRef.current && !languageMenuRef.current.contains(e.target)) setShowLanguageMenu(false);
-      if (topSearchRef.current && !topSearchRef.current.contains(e.target)) setShowTopSearch(false);
-      if (inboxRef.current && !inboxRef.current.contains(e.target)) setShowInbox(false);
-      if (notificationsRef.current && !notificationsRef.current.contains(e.target)) setShowNotifications(false);
-      if (profileRef.current && !profileRef.current.contains(e.target)) setShowProfile(false);
-    };
-
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('mousedown', onOutside);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('mousedown', onOutside);
-    };
-  }, [sidebarPosition]);
-
-  const handleLanguageChange = (code) => {
-    if (changeLanguage) { changeLanguage(code); setShowLanguageMenu(false); }
-  };
-
-  const handleNavigate = (href) => {
-    setShowSearchDropdown(false);
-    setShowMobileSearch(false);
-    setSearchQuery('');
-    router.push(href);
-  };
-
-  const navClasses = [
-    Z.nav(dark, isSticky),
-    'border-b transition-all duration-200',
-    isSticky ? 'sticky top-0 z-40' : '',
-    sidebarPosition === 'top'
-      ? 'flex-1 h-16 px-4 py-3 flex items-center justify-between'
-      : 'px-4 py-2 flex items-center justify-between h-16',
-  ].join(' ');
-
-  const iconBtn = `p-2 transition-colors duration-150 ${Z.btn(dark)}`;
-
-  return (
-    <nav className={navClasses}>
-      {/* ══════════════ LEFT ══════════════ */}
-      <div className="flex items-center gap-1 sm:gap-3">
-        {sidebarPosition !== 'top' ? (
-          <>
-            <button onClick={onMenuClick} className={`${iconBtn} lg:hidden`} aria-label="Toggle sidebar">
-              <Menu size={20} />
-            </button>
-
-            <div className="relative" ref={searchContainerRef}>
-              <button
-                onClick={() => setShowMobileSearch(!showMobileSearch)}
-                className={`${iconBtn} md:hidden`}
-                aria-label="Search"
-              >
-                <Search size={20} />
-              </button>
-
-              {showMobileSearch && (
-                <div className="absolute left-0 top-12 w-72 px-0 z-50 md:hidden">
-                  <div className="relative shadow-lg rounded-md">
-                    <Search size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${Z.textSecondary(dark)}`} />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => { setSearchQuery(e.target.value); setShowSearchDropdown(true); }}
-                      placeholder={t ? t('search') : 'Search pages…'}
-                      autoFocus
-                      className={`w-full pl-9 pr-4 py-2 text-sm border rounded-md outline-none transition-colors ${Z.input(dark)}`}
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div className="hidden md:block relative group">
-                <Search size={16} className={`absolute left-3 top-1/2 -translate-y-1/2 ${Z.textSecondary(dark)} group-focus-within:text-zinc-900 dark:group-focus-within:text-zinc-100 transition-colors`} />
-                <input
-                  ref={searchRef}
-                  type="text"
-                  value={searchQuery}
-                  onFocus={() => setShowSearchDropdown(true)}
-                  onChange={(e) => { setSearchQuery(e.target.value); setShowSearchDropdown(true); }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && filteredRoutes.length > 0) {
-                      handleNavigate(filteredRoutes[0].href);
-                    }
-                  }}
-                  placeholder={t ? t('search') : 'Search pages…'}
-                  className={`pl-9 pr-20 py-2 w-64 text-sm border rounded-md outline-none transition-colors ${Z.input(dark)}`}
-                />
-                <kbd className={`absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium border ${dark ? 'border-zinc-700 bg-zinc-800' : 'border-zinc-200 bg-zinc-100'} px-1.5 py-0.5 rounded pointer-events-none ${Z.textSecondary(dark)}`}>
-                  Ctrl K
-                </kbd>
-              </div>
-
-              {/* Quick Route Search Dropdown */}
-              {showSearchDropdown && (
-                <div className={`absolute left-0 mt-2 w-80 z-50 overflow-hidden ${Z.panel(dark)}`}>
-                  <div className={`px-3 py-2 border-b ${Z.panelHeader(dark)} flex items-center justify-between`}>
-                    <span className={`text-xs font-medium uppercase tracking-wide ${Z.textSecondary(dark)}`}>
-                      Quick Navigation
-                    </span>
-                    <span className={`text-[11px] ${Z.textSecondary(dark)}`}>Enter to jump</span>
-                  </div>
-                  <div className={`divide-y ${Z.panelDivide(dark)} max-h-64 overflow-y-auto`}>
-                    {filteredRoutes.map((route) => {
-                      const RouteIcon = route.icon;
-                      return (
-                        <button
-                          key={route.href}
-                          onClick={() => handleNavigate(route.href)}
-                          className={`w-full px-3 py-2.5 text-left flex items-center justify-between transition-colors ${Z.panelRow(dark)}`}
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <RouteIcon size={15} className={Z.textSecondary(dark)} />
-                            <div className="min-w-0">
-                              <p className={`text-sm font-medium capitalize truncate ${Z.textPrimary(dark)}`}>
-                                {route.label}
-                              </p>
-                              <p className={`text-xs capitalize truncate ${Z.textSecondary(dark)}`}>
-                                {route.category}
-                              </p>
-                            </div>
-                          </div>
-                          <ArrowRight size={14} className={Z.textSecondary(dark)} />
-                        </button>
-                      );
-                    })}
-                    {filteredRoutes.length === 0 && (
-                      <p className={`px-4 py-6 text-center text-xs ${Z.textSecondary(dark)}`}>
-                        No matching pages found.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <div />
-        )}
+  return <>
+    <header className="sticky top-0 z-40 flex h-14 w-full items-center justify-between gap-3 border-b border-border bg-background/85 px-3 backdrop-blur-md sm:px-6">
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        <button onClick={onMenuClick} className={`${iconButtonClass} lg:hidden`} aria-label="Open sidebar"><Menu size={18} strokeWidth={1.8}/></button>
+        <div className="hidden min-w-0 items-center gap-1 overflow-hidden sm:flex">
+          {breadcrumbs.map((crumb, index) => <span key={`${crumb}-${index}`} className="flex min-w-0 shrink items-center gap-1">
+            {index > 0 && <ChevronRight size={14} className="shrink-0 text-muted-foreground/60"/>}
+            <span className={`truncate text-sm ${index === breadcrumbs.length - 1 ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>{crumb}</span>
+          </span>)}
+        </div>
+        <span className="min-w-0 max-w-[160px] truncate text-sm font-semibold text-foreground sm:hidden max-[379px]:hidden">{currentTitle}</span>
       </div>
 
-      {/* ══════════════ RIGHT ══════════════ */}
-      <div className={`flex items-center gap-1 sm:gap-2 ${sidebarPosition === 'right' ? 'mr-5' : ''}`}>
-        {sidebarPosition === 'top' && (
-          <div className="relative flex items-center" ref={topSearchRef}>
-            <button
-              onClick={() => { setShowTopSearch(v => !v); setTimeout(() => searchRef.current?.focus(), 0); }}
-              className={iconBtn}
-              aria-label="Open search"
-            >
-              <Search size={20} />
-            </button>
-            {showTopSearch && (
-              <div className="relative ml-2">
-                <input
-                  ref={searchRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t ? t('search') : 'Search…'}
-                  className={`pl-3 pr-4 py-2 w-48 text-sm border rounded-md outline-none transition-colors shadow-lg ${Z.input(dark)}`}
-                />
-              </div>
-            )}
-          </div>
-        )}
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+        <button onClick={openCommand} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:bg-muted/80 md:hidden" aria-label="Quick search"><Search size={17}/></button>
+        <button onClick={openCommand} className="hidden h-9 w-64 items-center justify-between rounded-md border border-border bg-muted/40 px-3 text-xs text-muted-foreground transition-colors hover:bg-muted/80 md:flex"><span className="flex items-center gap-2"><Search size={15}/> Quick search...</span><kbd className="rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px]">Ctrl K</kbd></button>
 
-        <button onClick={toggleSticky} className={iconBtn} title={isSticky ? 'Disable sticky navbar' : 'Enable sticky navbar'}>
-          {isSticky ? <Pin size={18} /> : <PinOff size={18} />}
-        </button>
+        <button onClick={toggleDarkMode} className={iconButtonClass} aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'} title={isDark ? 'Light theme' : 'Dark theme'}>{isDark ? <Sun size={17}/> : <Moon size={17}/>}</button>
 
-        {/* ── Theme Toggle ── */}
-        <div className="relative" ref={themeMenuRef}>
-          <button onClick={() => setShowThemeMenu(!showThemeMenu)} className={iconBtn} title="Theme settings">
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-
-          {showThemeMenu && (
-            <div className={`absolute right-0 mt-2 w-72 z-50 overflow-hidden ${Z.panel(dark)} max-[426px]:left-1/2 max-[426px]:-translate-x-1/2`}>
-              <div className={`px-4 py-3 border-b ${Z.panelHeader(dark)}`}>
-                <p className={`text-sm font-semibold ${Z.textPrimary(dark)}`}>{t ? t('themeColors') : 'Global Theme Settings'}</p>
-                <p className={`text-xs mt-0.5 ${Z.textSecondary(dark)}`}>Applies to entire application</p>
-              </div>
-              <div className={`px-4 py-3 border-b ${Z.panelHeader(dark)}`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {isDark ? <Moon size={15} className={Z.textSecondary(dark)} /> : <Sun size={15} className={Z.textSecondary(dark)} />}
-                    <div>
-                      <p className={`text-sm font-medium ${Z.textPrimary(dark)}`}>{t ? t('darkMode') : 'Dark mode'}</p>
-                      <p className={`text-xs ${Z.textSecondary(dark)}`}>{isDark ? 'On' : 'Off'}</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={toggleDarkMode}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${isDark ? `bg-\${currentTheme}-600` : 'bg-zinc-300'}`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${isDark ? 'translate-x-6' : 'translate-x-1'}`} />
-                  </button>
-                </div>
-              </div>
-              <div className="p-4">
-                <p className={`text-xs font-medium uppercase tracking-wide mb-3 ${Z.textSecondary(dark)}`}>Accent colour</p>
-                <div className="space-y-1">
-                  {Object.keys(themes).map((key) => {
-                    const theme = themes[key];
-                    const active = currentTheme === key;
-                    return (
-                      <button
-                        key={key}
-                        onClick={() => changeTheme(key)}
-                        className={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors ${Z.menuItem(dark, active)}`}
-                      >
-                        <span className={`w-4 h-4 rounded-full mr-3 bg-${theme.primary}-600 flex-shrink-0`} />
-                        {theme.name}
-                        {active && <span className={`ml-auto text-xs text-${theme.primary}-600`}>{t ? t('active') : 'Active'}</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* ── Language Toggle ── */}
-        <div className="relative" ref={languageMenuRef}>
-          <button
-            onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-            className={`p-2 rounded-md flex items-center justify-center transition-colors duration-150 ${dark ? 'hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700' : 'hover:bg-zinc-100 border border-transparent'} w-9 h-9`}
-            title={t ? t('language') : 'Change language'}
-          >
-            <NextImage src={currentLang.flagUrl} alt={currentLang.name} width={24} height={16} unoptimized className="rounded-sm object-cover" />
-          </button>
-
-          {showLanguageMenu && (
-            <div className={`absolute right-0 mt-2 w-48 z-50 overflow-hidden ${Z.panel(dark)} max-[425px]:right-auto max-[425px]:left-1/2 max-[425px]:-translate-x-1/2`}>
-              <p className={`px-4 pt-3 pb-2 text-xs font-medium uppercase tracking-wide ${Z.textSecondary(dark)}`}>
-                {t ? t('language') : 'Language'}
-              </p>
-              <div className={`border-t ${Z.panelHeader(dark)}`} />
-              {languages.map((lang) => {
-                const active = currentLanguage === lang.code;
-                return (
-                  <button
-                    key={lang.code}
-                    onClick={() => handleLanguageChange(lang.code)}
-                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2.5 transition-colors ${Z.menuItem(dark, active)}`}
-                  >
-                    <NextImage src={lang.flagUrl} alt={lang.name} width={20} height={16} unoptimized className="rounded-sm object-cover flex-shrink-0" />
-                    <span>{lang.name}</span>
-                    {active && <span className={`ml-auto text-xs ${Z.textSecondary(dark)}`}>✓</span>}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* ── Inbox ── */}
         <div className="relative" ref={inboxRef}>
-          <button onClick={() => setShowInbox(!showInbox)} className={`${iconBtn} relative`} aria-label="Inbox">
-            <Mail size={18} />
-            {unreadInboxCount > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-foreground text-background text-[10px] rounded-full flex items-center justify-center font-semibold">
-                {unreadInboxCount}
-              </span>
-            )}
+          <button onClick={() => { setShowInbox((open) => !open); setShowNotifications(false); setShowLanguage(false); setShowProfile(false); }} className={iconButtonClass} aria-label="Messages" aria-expanded={showInbox}>
+            <Mail size={17}/>{unreadInboxCount > 0 && <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground px-1 font-mono text-[10px] font-semibold text-background">{unreadInboxCount > 99 ? '99+' : unreadInboxCount}</span>}
           </button>
-
-          {showInbox && (
-            <div className={`absolute right-0 mt-2 w-80 z-50 max-h-[500px] overflow-hidden flex flex-col ${Z.panel(dark)} max-[425px]:left-1/2 max-[425px]:-translate-x-[67.5%]`}>
-              <div className={`px-4 py-3 border-b ${Z.panelHeader(dark)} flex items-center justify-between flex-shrink-0`}>
-                <h3 className={`text-sm font-semibold ${Z.textPrimary(dark)}`}>Inbox</h3>
-                {unreadInboxCount > 0 && (
-                  <button
-                    onClick={async () => { await Promise.all(inboxMessages.filter((m) => m.unread).map((m) => notificationService.updateMessage(m.id, { isRead: true }))); setInboxMessages(prev => prev.map(m => ({ ...m, unread: false }))); setNotifications(prev => prev.map(n => ({ ...n, unread: false }))); }}
-                    className="text-xs text-foreground hover:underline font-medium"
-                  >
-                    Mark all read
-                  </button>
-                )}
-              </div>
-              <div className={`divide-y ${Z.panelDivide(dark)} overflow-y-auto flex-1`}>
-                {inboxMessages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    onClick={() => {
-                      if (msg.unread) notificationService.updateMessage(msg.id, { isRead: true }).catch((error) => console.error(error));
-                      setInboxMessages(prev => prev.map(m => m.id === msg.id ? { ...m, unread: false } : m));
-                      setShowInbox(false);
-                      router.push('/messages/inbox/unread');
-                    }}
-                    className={`px-4 py-3 transition-colors ${Z.panelRow(dark)}`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={`h-9 w-9 flex-shrink-0 rounded-full border border-border bg-muted flex items-center justify-center text-xs font-semibold ${Z.textPrimary(dark)}`}>{msg.name?.slice(0, 1)?.toUpperCase() || 'M'}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <p className={`text-sm font-medium truncate ${Z.textPrimary(dark)}`}>{msg.name}</p>
-                          <span className={`text-xs flex-shrink-0 ml-2 ${Z.textSecondary(dark)}`}>{msg.time}</span>
-                        </div>
-                        <p className={`text-xs mt-0.5 truncate ${Z.textSecondary(dark)}`}>{msg.message}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className={`p-3 border-t ${Z.panelHeader(dark)} flex-shrink-0`}>
-                <button
-                  onClick={() => { setShowInbox(false); router.push('/messages/inbox/unread'); }}
-                  className={`w-full py-1.5 text-sm font-medium transition-colors ${Z.ctaBtn(dark)}`}
-                >
-                  See all messages
-                </button>
-              </div>
-            </div>
-          )}
+          {showInbox && <div className={`absolute right-0 top-11 z-50 flex max-h-[min(32rem,calc(100dvh-4.5rem))] w-[min(20rem,calc(100vw-1.5rem))] flex-col overflow-hidden ${panelClass}`}>
+            <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3"><h2 className="text-sm font-semibold">Messages</h2>{unreadInboxCount > 0 && <button onClick={markAllInboxRead} className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>}</div>
+            <div className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">{inboxMessages.length ? inboxMessages.map((message) => <button key={message.id} onClick={() => { if (message.unread) markRead(message.id); setShowInbox(false); router.push('/messages/inbox/unread'); }} className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-muted/60"><span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border ${message.unread ? 'bg-foreground text-background' : 'bg-muted text-foreground'}`}><Mail size={14}/></span><span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{message.title}</span><span className="shrink-0 text-[10px] text-muted-foreground">{message.time}</span></span><span className="mt-0.5 block truncate text-xs text-muted-foreground">{message.body}</span></span></button>) : <p className="px-4 py-8 text-center text-sm text-muted-foreground">No messages yet.</p>}</div>
+            <button onClick={() => { setShowInbox(false); router.push('/messages/inbox'); }} className="shrink-0 border-t border-border px-4 py-3 text-sm font-medium hover:bg-muted/60">Open inbox</button>
+          </div>}
         </div>
 
-        {/* ── Notifications ── */}
         <div className="relative" ref={notificationsRef}>
-          <button onClick={() => setShowNotifications(!showNotifications)} className={`${iconBtn} relative`} aria-label="Notifications">
-            <Bell size={18} />
-            {unreadNotifCount > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-foreground text-background text-[10px] rounded-full flex items-center justify-center font-semibold">
-                {unreadNotifCount}
-              </span>
-            )}
+          <button onClick={() => { setShowNotifications((open) => !open); setShowInbox(false); setShowLanguage(false); setShowProfile(false); }} className={iconButtonClass} aria-label="Notifications" aria-expanded={showNotifications}>
+            <Bell size={17}/>{unreadNotificationCount > 0 && <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground px-1 font-mono text-[10px] font-semibold text-background">{unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}</span>}
           </button>
-
-          {showNotifications && (
-            <div className={`absolute right-0 mt-2 w-80 z-50 max-h-[500px] overflow-hidden flex flex-col ${Z.panel(dark)} max-[425px]:left-1/2 max-[425px]:-translate-x-[77.5%]`}>
-              <div className={`px-4 py-3 border-b ${Z.panelHeader(dark)} flex items-center justify-between flex-shrink-0`}>
-                <h3 className={`text-sm font-semibold ${Z.textPrimary(dark)}`}>Notifications</h3>
-                {unreadNotifCount > 0 && (
-                  <button
-                    onClick={async () => { await Promise.all(notifications.filter((n) => n.unread).map((n) => notificationService.updateMessage(n.id, { isRead: true }))); setNotifications(prev => prev.map(n => ({ ...n, unread: false }))); setInboxMessages(prev => prev.map(m => ({ ...m, unread: false }))); }}
-                    className="text-xs text-foreground hover:underline font-medium"
-                  >
-                    Mark all read
-                  </button>
-                )}
-              </div>
-              <div className={`divide-y ${Z.panelDivide(dark)} overflow-y-auto flex-1`}>
-                {notifications.map((n) => (
-                  <div
-                    key={n.id}
-                    onClick={() => {
-                      if (n.unread) notificationService.updateMessage(n.id, { isRead: true }).catch((error) => console.error(error));
-                      setNotifications(prev => prev.map(item => item.id === n.id ? { ...item, unread: false } : item));
-                      setShowNotifications(false);
-                      router.push(n.href);
-                    }}
-                    className={`px-4 py-3 transition-colors ${Z.panelRow(dark)}`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${n.unread ? 'bg-foreground text-background' : (dark ? 'bg-zinc-800' : 'bg-zinc-100')}`}>
-                        <Bell size={14} className={n.unread ? 'text-background' : Z.textSecondary(dark)} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className={`text-sm font-medium leading-snug ${Z.textPrimary(dark)}`}>{t ? t(n.i18nKey) || n.title : n.title}</p>
-                          <span className={`text-xs flex-shrink-0 ${Z.textSecondary(dark)}`}>{n.time}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className={`p-3 border-t ${Z.panelHeader(dark)} flex-shrink-0`}>
-                <button
-                  onClick={() => { setShowNotifications(false); router.push('/messages'); }}
-                  className={`w-full py-1.5 text-sm font-medium transition-colors ${Z.ctaBtn(dark)}`}
-                >
-                  See all notifications
-                </button>
-              </div>
-            </div>
-          )}
+          {showNotifications && <div className={`absolute right-0 top-11 z-50 flex max-h-[min(32rem,calc(100dvh-4.5rem))] w-[min(20rem,calc(100vw-1.5rem))] flex-col overflow-hidden ${panelClass}`}>
+            <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3"><h2 className="text-sm font-semibold">Notifications</h2>{unreadNotificationCount > 0 && <button onClick={markAllNotificationsRead} className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>}</div>
+            <div className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">{notifications.length ? notifications.map((notification) => <button key={notification.id} onClick={() => { if (notification.unread) markRead(notification.id); setShowNotifications(false); router.push(notification.href); }} className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-muted/60"><span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border ${notification.unread ? 'bg-foreground text-background' : 'bg-muted text-foreground'}`}><Bell size={14}/></span><span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{notification.title}</span><span className="shrink-0 text-[10px] text-muted-foreground">{notification.time}</span></span><span className="mt-0.5 block text-xs text-muted-foreground">{notification.unread ? 'Unread' : 'Read'}</span></span></button>) : <p className="px-4 py-8 text-center text-sm text-muted-foreground">No notifications yet.</p>}</div>
+            <button onClick={() => { setShowNotifications(false); router.push('/messages'); }} className="shrink-0 border-t border-border px-4 py-3 text-sm font-medium hover:bg-muted/60">Open notifications</button>
+          </div>}
         </div>
 
-        {/* ── Profile ── */}
-        <div className="relative" ref={profileRef}>
-          <button
-            onClick={() => setShowProfile(!showProfile)}
-            className="rounded-full transition-all hover:ring-2 hover:ring-zinc-300 dark:hover:ring-zinc-700 hover:ring-offset-1"
-            aria-label="Profile"
-          >
-            <NextImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jonathan" alt="Jonathan Deo" width={32} height={32} unoptimized className="rounded-full bg-zinc-100 dark:bg-zinc-800" />
-          </button>
+        <div className="relative" ref={languageRef}>
+          <button onClick={() => { setShowLanguage((open) => !open); setShowInbox(false); setShowNotifications(false); setShowProfile(false); }} className={iconButtonClass} aria-label="Change language" title="Change language"><Languages size={17}/></button>
+          {showLanguage && <div className={`absolute right-0 top-11 w-48 p-1.5 ${panelClass}`}><p className="mb-1 border-b border-border px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Language</p>{LANGUAGES.map((item) => <button key={item.code} onClick={() => { setLanguage?.(item.code); setShowLanguage(false); }} className={`flex min-h-10 w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors ${language === item.code ? 'bg-foreground font-medium text-background' : 'text-foreground hover:bg-muted'}`}><span>{item.name}</span><span className="flex items-center gap-2">{language === item.code && <Check size={14}/>}<span className={`rounded border px-1 py-0.5 font-mono text-[10px] ${language === item.code ? 'border-background/30 bg-background/10 text-background' : 'border-border bg-muted text-muted-foreground'}`}>{LANGUAGE_CODES[item.code]}</span></span></button>)}</div>}
+        </div>
 
-          {showProfile && (
-            <div className={`absolute right-0 mt-2 w-72 z-50 overflow-hidden ${Z.panel(dark)} max-[425px]:left-1/2 max-[425px]:-translate-x-[90%]`}>
-              <div className={`px-5 py-4 border-b ${Z.panelHeader(dark)}`}>
-                <div className="flex items-center gap-3">
-                  <NextImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jonathan" alt="Jonathan Deo" width={48} height={48} unoptimized className="rounded-full flex-shrink-0 bg-zinc-100 dark:bg-zinc-800" />
-                  <div className="min-w-0">
-                    <p className={`text-sm font-semibold ${Z.textPrimary(dark)}`}>Jonathan Deo</p>
-                    <p className={`text-xs ${Z.textSecondary(dark)}`}>Admin</p>
-                    <p className={`text-xs mt-0.5 flex items-center gap-1 ${Z.textSecondary(dark)}`}>
-                      <Mail size={11} /> info@materialam.com
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="py-1">
-                {profileMenuItems.map(({ icon: Icon, label, sub, href, lightBg, darkBg, ic }) => (
-                  <button
-                    key={label}
-                    onClick={() => { setShowProfile(false); router.push(href); }}
-                    className={`flex items-center w-full px-5 py-2.5 text-sm transition-colors ${Z.panelRow(dark)}`}
-                  >
-                    <div className={`w-8 h-8 rounded-md flex items-center justify-center mr-3 flex-shrink-0 ${dark ? darkBg : lightBg}`}>
-                      <Icon size={15} className={ic} />
-                    </div>
-                    <div className="text-left">
-                      <p className={`text-sm font-medium ${Z.textPrimary(dark)}`}>{label}</p>
-                      <p className={`text-xs ${Z.textSecondary(dark)}`}>{sub}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-              <div className={`p-4 border-t ${Z.panelHeader(dark)}`}>
-                <button
-                  onClick={() => setShowProfile(false)}
-                  className={`w-full flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-md transition-colors ${dark ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200' : 'bg-zinc-900 hover:bg-zinc-800 text-white'}`}
-                >
-                  <LogOut size={15} /> Sign out
-                </button>
-              </div>
-            </div>
-          )}
+        <div className="relative" ref={profileRef}>
+          <button onClick={() => { setShowProfile((open) => !open); setShowInbox(false); setShowNotifications(false); setShowLanguage(false); }} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-foreground font-mono text-xs font-semibold text-background" aria-label="Open profile menu" aria-expanded={showProfile}>JD</button>
+          {showProfile && <div className={`absolute right-0 top-11 w-60 p-1.5 ${panelClass}`}>
+            <div className="mb-1 flex items-center gap-2.5 border-b border-border px-3 py-2.5"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-foreground font-mono text-xs font-semibold text-background">JD</span><span className="min-w-0"><span className="block truncate text-sm font-bold">John Doe</span><span className="block truncate text-xs text-muted-foreground">john@nexstore.com</span></span></div>
+            <div className="p-0.5">{[{ label: 'Profile', href: '/settings', icon: User }, { label: 'Account Settings', href: '/settings', icon: Settings }, { label: 'Security', href: '/security/audit/security', icon: Shield }].map(({ label, href, icon: Icon }) => <button key={label} onClick={() => { setShowProfile(false); router.push(href); }} className="flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted"><Icon size={15}/>{label}</button>)}</div>
+            <div className="mt-1 border-t border-border pt-1"><button onClick={signOut} className="flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted"><LogOut size={15}/>Sign Out</button></div>
+          </div>}
         </div>
       </div>
-    </nav>
-  );
+    </header>
+
+    {commandOpen && <div className="fixed inset-0 z-[80] flex items-start justify-center bg-black/50 p-3 pt-[12vh] backdrop-blur-sm sm:p-6 sm:pt-[14vh]" onMouseDown={(event) => { if (event.target === event.currentTarget) closeCommand(); }}>
+      <section role="dialog" aria-modal="true" aria-label="Quick search" className="w-full max-w-xl overflow-hidden rounded-xl border border-border bg-background shadow-2xl">
+        <div className="flex items-center gap-3 border-b border-border px-4"><Search size={18} className="shrink-0 text-muted-foreground"/><input ref={commandInputRef} value={commandQuery} onChange={(event) => { setCommandQuery(event.target.value); setSelectedIndex(0); }} onKeyDown={(event) => {
+          if (event.key === 'ArrowDown') { event.preventDefault(); setSelectedIndex((index) => Math.min(index + 1, commandResults.length - 1)); }
+          if (event.key === 'ArrowUp') { event.preventDefault(); setSelectedIndex((index) => Math.max(0, index - 1)); }
+          if (event.key === 'Enter' && commandResults[selectedIndex]) { event.preventDefault(); activateResult(commandResults[selectedIndex]); }
+        }} placeholder="Search routes and actions..." className="h-12 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"/><kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">ESC</kbd></div>
+        <div className="max-h-[min(65vh,28rem)] overflow-y-auto p-2">{commandResults.length ? commandResults.map((result, index) => {
+          const Icon = result.icon || (result.action === 'toggle-theme' ? (isDark ? Sun : Moon) : result.href?.includes('settings') ? Settings : result.href?.includes('messages') ? Mail : Activity);
+          return <button key={result.id || `${result.href}-${result.label}`} onMouseEnter={() => setSelectedIndex(index)} onClick={() => activateResult(result)} className={`flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-left ${index === selectedIndex ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'}`}><Icon size={16} className="shrink-0"/><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{result.label}</span><span className="block truncate text-xs text-muted-foreground">{result.category || 'Route'}</span></span>{result.action ? <span className="text-[10px] text-muted-foreground">Action</span> : <ArrowRight size={14} className="shrink-0 text-muted-foreground"/>}</button>;
+        }) : <p className="px-4 py-10 text-center text-sm text-muted-foreground">No matching routes or actions.</p>}</div>
+        <div className="flex items-center gap-4 border-t border-border px-4 py-2 text-[10px] text-muted-foreground"><span>↑↓ Navigate</span><span>↵ Open</span><span>Esc Close</span></div>
+      </section>
+    </div>}
+  </>;
 }
