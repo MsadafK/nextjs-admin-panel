@@ -1,62 +1,46 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { Settings, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Shield } from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { ChevronDown, PanelLeftClose, PanelLeftOpen, Shield, X } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 import { menuItems } from './MenuItems';
 import { notificationService } from '@/services/notificationService';
 import { supabase } from '@/lib/supabase';
 
-export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPositionChange, isDarkMode = false }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [activePath, setActivePath] = useState(['dashboard']);
-  const [showPositionMenu, setShowPositionMenu] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState({});
-  const [hoveredItem, setHoveredItem] = useState(null);
-  const hoverTimeout = useRef(null);
-  const hoverMenuRef = useRef(null);
-  const positionMenuRef = useRef(null);
-  const [userName] = useState('John Doe');
-  const [userEmail] = useState('john@nexstore.com');
-  const [windowWidth, setWindowWidth] = useState(1024);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const { t } = useLanguage() || {};
+const NAV_SECTIONS = [
+  { title: 'Overview', items: ['dashboard', 'analytics', 'reports'] },
+  { title: 'Management', items: ['users', 'products'] },
+  { title: 'Workspace', items: ['messages', 'calendar'] },
+  { title: 'System', items: ['security', 'performance', 'settings'] },
+];
 
-  useEffect(() => {
-    setWindowWidth(window.innerWidth);
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const translateText = (text) => {
-    if (!text) return '';
-    return t ? t(text) : text.replace(/_/g, ' ');
-  };
-
-  const ICON_SIZE = 20;
-  const getBadge = (item) => ['messages', 'inbox', 'unread_messages'].includes(item.label) ? unreadCount : item.badge;
-
-  const findPathByHref = useCallback(function findPath(targetHref, items = menuItems, currentPath = []) {
-    for (const item of items) {
-      const newPath = [...currentPath, item.label];
-      if (item.href === targetHref && !item.subItems && !item.childItems) {
-        return newPath;
-      }
-      if (item.subItems) {
-        const subPath = findPath(targetHref, item.subItems, newPath);
-        if (subPath) return subPath;
-      }
-      if (item.childItems) {
-        const childPath = findPath(targetHref, item.childItems, newPath);
-        if (childPath) return childPath;
-      }
+const normalizePath = (path = '') => path.replace(/\/$/, '') || '/';
+const findRouteTrail = (items, pathname, parents = []) => {
+  for (const item of items) {
+    const trail = [...parents, item];
+    if (item.href && normalizePath(item.href) === normalizePath(pathname)) return trail;
+    const nested = item.subItems || item.childItems;
+    if (nested) {
+      const match = findRouteTrail(nested, pathname, trail);
+      if (match) return match;
     }
-    return null;
-  }, []);
+  }
+  return null;
+};
+const containsRoute = (item, pathname) => Boolean(findRouteTrail([item], pathname));
 
+export default function Sidebar({
+  isCollapsed = false, onToggle, position = 'left', isDarkMode = false,
+  isMobile = false, isMobileOpen = false, onMobileClose = () => {},
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { t } = useLanguage() || {};
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [expanded, setExpanded] = useState({});
+
+  const translate = useCallback((value) => (t ? t(value) : value.replace(/_/g, ' ')), [t]);
   const refreshCounts = useCallback(async () => {
     try { setUnreadCount(await notificationService.getUnreadCount()); }
     catch (error) { console.error('Could not load unread message count:', error); }
@@ -77,721 +61,109 @@ export default function Sidebar({ isCollapsed, onToggle, position = 'left', onPo
     };
   }, [refreshCounts]);
 
-  const findPathToItem = (targetLabel, items = menuItems, currentPath = []) => {
-    for (const item of items) {
-      const newPath = [...currentPath, item.label];
-      if (item.label === targetLabel) return newPath;
-      if (item.subItems) {
-        const subPath = findPathToItem(targetLabel, item.subItems, newPath);
-        if (subPath) return subPath;
-      }
-      if (item.childItems) {
-        const childPath = findPathToItem(targetLabel, item.childItems, newPath);
-        if (childPath) return childPath;
-      }
-    }
-    return null;
-  };
-
-  // Automatically sync activePath & expandedMenus with Next.js pathname
   useEffect(() => {
     if (!pathname) return;
-    const matchedPath = findPathByHref(pathname);
-    if (matchedPath) {
-      setActivePath(matchedPath);
-      localStorage.setItem('sidebarActivePath', JSON.stringify(matchedPath));
-
-      const newExpanded = {};
-      for (let i = 0; i < matchedPath.length - 1; i++) {
-        newExpanded[matchedPath[i]] = true;
-      }
-      setExpandedMenus(newExpanded);
-      localStorage.setItem('sidebarExpandedMenus', JSON.stringify(newExpanded));
+    const trail = findRouteTrail(menuItems, pathname);
+    if (trail) {
+      const next = {};
+      trail.slice(0, -1).forEach((item) => { next[item.href || item.label] = true; });
+      setExpanded(next);
     }
-  }, [pathname, findPathByHref]);
-
-  const isInActivePath = (itemLabel) => activePath.includes(itemLabel);
-
-  const setActiveItem = (itemLabel) => {
-    const path = findPathToItem(itemLabel);
-    if (path) {
-      setActivePath(path);
-      localStorage.setItem('sidebarActivePath', JSON.stringify(path));
-
-      const newExpandedMenus = { ...expandedMenus };
-      for (let i = 0; i < path.length - 1; i++) {
-        newExpandedMenus[path[i]] = true;
-      }
-      setExpandedMenus(newExpandedMenus);
-      localStorage.setItem('sidebarExpandedMenus', JSON.stringify(newExpandedMenus));
-
-      const navigateToItem = (items = menuItems) => {
-        for (const item of items) {
-          if (item.label === itemLabel) {
-            if (item.href && item.href !== '#' && !item.subItems && !item.childItems) {
-              router.push(item.href);
-              setHoveredItem(null);
-            }
-            return true;
-          }
-          if (item.subItems && navigateToItem(item.subItems)) return true;
-          if (item.childItems && navigateToItem(item.childItems)) return true;
-        }
-        return false;
-      };
-      navigateToItem();
-    }
-  };
-
-  const handleMenuClick = (item, e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-
-    if (item.subItems) {
-      const newExpandedMenus = expandedMenus[item.label] ? {} : { [item.label]: true };
-      setExpandedMenus(newExpandedMenus);
-      const path = findPathToItem(item.label);
-      if (path) {
-        setActivePath(path);
-        localStorage.setItem('sidebarActivePath', JSON.stringify(path));
-      }
-      return;
-    }
-
-    setExpandedMenus({});
-    const path = findPathToItem(item.label);
-    if (path) {
-      setActivePath(path);
-      localStorage.setItem('sidebarActivePath', JSON.stringify(path));
-    }
-
-    if (item.href && item.href !== '#') {
-      router.push(item.href);
-    }
-  };
-
-  const handleMouseEnter = (item, event) => {
-    if (isCollapsed || position === 'bottom' || position === 'top') {
-      if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-      const rect = event.currentTarget.getBoundingClientRect();
-      hoverTimeout.current = setTimeout(() => {
-        setHoveredItem({ ...item, rect });
-      }, 150);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-    hoverTimeout.current = setTimeout(() => {
-      setHoveredItem(null);
-      if (position === 'top' || position === 'bottom') {
-        setExpandedMenus({});
-      }
-    }, 300);
-  };
-
-  const handleHoverMenuMouseEnter = () => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-  };
-
-  const handleHoverMenuMouseLeave = () => {
-    hoverTimeout.current = setTimeout(() => {
-      setHoveredItem(null);
-      if (position === 'top' || position === 'bottom') {
-        setExpandedMenus({});
-      }
-    }, 300);
-  };
+    if (isMobile) onMobileClose();
+  }, [pathname, isMobile, onMobileClose]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (hoverMenuRef.current && !hoverMenuRef.current.contains(event.target)) {
-        setHoveredItem(null);
-      }
-      if (positionMenuRef.current && !positionMenuRef.current.contains(event.target)) {
-        setShowPositionMenu(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
+    if (!isMobile || !isMobileOpen) return undefined;
+    document.body.style.overflow = 'hidden';
+    const handleEscape = (event) => { if (event.key === 'Escape') onMobileClose(); };
+    window.addEventListener('keydown', handleEscape);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleEscape);
     };
-  }, []);
+  }, [isMobile, isMobileOpen, onMobileClose]);
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 1023px)');
-    const handleChange = (e) => {
-      if (e.matches && !isCollapsed && (position === 'left' || position === 'right') && typeof onToggle === 'function') {
-        onToggle();
-      }
-    };
-
-    handleChange(mediaQuery);
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [isCollapsed, onToggle, position]);
-
-  const getContainerClasses = () => {
-    let classes = `transition-all duration-300 flex ${
-      isDarkMode
-        ? 'bg-zinc-900 text-zinc-300 border-zinc-800'
-        : 'bg-white text-zinc-600 border-zinc-200'
-    }`;
-
-    if (position === 'top') {
-      classes += ' h-16 flex-row border-b w-full z-50';
-    } else if (position === 'bottom') {
-      classes += ' fixed bottom-0 left-0 right-0 h-16 flex-row border-t overflow-hidden z-50';
-    } else if (position === 'right') {
-      classes += ` fixed right-0 top-0 bottom-0 ${isCollapsed ? 'w-16' : 'w-64'} flex-col border-l z-40`;
-    } else {
-      classes += ` fixed left-0 top-0 bottom-0 ${isCollapsed ? 'w-16' : 'w-64'} flex-col border-r z-40`;
-    }
-
-    return classes;
+  const closeAfterNavigation = () => { if (isMobile) onMobileClose(); };
+  const toggleGroup = (item) => {
+    const key = item.href || item.label;
+    setExpanded((current) => ({ ...current, [key]: !current[key] }));
+  };
+  const navigate = (href) => {
+    if (href && href !== '#') router.push(href);
+    closeAfterNavigation();
   };
 
-  const positionOptions = [
-    { value: 'left', label: 'Left', icon: <ChevronLeft size={14} /> },
-    { value: 'right', label: 'Right', icon: <ChevronRight size={14} /> },
-    { value: 'top', label: 'Top', icon: <ChevronUp size={14} /> },
-    { value: 'bottom', label: 'Bottom', icon: <ChevronDown size={14} /> },
-  ];
-
-  const getHoverMenuPosition = () => {
-    if (!hoveredItem?.rect) return {};
-
-    const menuWidth = 250;
-    const menuHeight = 400;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    let left, right, top, bottom;
-
-    if (position === 'left' || position === 'right') {
-      if (position === 'right') {
-        right = viewportWidth - hoveredItem.rect.left + 8;
-        if (right + menuWidth > viewportWidth) {
-          left = hoveredItem.rect.left - menuWidth - 8;
-        }
-      } else {
-        left = hoveredItem.rect.right + 8;
-        if (left + menuWidth > viewportWidth) {
-          right = viewportWidth - hoveredItem.rect.left + 8;
-        }
-      }
-      top = Math.max(8, Math.min(hoveredItem.rect.top, viewportHeight - menuHeight));
-    } else {
-      left = hoveredItem.rect.left;
-      if (left + menuWidth > viewportWidth) {
-        left = viewportWidth - menuWidth - 8;
-      } else if (left < 8) {
-        left = 8;
-      }
-
-      if (position === 'top') {
-        top = hoveredItem.rect.bottom + 8;
-        if (top + menuHeight > viewportHeight) {
-          top = hoveredItem.rect.top - menuHeight - 8;
-        }
-      } else {
-        bottom = viewportHeight - hoveredItem.rect.top + 8;
-        if (bottom + menuHeight > viewportHeight) {
-          top = hoveredItem.rect.bottom + 8;
-        } else {
-          top = 'auto';
-          bottom = viewportHeight - hoveredItem.rect.top + 8;
-        }
-      }
-    }
-
-    return { left, right, top, bottom };
+  const renderLeaf = (item, level = 2) => {
+    const active = normalizePath(item.href) === normalizePath(pathname);
+    return <button key={`${item.label}-${item.href}`} type="button" title={isCollapsed ? translate(item.label) : undefined} onClick={() => navigate(item.href)} className={`flex min-h-10 w-full min-w-0 items-center rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors ${active ? 'bg-foreground text-background font-medium shadow-2xs' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'} ${level === 3 ? 'text-[12.5px]' : ''}`}>
+      <span className="min-w-0 truncate capitalize">{translate(item.label)}</span>
+    </button>;
   };
 
-  const renderHoverMenu = () => {
-    if (!hoveredItem || (!isCollapsed && position !== 'bottom' && position !== 'top')) return null;
+  const renderNested = (item, level = 2) => {
+    const hasChildren = Boolean(item.subItems || item.childItems);
+    if (!hasChildren) return renderLeaf(item, level);
+    const children = item.subItems || item.childItems;
+    const key = item.href || item.label;
+    const isOpen = Boolean(expanded[key]);
+    const branchActive = containsRoute(item, pathname);
+    return <div key={`${item.label}-${key}`} className="space-y-0.5">
+      <button type="button" aria-expanded={isOpen} onClick={() => toggleGroup(item)} className={`flex min-h-10 w-full min-w-0 items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors ${branchActive ? 'bg-muted/60 font-semibold text-foreground' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'}`}>
+        <span className="min-w-0 truncate capitalize">{translate(item.label)}</span><ChevronDown size={14} className={`shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}/>
+      </button>
+      {isOpen && <div className="ml-5 space-y-0.5 border-l border-border pl-3">
+        {children.map((child) => child.subItems || child.childItems ? renderNested(child, level + 1) : renderLeaf(child, level + 1))}
+      </div>}
+    </div>;
+  };
 
-    const menuPosition = getHoverMenuPosition();
+  const asideWidth = isCollapsed && !isMobile ? 'w-16' : 'w-64';
+  const edge = position === 'right' ? 'right-0 border-l' : 'left-0 border-r';
 
-    return (
-      <div
-        ref={hoverMenuRef}
-        className={`fixed z-[60] ${isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'} border rounded-lg shadow-dropdown min-w-[250px] py-2`}
-        style={menuPosition}
-        onMouseEnter={handleHoverMenuMouseEnter}
-        onMouseLeave={handleHoverMenuMouseLeave}
-      >
-        <div className={`px-3 py-2 border-b ${isDarkMode ? 'border-zinc-800' : 'border-zinc-200'}`}>
-          <div className="flex items-center space-x-2">
-            <hoveredItem.icon size={16} className={isDarkMode ? 'text-zinc-300' : 'text-zinc-600'} />
-            <span className={`font-medium text-sm capitalize ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`}>
-              {translateText(hoveredItem.label)}
-            </span>
-            {getBadge(hoveredItem) > 0 && (
-              <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
-                {getBadge(hoveredItem)}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {hoveredItem.subItems && (
-          <div className="py-1">
-            {hoveredItem.subItems.map((subItem) => {
-              const SubIcon = subItem.icon;
-              return (
-                <div key={subItem.label} className="relative group/submenu">
-                  <button
-                    onClick={() => setActiveItem(subItem.label)}
-                    className={`w-full flex items-center px-3 py-2 text-sm ${
-                      isDarkMode
-                        ? 'text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100'
-                        : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
-                    } transition-colors`}
-                  >
-                    <SubIcon size={16} className={`mr-3 ${isDarkMode ? 'text-zinc-500' : 'text-zinc-400'}`} />
-                    <span className="flex-1 text-left capitalize">
-                      {translateText(subItem.label)}
-                    </span>
-                    {getBadge(subItem) > 0 && (
-                      <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
-                        {getBadge(subItem)}
-                      </span>
-                    )}
-                    {subItem.childItems && (
-                      position === 'right' || position === 'bottom' ? (
-                        <ChevronLeft size={14} className={`ml-2 ${isDarkMode ? 'text-zinc-500' : 'text-zinc-400'}`} />
-                      ) : (
-                        <ChevronRight size={14} className={`ml-2 ${isDarkMode ? 'text-zinc-500' : 'text-zinc-400'}`} />
-                      )
-                    )}
-                  </button>
-
-                  {subItem.childItems && (
-                    <div
-                      className={`absolute ${
-                        position === 'right' || position === 'bottom' ? 'right-full mr-1' : 'left-full ml-1'
-                      } ${
-                        position === 'bottom' ? 'bottom-0' : 'top-0'
-                      } ${
-                        isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'
-                      } border rounded-lg shadow-dropdown min-w-[200px] py-2 opacity-0 invisible group-hover/submenu:opacity-100 group-hover/submenu:visible transition-all duration-200 z-[70]`}
-                    >
-                      <div className={`px-3 py-2 border-b ${isDarkMode ? 'border-zinc-800' : 'border-zinc-200'} mb-1`}>
-                        <span className="text-xs font-medium text-zinc-500 uppercase tracking-wide">
-                          {translateText(subItem.label)}
-                        </span>
-                      </div>
-                      {subItem.childItems.map((childItem) => {
-                        const ChildIcon = childItem.icon;
-                        return (
-                          <button
-                            key={childItem.label}
-                            onClick={() => setActiveItem(childItem.label)}
-                            className={`w-full flex items-center px-3 py-2 text-sm ${
-                              isDarkMode
-                                ? 'text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100'
-                                : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
-                            } transition-colors`}
-                          >
-                            <ChildIcon size={14} className={`mr-3 ${isDarkMode ? 'text-zinc-500' : 'text-zinc-400'}`} />
-                            <span className="text-left capitalize">
-                              {translateText(childItem.label)}
-                            </span>
-                            {getBadge(childItem) > 0 && (
-                              <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium ml-2">
-                                {getBadge(childItem)}
-                              </span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
+  return <>
+    {isMobile && isMobileOpen && <button type="button" aria-label="Close navigation" onClick={onMobileClose} className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs lg:hidden"/>}
+    <aside className={`${isMobile ? `fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] border-r ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}` : `hidden lg:flex fixed inset-y-0 ${edge} ${asideWidth}`} flex h-[100dvh] flex-col border-border/70 bg-background text-foreground transition-[width,transform] duration-200 ease-in-out`}>
+      <div className={`flex h-14 shrink-0 items-center border-b border-border/70 px-3 ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}`}>
+        {(!isCollapsed || isMobile) && <button type="button" onClick={() => navigate('/')} className="flex min-w-0 items-center gap-2.5 rounded-md text-left" title="AdminPro home">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-foreground text-background"><Shield size={17} strokeWidth={1.75}/></span>
+          <span className="flex min-w-0 items-center gap-1.5"><span className="truncate text-[15px] font-semibold tracking-tight">AdminPro</span><span className="rounded border border-border px-1 py-0.5 text-[9px] font-semibold leading-none tracking-wider text-muted-foreground">PRO</span></span>
+        </button>}
+        {isMobile ? <button type="button" onClick={onMobileClose} aria-label="Close sidebar" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"><X size={18}/></button>
+          : <button type="button" onClick={onToggle} aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground lg:flex">{isCollapsed ? <PanelLeftOpen size={17} strokeWidth={1.75}/> : <PanelLeftClose size={17} strokeWidth={1.75}/>}</button>}
       </div>
-    );
-  };
 
-  const ToggleIcon = isCollapsed
-    ? (position === 'right' ? ChevronLeft : ChevronRight)
-    : (position === 'right' ? ChevronRight : ChevronLeft);
-
-  return (
-    <>
-      <div className={getContainerClasses()}>
-        <div
-          className={`p-3.5 ${position === 'bottom' || position === 'top' ? 'border-r' : 'border-b'} ${
-            isDarkMode ? 'border-zinc-800' : 'border-zinc-200'
-          } flex items-center justify-between ${
-            position === 'bottom' || position === 'top' ? 'flex-shrink-0' : ''
-          } ${position === 'right' ? 'flex-row-reverse' : ''}`}
-        >
-          {!isCollapsed && (
-            <div
-              onClick={() => router.push('/')}
-              className="flex items-center space-x-2 cursor-pointer"
-            >
-              <div className="w-8 h-8 bg-zinc-900 dark:bg-zinc-100 rounded-lg flex items-center justify-center">
-                <Shield className="w-5 h-5 text-white dark:text-zinc-900" />
-              </div>
-              <h1 className={`text-xl font-semibold tracking-tight ${isDarkMode ? 'text-zinc-100' : 'text-zinc-900'}`}>
-                {translateText('app_name')}
-              </h1>
-            </div>
-          )}
-
-          {windowWidth > 768 && (
-            <div className="flex items-center space-x-1">
-              <div className="relative" ref={positionMenuRef}>
-                <button
-                  onClick={() => setShowPositionMenu(!showPositionMenu)}
-                  disabled={windowWidth < 1279}
-                  className={`p-2 rounded-md ${
-                    windowWidth < 1280
-                      ? 'opacity-40 cursor-not-allowed'
-                      : isDarkMode
-                      ? 'hover:bg-zinc-800 text-zinc-400'
-                      : 'hover:bg-zinc-100 text-zinc-500'
-                  } transition-colors`}
-                  title="Change sidebar position"
-                >
-                  <Settings size={ICON_SIZE} />
-                </button>
-
-                {showPositionMenu && (
-                  <div
-                    className={`absolute ${
-                      position === 'right' ? 'right-0' : 'left-0'
-                    } mt-2 w-36 rounded-lg border shadow-dropdown py-1 z-[70] ${
-                      isDarkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'
-                    }`}
-                  >
-                    {positionOptions.map((opt) => (
-                      <button
-                        key={opt.value}
-                        onClick={() => {
-                          if (onPositionChange) onPositionChange(opt.value);
-                          setShowPositionMenu(false);
-                        }}
-                        className={`w-full flex items-center justify-between px-3 py-1.5 text-xs font-medium transition-colors ${
-                          position === opt.value
-                            ? isDarkMode
-                              ? 'bg-zinc-800 text-zinc-100'
-                              : 'bg-zinc-100 text-zinc-900'
-                            : isDarkMode
-                            ? 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
-                            : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
-                        }`}
-                      >
-                        <span>{opt.label}</span>
-                        {opt.icon}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <button
-                onClick={onToggle}
-                disabled={windowWidth < 1279}
-                className={`p-2 rounded-md ${
-                  windowWidth < 1280
-                    ? 'opacity-40 cursor-not-allowed'
-                    : isDarkMode
-                    ? 'hover:bg-zinc-800 text-zinc-400'
-                    : 'hover:bg-zinc-100 text-zinc-500'
-                } transition-colors`}
-              >
-                <ToggleIcon size={ICON_SIZE} />
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Navigation */}
-        <nav
-          className={`flex-1 px-3 md:px-4 py-3 ${
-            position === 'bottom' || position === 'top'
-              ? 'overflow-x-auto overflow-y-hidden'
-              : 'overflow-y-auto'
-          } sidebar-scroll`}
-        >
-          <ul
-            className={`${
-              position === 'bottom' || position === 'top'
-                ? 'flex space-x-2 items-center whitespace-nowrap pr-12 min-w-max'
-                : 'space-y-1'
-            }`}
-          >
-            {menuItems.map((item) => {
+      <nav aria-label="Main navigation" className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-3">
+        {NAV_SECTIONS.map((section) => {
+          const sectionItems = section.items.map((label) => menuItems.find((item) => item.label === label)).filter(Boolean);
+          return <section key={section.title} className="mt-2">
+            {!isCollapsed && !isMobile && <h2 className="px-3 pb-1.5 pt-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">{section.title}</h2>}
+            {sectionItems.map((item) => {
               const Icon = item.icon;
-              const isActive = activePath[activePath.length - 1] === item.label;
-              const isInPath = isInActivePath(item.label);
-              const isExpanded = expandedMenus[item.label];
-              const translatedLabel = translateText(item.label);
-              const activeBorder =
-                position === 'left'
-                  ? 'border-r-2'
-                  : position === 'right'
-                  ? 'border-l-2'
-                  : position === 'top'
-                  ? 'border-b-2'
-                  : 'border-t-2';
-
-              return (
-                <li
-                  key={item.label}
-                  className={`relative ${
-                    isCollapsed && (position === 'left' || position === 'right') ? 'mb-2' : ''
-                  }`}
-                >
-                  <button
-                    onClick={(e) => handleMenuClick(item, e)}
-                    onMouseEnter={(e) => handleMouseEnter(item, e)}
-                    onMouseLeave={handleMouseLeave}
-                    className={`${
-                      position === 'bottom' || position === 'top' ? 'flex-shrink-0 h-10' : 'w-full'
-                    } flex items-center ${
-                      isCollapsed && (position === 'left' || position === 'right')
-                        ? 'justify-center py-3 px-0 h-12'
-                        : isCollapsed
-                        ? 'justify-center px-3'
-                        : 'px-3'
-                    } rounded-lg transition-colors group ${
-                      isActive
-                        ? `${isDarkMode ? 'bg-zinc-800 text-zinc-50' : 'bg-zinc-900 text-zinc-50'} ${activeBorder}`
-                        : isInPath
-                        ? `${isDarkMode ? 'bg-zinc-800/60 text-zinc-300' : 'bg-zinc-100 text-zinc-700'} ${activeBorder}`
-                        : `\${
-                            isDarkMode
-                              ? 'text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100'
-                              : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
-                          }`
-                    }`}
-                  >
-                    <Icon
-                      size={ICON_SIZE}
-                      strokeWidth={2}
-                      className={`flex-shrink-0 ${isCollapsed ? 'mx-auto' : 'mr-3'} ${
-                        isActive
-                          ? 'text-zinc-50'
-                          : isInPath
-                          ? isDarkMode
-                            ? 'text-zinc-200'
-                            : 'text-zinc-700'
-                          : isDarkMode
-                          ? 'text-zinc-400 group-hover:text-zinc-100'
-                          : 'text-zinc-400 group-hover:text-zinc-700'
-                      }`}
-                    />
-                    {!isCollapsed && (
-                      <div className="flex items-center justify-between w-full h-10">
-                        <span className="font-medium capitalize">{translatedLabel}</span>
-                        <div className="flex items-center space-x-2">
-                          {getBadge(item) > 0 && (
-                            <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
-                              {getBadge(item)}
-                            </span>
-                          )}
-                          {item.subItems && position !== 'bottom' && position !== 'top' && (
-                            <ChevronDown
-                              size={16}
-                              className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </button>
-
-                  {item.subItems && !isCollapsed && isExpanded && (position === 'left' || position === 'right') && (
-                    <div className="relative ml-6 mt-1">
-                      <div className={`absolute left-4 top-0 bottom-0 w-px ${isDarkMode ? 'bg-zinc-700' : 'bg-zinc-200'}`} />
-                      <ul className="space-y-1">
-                        {item.subItems.map((subItem, subIndex) => {
-                          const SubIcon = subItem.icon;
-                          const subTranslatedLabel = translateText(subItem.label);
-                          const isSubActive = activePath[activePath.length - 1] === subItem.label;
-                          const isSubInPath = isInActivePath(subItem.label);
-                          const isSubExpanded = expandedMenus[subItem.label];
-                          const isLastSubItem = subIndex === item.subItems.length - 1;
-
-                          return (
-                            <li key={subItem.label} className="relative">
-                              <div
-                                className={`absolute left-4 top-3 w-2 h-2 rounded-full transform -translate-x-1/2 z-10 ${
-                                  isSubActive
-                                    ? isDarkMode
-                                      ? 'bg-zinc-200'
-                                      : 'bg-zinc-900'
-                                    : isSubInPath
-                                    ? 'bg-zinc-500'
-                                    : isDarkMode
-                                    ? 'bg-zinc-600'
-                                    : 'bg-zinc-300'
-                                } ${isSubActive || isSubInPath ? 'ring-2 ring-white dark:ring-zinc-900' : ''}`}
-                              />
-
-                              {isLastSubItem && (
-                                <div className={`absolute left-4 top-5 bottom-0 w-px ${isDarkMode ? 'bg-zinc-900' : 'bg-white'} z-5`} />
-                              )}
-
-                              <button
-                                onClick={() => {
-                                  setActiveItem(subItem.label);
-                                  if (subItem.childItems) {
-                                    setExpandedMenus((prev) => ({
-                                      ...prev,
-                                      [subItem.label]: !prev[subItem.label],
-                                    }));
-                                  }
-                                }}
-                                className={`w-full flex items-center pl-8 pr-3 py-2 rounded-lg text-sm transition-colors group ${
-                                  isSubActive
-                                    ? `${isDarkMode ? 'bg-zinc-800 text-zinc-50' : 'bg-zinc-900 text-zinc-50'} ${activeBorder}`
-                                    : isSubInPath
-                                    ? `${isDarkMode ? 'bg-zinc-800/60 text-zinc-300' : 'bg-zinc-100 text-zinc-700'} ${activeBorder}`
-                                    : `\${
-                                        isDarkMode
-                                          ? 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100'
-                                          : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700'
-                                      }`
-                                }`}
-                              >
-                                <SubIcon
-                                  size={16}
-                                  className={`mr-3 ${
-                                    isSubActive
-                                      ? 'text-zinc-50'
-                                      : isSubInPath
-                                      ? isDarkMode
-                                        ? 'text-zinc-200'
-                                        : 'text-zinc-700'
-                                      : 'text-zinc-400 group-hover:text-zinc-500'
-                                  }`}
-                                />
-                                <div className="flex items-center justify-between w-full">
-                                  <span className="capitalize">{subTranslatedLabel}</span>
-                                  <div className="flex items-center space-x-2">
-                                    {getBadge(subItem) > 0 && (
-                                      <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
-                                        {getBadge(subItem)}
-                                      </span>
-                                    )}
-                                    {subItem.childItems && (
-                                      <ChevronDown
-                                        size={14}
-                                        className={`transition-transform ${isSubExpanded ? 'rotate-180' : ''}`}
-                                      />
-                                    )}
-                                  </div>
-                                </div>
-                              </button>
-
-                              {subItem.childItems && isSubExpanded && (
-                                <div className="relative ml-6 mt-1">
-                                  <div className={`absolute left-4 top-0 bottom-0 w-px ${isDarkMode ? 'bg-zinc-700' : 'bg-zinc-300'}`} />
-                                  <ul className="space-y-1">
-                                    {subItem.childItems.map((childItem, childIndex) => {
-                                      const ChildIcon = childItem.icon;
-                                      const childTranslatedLabel = translateText(childItem.label);
-                                      const isChildActive = activePath[activePath.length - 1] === childItem.label;
-                                      const isLastChildItem = childIndex === subItem.childItems.length - 1;
-
-                                      return (
-                                        <li key={childItem.label} className="relative">
-                                          <div
-                                            className={`absolute left-4 top-3 w-1.5 h-1.5 rounded-full transform -translate-x-1/2 z-10 ${
-                                              isChildActive
-                                                ? isDarkMode
-                                                  ? 'bg-zinc-200'
-                                                  : 'bg-zinc-900'
-                                                : isDarkMode
-                                                ? 'bg-zinc-500'
-                                                : 'bg-zinc-400'
-                                            } ${isChildActive ? 'ring-2 ring-white dark:ring-zinc-900 scale-125' : ''}`}
-                                          />
-
-                                          {isLastChildItem && (
-                                            <div className={`absolute left-4 top-4 bottom-0 w-px ${isDarkMode ? 'bg-zinc-900' : 'bg-white'} z-5`} />
-                                          )}
-
-                                          <button
-                                            onClick={() => setActiveItem(childItem.label)}
-                                            className={`w-full flex items-center pl-8 pr-3 py-2 rounded-lg text-sm transition-colors group ${
-                                              isChildActive
-                                                ? `${isDarkMode ? 'bg-zinc-800 text-zinc-50' : 'bg-zinc-900 text-zinc-50'} ${activeBorder}`
-                                                : `\${
-                                                    isDarkMode
-                                                      ? 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100'
-                                                      : 'text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600'
-                                                  }`
-                                            }`}
-                                          >
-                                            <ChildIcon
-                                              size={14}
-                                              className={`mr-3 transition-all duration-200 ${
-                                                isChildActive ? 'text-zinc-50 scale-110' : 'text-zinc-400 group-hover:text-zinc-500'
-                                              }`}
-                                            />
-                                            <div className="flex items-center justify-between w-full">
-                                              <span className="capitalize">{childTranslatedLabel}</span>
-                                              {getBadge(childItem) > 0 && (
-                                                <span className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs px-1.5 py-0.5 rounded-full font-medium">
-                                                  {getBadge(childItem)}
-                                                </span>
-                                              )}
-                                            </div>
-                                          </button>
-                                        </li>
-                                      );
-                                    })}
-                                  </ul>
-                                </div>
-                              )}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  )}
-                </li>
-              );
+              const key = item.href || item.label;
+              const hasChildren = Boolean(item.subItems || item.childItems);
+              const isOpen = Boolean(expanded[key]);
+              const exactActive = normalizePath(item.href) === normalizePath(pathname) && !hasChildren;
+              const branchActive = containsRoute(item, pathname);
+              const label = translate(item.label);
+              return <div key={item.label} className="mb-0.5">
+                <button type="button" title={isCollapsed && !isMobile ? label : undefined} aria-expanded={hasChildren ? isOpen : undefined} onClick={() => hasChildren ? (isCollapsed && !isMobile ? onToggle?.() : toggleGroup(item)) : navigate(item.href)} className={`relative flex h-9 min-h-10 w-full min-w-0 items-center justify-between gap-2.5 rounded-md px-3 text-[13px] font-medium transition-all lg:min-h-0 ${exactActive ? 'bg-foreground text-background shadow-2xs' : branchActive ? 'bg-muted/60 text-foreground font-semibold' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'} ${isCollapsed && !isMobile ? 'justify-center px-0' : ''}`}>
+                  <span className={`flex min-w-0 items-center gap-2.5 ${isCollapsed && !isMobile ? 'justify-center' : ''}`}><Icon size={16} strokeWidth={1.75} className="shrink-0"/>{(!isCollapsed || isMobile) && <span className="min-w-0 truncate capitalize">{label}</span>}</span>
+                  {(!isCollapsed || isMobile) && <span className="flex shrink-0 items-center gap-2">{item.label === 'messages' && unreadCount > 0 && <span aria-label={`${unreadCount} unread messages`} className="rounded-full bg-foreground px-1.5 py-0.5 text-[10px] font-semibold leading-none text-background">{unreadCount > 99 ? '99+' : unreadCount}</span>}{hasChildren && <ChevronDown size={14} className={`shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}/>}</span>}
+                  {isCollapsed && !isMobile && item.label === 'messages' && unreadCount > 0 && <span className="absolute right-1 top-1.5 h-2 w-2 rounded-full bg-foreground ring-2 ring-background"/>}
+                </button>
+                {hasChildren && isOpen && (!isCollapsed || isMobile) && <div className="ml-5 space-y-0.5 border-l border-border pl-3 pt-0.5">{(item.subItems || item.childItems).map((child) => renderNested(child, 2))}</div>}
+              </div>;
             })}
-          </ul>
-        </nav>
+          </section>;
+        })}
+      </nav>
 
-        {!isCollapsed && position !== 'bottom' && position !== 'top' && (
-          <div className={`p-4 border-t ${isDarkMode ? 'border-zinc-800' : 'border-zinc-200'}`}>
-            <div className="flex items-center space-x-3">
-              <div className="w-9 h-9 bg-zinc-900 dark:bg-zinc-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-white dark:text-zinc-900 text-sm font-semibold">
-                  {userName ? userName.split(' ').map((n) => n[0]).join('').toUpperCase() : 'U'}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium truncate ${isDarkMode ? 'text-zinc-200' : 'text-zinc-900'}`}>
-                  {userName}
-                </p>
-                <p className="text-xs truncate text-zinc-500">
-                  {userEmail}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {renderHoverMenu()}
-    </>
-  );
+      {(!isCollapsed || isMobile) && <div className="mt-auto shrink-0 border-t border-border bg-background p-3">
+        <div className="flex items-center gap-2.5 rounded-lg border border-border bg-muted/30 p-2.5 transition-colors hover:bg-muted/60">
+          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-semibold text-background">JD<span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background bg-muted-foreground"/></span>
+          <span className="min-w-0 flex-1"><span className="block truncate text-[13px] font-medium tracking-tight">John Doe</span><span className="block truncate text-[11px] text-muted-foreground">john@nexstore.com</span></span>
+        </div>
+      </div>}
+    </aside>
+  </>;
 }

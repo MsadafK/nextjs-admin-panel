@@ -99,7 +99,7 @@ export default function SettingsModal({
     { code: 'zh', name: '中文',      flag: '🇨🇳' },
   ];
 
-  const positions = ['left', 'right', 'top', 'bottom'];
+  const positions = ['left', 'right'];
 
   /* shared classes */
   const sectionTitle = 'text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3';
