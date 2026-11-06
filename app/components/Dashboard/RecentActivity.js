@@ -1,86 +1,25 @@
 'use client';
 
-import { Clock, User, ShoppingCart, Package, Shield, Settings } from 'lucide-react';
+import { Clock, Package, Shield, ShoppingCart, Settings, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-const MODULE_ICONS = {
-  Auth: User,
-  Products: Package,
-  Orders: ShoppingCart,
-  Security: Shield,
-  Settings: Settings,
-};
+const MODULE_ICONS = { Auth: User, Products: Package, Orders: ShoppingCart, Security: Shield, Settings };
 
 export default function RecentActivity({ activities = [], loading }) {
   const router = useRouter();
-
-  return (
-    <div className="card p-0 shadow-card flex flex-col h-full">
-      {/* Header */}
-      <div className="px-5 py-4 border-b border-border flex items-center justify-between flex-shrink-0">
-        <h3 className="text-sm font-semibold text-foreground">Recent Activity (Live DB)</h3>
-        <Clock className="w-4 h-4 text-muted-foreground" />
-      </div>
-
-      {/* List */}
-      <div className="px-5 py-4 space-y-4 flex-1">
-        {loading ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="skeleton h-12 w-full rounded-md" />
-          ))
-        ) : activities.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">
-            No recent activity found in Supabase.
-          </p>
-        ) : (
-          activities.map((log, index) => {
-            const Icon = MODULE_ICONS[log.module] || Clock;
-            const isLast = index === activities.length - 1;
-
-            return (
-              <div key={log.id} className="flex items-start gap-3 relative">
-                {/* Vertical connector line */}
-                {!isLast && (
-                  <div className="absolute left-[15px] top-8 bottom-0 w-px bg-border" />
-                )}
-
-                {/* Icon chip — monochrome */}
-                <div className="p-2 rounded-md bg-muted flex-shrink-0 z-10">
-                  <Icon className="w-3.5 h-3.5 text-muted-foreground" strokeWidth={2} />
-                </div>
-
-                {/* Text */}
-                <div className="flex-1 min-w-0 pt-0.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-medium text-foreground leading-snug truncate">
-                      {log.action}
-                    </p>
-                    <span className="text-[11px] text-muted-foreground flex-shrink-0">
-                      {log.user}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                    {log.details}
-                  </p>
-                  <p className="text-xs text-muted-foreground/60 mt-1">
-                    {log.time}
-                  </p>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="px-5 py-3 border-t border-border flex-shrink-0 bg-muted/20">
-        <button
-          onClick={() => router.push('/users/all/activity')}
-          className="text-xs font-medium text-foreground hover:text-muted-foreground transition-colors underline-offset-2 hover:underline"
-        >
-          View all activity →
-        </button>
+  return <section className="min-w-0 rounded-xl border border-border bg-card">
+    <div className="flex items-center justify-between border-b border-border px-4 py-4 sm:px-5"><div><h2 className="text-sm font-semibold text-foreground">Recent Activity (Live DB)</h2><p className="mt-1 text-xs text-muted-foreground">Latest changes across your workspace</p></div><span className="inline-flex items-center gap-1.5 rounded border border-border bg-muted px-2 py-1 font-mono text-[10px] text-foreground"><Clock size={12}/>{loading ? '…' : activities.length}</span></div>
+    <div className="overflow-x-auto pb-2">
+      <div className="min-w-[580px] divide-y divide-border sm:min-w-full">
+      {loading ? Array.from({ length: 4 }).map((_, index) => <div key={index} className="m-4 h-12 animate-pulse rounded-md bg-muted"/>) : activities.length === 0 ? <p className="px-4 py-10 text-center text-sm text-muted-foreground">No recent activity found in Supabase.</p> : activities.map((log) => {
+        const Icon = MODULE_ICONS[log.module] || Clock;
+        return <article key={log.id} className="flex min-w-max items-start justify-between gap-5 p-3.5 transition-colors hover:bg-muted/40">
+          <div className="flex min-w-0 flex-1 items-start gap-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-foreground"><Icon size={14}/></span><div className="min-w-0 flex-1"><div className="flex items-center gap-2"><p className="whitespace-nowrap text-sm font-medium text-foreground">{log.action}</p><span className="shrink-0 whitespace-nowrap rounded border border-border bg-muted px-2 py-0.5 font-mono text-[10px] uppercase text-foreground">{log.user}</span></div><p className="mt-1 whitespace-nowrap text-xs text-muted-foreground" title={log.details}>{log.details}</p></div></div>
+          <span className="shrink-0 whitespace-nowrap pt-0.5 text-[10px] text-muted-foreground">{log.time}</span>
+        </article>;
+      })}
       </div>
     </div>
-  );
+    <div className="border-t border-border px-4 py-3"><button onClick={() => router.push('/users/all/activity')} className="text-xs font-medium text-foreground underline-offset-2 hover:text-muted-foreground hover:underline">View all activity →</button></div>
+  </section>;
 }

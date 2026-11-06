@@ -3,6 +3,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { dashboardService } from '@/services/dashboardService';
+import { productService } from '@/services/productService';
+import { eventService } from '@/services/eventService';
+import { notificationService } from '@/services/notificationService';
 
 export function useDashboard() {
   const [summaryStats, setSummaryStats] = useState({
@@ -18,6 +21,9 @@ export function useDashboard() {
     conversionChange: '+0%',
   });
   const [recentActivities, setRecentActivities] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -25,9 +31,15 @@ export function useDashboard() {
     try {
       setLoading(true);
       setError(null);
-      const data = await dashboardService.getDashboardData();
-      setSummaryStats(data.summaryStats);
-      setRecentActivities(data.recentActivities);
+      const [dataResult, productsResult, eventsResult, notificationsResult] = await Promise.allSettled([
+        dashboardService.getDashboardData(), productService.getProducts(), eventService.getEvents(), notificationService.getNotifications(),
+      ]);
+      if (dataResult.status === 'rejected') throw dataResult.reason;
+      setSummaryStats(dataResult.value.summaryStats);
+      setRecentActivities(dataResult.value.recentActivities);
+      setProducts(productsResult.status === 'fulfilled' ? productsResult.value : []);
+      setEvents(eventsResult.status === 'fulfilled' ? eventsResult.value : []);
+      setNotifications(notificationsResult.status === 'fulfilled' ? notificationsResult.value : []);
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
       setError(err.message || 'Failed to fetch live dashboard data');
@@ -43,6 +55,9 @@ export function useDashboard() {
   return {
     summaryStats,
     recentActivities,
+    products,
+    events,
+    notifications,
     loading,
     error,
     refreshDashboard: fetchDashboard,
