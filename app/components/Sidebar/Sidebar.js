@@ -125,14 +125,14 @@ export default function Sidebar({
     <aside className={`${isMobile ? `fixed inset-y-0 ${position === 'right' ? 'right-0 border-l' : 'left-0 border-r'} z-50 w-72 max-w-[85vw] ${isMobileOpen ? 'translate-x-0' : position === 'right' ? 'translate-x-full' : '-translate-x-full'}` : `hidden lg:flex fixed inset-y-0 ${edge} ${asideWidth}`} flex h-[100dvh] flex-col border-border/70 bg-background text-foreground transition-[width,transform] duration-200 ease-in-out`}>
       <div className={`flex h-14 shrink-0 items-center border-b border-border/70 px-3 ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}`}>
         {(!isCollapsed || isMobile) && <button type="button" onClick={() => navigate('/')} className="flex min-w-0 items-center gap-2.5 rounded-md text-left" title="AdminPro home">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-foreground text-background"><Shield size={17} strokeWidth={1.75}/></span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-foreground"><Shield size={17} strokeWidth={1.75}/></span>
           <span className="flex min-w-0 items-center gap-1.5"><span className="truncate text-[15px] font-semibold tracking-tight">AdminPro</span><span className="rounded border border-border px-1 py-0.5 text-[9px] font-semibold leading-none tracking-wider text-muted-foreground">PRO</span></span>
         </button>}
         {isMobile ? <button type="button" onClick={onMobileClose} aria-label="Close sidebar" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"><X size={18}/></button>
           : <button type="button" onClick={onToggle} aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground lg:flex">{isCollapsed ? <PanelLeftOpen size={17} strokeWidth={1.75}/> : <PanelLeftClose size={17} strokeWidth={1.75}/>}</button>}
       </div>
 
-      <nav aria-label="Main navigation" className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-3">
+      <nav aria-label="Main navigation" className="sidebar-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 pb-3">
         {NAV_SECTIONS.map((section) => {
           const sectionItems = section.items.map((label) => menuItems.find((item) => item.label === label)).filter(Boolean);
           return <section key={section.title} className="mt-2">
