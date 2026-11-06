@@ -331,6 +331,11 @@
     }
   }
 
+  @keyframes workspace-sheet-in {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
   /* ── Status dot (success / warning / danger / neutral) ── */
   .status-success { color: hsl(142 76% 36%); }
   .status-warning { color: hsl(38 92% 50%); }

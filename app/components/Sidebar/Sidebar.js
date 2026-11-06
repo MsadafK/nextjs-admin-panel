@@ -122,7 +122,7 @@ export default function Sidebar({
 
   return <>
     {isMobile && isMobileOpen && <button type="button" aria-label="Close navigation" onClick={onMobileClose} className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs lg:hidden"/>}
-    <aside className={`${isMobile ? `fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] border-r ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}` : `hidden lg:flex fixed inset-y-0 ${edge} ${asideWidth}`} flex h-[100dvh] flex-col border-border/70 bg-background text-foreground transition-[width,transform] duration-200 ease-in-out`}>
+    <aside className={`${isMobile ? `fixed inset-y-0 ${position === 'right' ? 'right-0 border-l' : 'left-0 border-r'} z-50 w-72 max-w-[85vw] ${isMobileOpen ? 'translate-x-0' : position === 'right' ? 'translate-x-full' : '-translate-x-full'}` : `hidden lg:flex fixed inset-y-0 ${edge} ${asideWidth}`} flex h-[100dvh] flex-col border-border/70 bg-background text-foreground transition-[width,transform] duration-200 ease-in-out`}>
       <div className={`flex h-14 shrink-0 items-center border-b border-border/70 px-3 ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}`}>
         {(!isCollapsed || isMobile) && <button type="button" onClick={() => navigate('/')} className="flex min-w-0 items-center gap-2.5 rounded-md text-left" title="AdminPro home">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-foreground text-background"><Shield size={17} strokeWidth={1.75}/></span>
