@@ -1,283 +1,54 @@
-// app/users/add/single/page.js
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  UserPlus,
-  User,
-  Mail,
-  Phone,
-  Briefcase,
-  Shield,
-  Lock,
-  Check,
-  ArrowLeft,
-  AlertCircle,
-} from 'lucide-react';
-import { userService } from '@/services/userService';
+import { Check, UserPlus } from 'lucide-react';
+import { useUsers } from '@/hooks/useUsers';
+import UserPageHeader from '@/app/components/Users/UserPageHeader';
+import UserKpiSummary from '@/app/components/Users/UserKpiSummary';
+
+const controlClass = 'h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground outline-none transition-colors focus:border-foreground';
 
 export default function AddSingleUserPage() {
   const router = useRouter();
+  const { users, loading, refreshUsers, addUser } = useUsers();
+  const [form, setForm] = useState({ name: '', email: '', role: 'user', department: 'Engineering', status: 'active' });
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const initials = (form.name || 'New User').trim().split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    department: 'Engineering',
-    position: '',
-    employeeId: '',
-    role: 'user',
-    status: 'active',
-    password: '',
-    confirmPassword: '',
-  });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(false);
-
-    if (formData.password && formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
+  const update = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setSubmitting(true); setError(''); setSuccess(false);
     try {
-      setSubmitting(true);
-      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-      await userService.createUser({
-        name: fullName || formData.email.split('@')[0],
-        email: formData.email.trim(),
-        phone: formData.phone,
-        department: formData.department,
-        role: formData.role,
-        status: formData.status,
-      });
-
+      await addUser(form);
       setSuccess(true);
-      setTimeout(() => router.push('/users/all/list'), 900);
-    } catch (err) {
-      setError(err.message || 'Failed to create user in Supabase');
-    } finally {
-      setSubmitting(false);
-    }
+      window.setTimeout(() => router.push('/users/all/list'), 800);
+    } catch (submitError) { setError(submitError.message || 'Could not save the user.'); }
+    finally { setSubmitting(false); }
   };
 
-  return (
-    <div className="page-container max-w-4xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <UserPlus size={22} className="text-foreground" />
-            Add New User
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Create a new user record directly in Supabase (`public.users`)
-          </p>
+  return <div className="page-container mx-auto max-w-7xl space-y-6">
+    <UserPageHeader title="Add New User" description="Create an account in your live public.users directory." loading={loading} onRefresh={refreshUsers} users={users}/>
+    <UserKpiSummary users={users} loading={loading}/>
+    {error && <p role="alert" className="rounded-lg border border-border bg-muted p-3 text-sm text-foreground">{error}</p>}
+    {success && <p role="status" className="rounded-lg border border-border bg-foreground p-3 text-sm text-background">User saved. Returning to the directory…</p>}
+
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 items-start gap-5 xl:grid-cols-3">
+      <section className="rounded-xl border border-border bg-background p-5 sm:p-6 xl:col-span-2">
+        <div className="mb-5 flex items-center gap-3 border-b border-border pb-4"><span className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-muted text-foreground"><UserPlus size={17}/></span><div><h2 className="text-sm font-semibold text-foreground">User Details</h2><p className="mt-0.5 text-xs text-muted-foreground">Enter account identity, role, and workspace assignment.</p></div></div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <label className="space-y-1.5 text-xs font-medium text-foreground">Full Name<input required value={form.name} onChange={update('name')} placeholder="Full name" className={controlClass}/></label>
+          <label className="space-y-1.5 text-xs font-medium text-foreground">Email Address<input type="email" required value={form.email} onChange={update('email')} placeholder="name@company.com" className={controlClass}/></label>
+          <label className="space-y-1.5 text-xs font-medium text-foreground">Role<select value={form.role} onChange={update('role')} className={controlClass}><option value="admin">Admin</option><option value="manager">Manager</option><option value="user">User</option></select></label>
+          <label className="space-y-1.5 text-xs font-medium text-foreground">Department<select value={form.department} onChange={update('department')} className={controlClass}><option>Engineering</option><option>Management</option><option>Marketing</option><option>Support</option><option>General</option></select></label>
+          <label className="space-y-1.5 text-xs font-medium text-foreground">Status<select value={form.status} onChange={update('status')} className={controlClass}><option value="active">Active</option><option value="suspended">Suspended</option></select></label>
         </div>
-        <button onClick={() => router.push('/users/all/list')} className="btn btn-outline">
-          <ArrowLeft size={15} className="mr-2" />
-          Back to User List
-        </button>
-      </div>
-
-      {error && (
-        <div className="card p-4 border border-foreground bg-muted text-foreground text-sm flex items-center gap-2">
-          <AlertCircle size={16} />
-          <span>{error}</span>
-        </div>
-      )}
-
-      {success && (
-        <div className="card p-4 border border-foreground bg-foreground text-background text-sm flex items-center gap-2">
-          <Check size={16} />
-          <span>User created in Supabase! Redirecting to User List...</span>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Personal Info */}
-        <div className="card p-6 shadow-card border border-border space-y-4">
-          <div className="flex items-center gap-2 border-b border-border pb-3">
-            <User size={18} className="text-foreground" />
-            <h2 className="text-base font-semibold text-foreground">Personal Information</h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="label block mb-1.5">First Name *</label>
-              <input
-                type="text"
-                required
-                value={formData.firstName}
-                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                placeholder="Mohd"
-                className="input w-full"
-              />
-            </div>
-            <div>
-              <label className="label block mb-1.5">Last Name *</label>
-              <input
-                type="text"
-                required
-                value={formData.lastName}
-                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                placeholder="Sadaf"
-                className="input w-full"
-              />
-            </div>
-            <div>
-              <label className="label block mb-1.5">Email Address *</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="user@example.com"
-                  className="input pl-9 w-full"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="label block mb-1.5">Phone Number</label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+91 98765 43210"
-                  className="input pl-9 w-full"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Professional Info */}
-        <div className="card p-6 shadow-card border border-border space-y-4">
-          <div className="flex items-center gap-2 border-b border-border pb-3">
-            <Briefcase size={18} className="text-foreground" />
-            <h2 className="text-base font-semibold text-foreground">Professional Information</h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="label block mb-1.5">Department *</label>
-              <select
-                value={formData.department}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                className="input w-full"
-              >
-                <option value="Engineering">Engineering</option>
-                <option value="Management">Management</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Support">Support</option>
-                <option value="General">General</option>
-              </select>
-            </div>
-            <div>
-              <label className="label block mb-1.5">Position</label>
-              <input
-                type="text"
-                value={formData.position}
-                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                placeholder="Frontend Engineer"
-                className="input w-full"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Account Settings */}
-        <div className="card p-6 shadow-card border border-border space-y-4">
-          <div className="flex items-center gap-2 border-b border-border pb-3">
-            <Shield size={18} className="text-foreground" />
-            <h2 className="text-base font-semibold text-foreground">Account Settings</h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="label block mb-1.5">User Role *</label>
-              <select
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                className="input w-full"
-              >
-                <option value="user">User</option>
-                <option value="manager">Manager</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-            <div>
-              <label className="label block mb-1.5">Account Status</label>
-              <select
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                className="input w-full"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-            <div>
-              <label className="label block mb-1.5">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="Enter password"
-                  className="input pl-9 w-full"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="label block mb-1.5">Confirm Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  placeholder="Re-enter password"
-                  className="input pl-9 w-full"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-lg bg-muted border border-border text-xs text-foreground">
-            <strong>Password Requirements:</strong> Minimum 8 characters recommended for administrative accounts.
-          </div>
-        </div>
-
-        <div className="flex items-center justify-end gap-3">
-          <button
-            type="button"
-            onClick={() => router.push('/users/all/list')}
-            className="btn btn-outline"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn btn-primary bg-foreground text-background hover:bg-foreground/90"
-          >
-            <Check size={16} className="mr-2" />
-            {submitting ? 'Creating User...' : 'Create User'}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
+        <div className="mt-6 flex flex-wrap justify-end gap-2 border-t border-border pt-4"><button type="button" onClick={() => router.push('/users/all/list')} className="h-9 rounded-md border border-border px-4 text-xs font-medium text-foreground hover:bg-muted">Cancel</button><button type="submit" disabled={submitting} className="inline-flex h-9 items-center gap-2 rounded-md bg-foreground px-5 text-xs font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-60"><Check size={14}/>{submitting ? 'Saving…' : 'Save User'}</button></div>
+      </section>
+      <aside className="rounded-xl border border-border bg-background p-5 sm:p-6"><h2 className="text-sm font-semibold text-foreground">Live Profile Preview</h2><p className="mt-1 text-xs text-muted-foreground">Preview updates as you edit the form.</p><div className="mt-5 rounded-lg border border-border bg-muted/20 p-4"><div className="flex items-center gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-xs font-semibold text-background">{initials}</span><span className="min-w-0"><span className="block truncate text-sm font-semibold text-foreground">{form.name || 'Full Name'}</span><span className="block truncate text-xs text-muted-foreground">{form.email || 'email@company.com'}</span></span></div><div className="mt-4 flex flex-wrap gap-2"><span className="rounded border border-border bg-muted px-2 py-1 font-mono text-[10px] uppercase text-foreground">{form.role}</span><span className="rounded border border-border bg-muted px-2 py-1 text-[10px] text-foreground">{form.department}</span><span className={`rounded px-2 py-1 text-[10px] font-medium ${form.status === 'active' ? 'bg-foreground text-background' : 'border border-border bg-muted text-muted-foreground'}`}>{form.status}</span></div></div></aside>
+    </form>
+  </div>;
 }

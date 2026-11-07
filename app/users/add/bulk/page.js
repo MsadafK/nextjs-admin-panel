@@ -13,19 +13,20 @@ import {
   Trash2,
 } from 'lucide-react';
 import { userService } from '@/services/userService';
+import { useUsers } from '@/hooks/useUsers';
+import UserPageHeader from '@/app/components/Users/UserPageHeader';
+import UserKpiSummary from '@/app/components/Users/UserKpiSummary';
 
 export default function BulkImportUsersPage() {
   const router = useRouter();
+  const { users, loading, refreshUsers } = useUsers();
   const [parsedUsers, setParsedUsers] = useState([]);
   const [importing, setImporting] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
 
   const handleDownloadTemplate = () => {
-    const csv =
-      'Name,Email,Department,Role,Status\n' +
-      'Aarav Sharma,aarav@example.com,Engineering,user,active\n' +
-      'Zoya Khan,zoya@example.com,Management,manager,active';
+    const csv = 'Name,Email,Department,Role,Status\n,,,,\n';
     const link = document.createElement('a');
     link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
     link.setAttribute('download', 'bulk_users_template.csv');
@@ -79,6 +80,7 @@ export default function BulkImportUsersPage() {
       for (const user of parsedUsers) {
         await userService.createUser(user);
       }
+      await refreshUsers();
       setMessage(`Successfully imported ${parsedUsers.length} users into Supabase!`);
       setParsedUsers([]);
     } catch (err) {
@@ -90,14 +92,8 @@ export default function BulkImportUsersPage() {
 
   return (
     <div className="page-container max-w-6xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1">
-          Bulk Import Users
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Import multiple users at once into Supabase (`public.users`) using CSV files
-        </p>
-      </div>
+      <UserPageHeader title="Bulk Import Users" description="Import account records from CSV into the live public.users directory." loading={loading} onRefresh={refreshUsers} users={users}/>
+      <UserKpiSummary users={users} loading={loading}/>
 
       {error && (
         <div className="card p-4 border border-foreground bg-muted text-foreground text-sm flex items-center gap-2">
@@ -185,7 +181,7 @@ export default function BulkImportUsersPage() {
             Download Template
           </button>
           <span className="text-[11px] text-muted-foreground">
-            Includes sample data for reference
+            CSV column header template
           </span>
         </div>
       </div>

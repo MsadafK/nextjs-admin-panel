@@ -1,148 +1,32 @@
-// app/users/active/online/page.js
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Search, Radio, RefreshCw, MessageSquare, Activity } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { MessageSquare, Search, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useUsers } from '@/hooks/useUsers';
+import UserPageHeader from '@/app/components/Users/UserPageHeader';
+import UserKpiSummary from '@/app/components/Users/UserKpiSummary';
+
+const controlClass = 'h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground';
 
 export default function OnlineUsersPage() {
   const router = useRouter();
   const { users, loading, refreshUsers } = useUsers();
+  const [search, setSearch] = useState('');
+  const [role, setRole] = useState('all');
+  const [department, setDepartment] = useState('all');
+  const activeUsers = users.filter((user) => (user.status || 'active').toLowerCase() === 'active');
+  const filtered = useMemo(() => activeUsers.filter((user) => {
+    const q = search.toLowerCase();
+    return (!q || `${user.name} ${user.email} ${user.department}`.toLowerCase().includes(q)) && (role === 'all' || (user.role || 'user').toLowerCase() === role) && (department === 'all' || (user.department || 'General').toLowerCase() === department.toLowerCase());
+  }), [activeUsers, search, role, department]);
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [roleFilter, setRoleFilter] = useState('all');
-  const [pingedId, setPingedId] = useState(null);
-
-  const activeUsers = useMemo(() => {
-    return users
-      .filter((u) => (u.status || 'active').toLowerCase() === 'active')
-      .map((u, idx) => ({
-        ...u,
-        ipAddress: `192.168.1.${101 + idx}`,
-        sessionAgo: idx === 0 ? 'Just now' : `${idx * 2 + 1} min ago`,
-      }));
-  }, [users]);
-
-  const filteredOnline = useMemo(() => {
-    const q = searchQuery.toLowerCase();
-    return activeUsers.filter((u) => {
-      const matchSearch =
-        u.name?.toLowerCase().includes(q) ||
-        u.email?.toLowerCase().includes(q) ||
-        u.department?.toLowerCase().includes(q);
-      const matchRole = roleFilter === 'all' || (u.role || 'user').toLowerCase() === roleFilter;
-      return matchSearch && matchRole;
-    });
-  }, [activeUsers, searchQuery, roleFilter]);
-
-  const handlePing = (id) => {
-    setPingedId(id);
-    setTimeout(() => setPingedId(null), 1500);
-  };
-
-  return (
-    <div className="page-container max-w-7xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Radio size={20} className="text-foreground" />
-            Online Users
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {activeUsers.length} users are currently active in Supabase (`public.users`). Real-time monitoring enabled.
-          </p>
-        </div>
-        <button onClick={refreshUsers} className="btn btn-outline">
-          <RefreshCw size={16} className={loading ? 'animate-spin mr-2' : 'mr-2'} />
-          Sync Sessions
-        </button>
-      </div>
-
-      <div className="card p-4 shadow-card border border-border flex flex-col sm:flex-row gap-3">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search online users by name, email, or department..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="input pl-9 w-full"
-          />
-        </div>
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="input w-full sm:w-auto"
-        >
-          <option value="all">All Roles</option>
-          <option value="admin">Admin</option>
-          <option value="manager">Manager</option>
-          <option value="user">User</option>
-        </select>
-      </div>
-
-      {loading ? (
-        <div className="card p-12 text-center text-muted-foreground border border-border">
-          Loading active sessions from Supabase...
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredOnline.map((user) => {
-            const initials = (user.name || 'U')
-              .split(' ')
-              .map((n) => n[0])
-              .join('')
-              .toUpperCase()
-              .slice(0, 2);
-
-            return (
-              <div
-                key={user.id}
-                className="card p-5 shadow-card border border-border flex flex-col justify-between space-y-4"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="relative">
-                      <div className="w-11 h-11 rounded-full bg-foreground text-background flex items-center justify-center font-mono text-sm font-bold">
-                        {initials}
-                      </div>
-                      <span className="w-3 h-3 rounded-full bg-foreground border-2 border-background absolute -bottom-0.5 -right-0.5" />
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-semibold text-foreground truncate">{user.name}</h3>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {user.department || 'General'} • {user.role}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right text-xs text-muted-foreground flex-shrink-0 font-mono">
-                    <p>{user.sessionAgo}</p>
-                    <p className="text-[11px]">IP: {user.ipAddress}</p>
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t border-border flex items-center justify-between gap-2">
-                  <button
-                    onClick={() => router.push('/messages')}
-                    className="btn btn-outline h-8 px-3 text-xs flex-1"
-                  >
-                    <MessageSquare size={13} className="mr-1.5" />
-                    Message
-                  </button>
-                  <button
-                    onClick={() => handlePing(user.id)}
-                    className="btn btn-primary bg-foreground text-background hover:bg-foreground/90 h-8 px-3 text-xs flex-1"
-                  >
-                    <Activity size={13} className="mr-1.5" />
-                    {pingedId === user.id ? 'Pong ✓ (14ms)' : 'Ping'}
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
+  return <div className="page-container mx-auto max-w-7xl space-y-6">
+    <UserPageHeader title="Active Users" description="Accounts currently marked active in the live users directory." loading={loading} onRefresh={refreshUsers} users={activeUsers}/>
+    <UserKpiSummary users={users} loading={loading}/>
+    <section className="grid grid-cols-1 gap-3 rounded-xl border border-border bg-muted/20 p-3.5 sm:grid-cols-2 xl:grid-cols-4"><div className="relative xl:col-span-2"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search active users…" className={`${controlClass} pl-9`}/></div><select value={role} onChange={(event) => setRole(event.target.value)} className={controlClass}><option value="all">All Roles</option><option value="admin">Admin</option><option value="manager">Manager</option><option value="user">User</option></select><select value={department} onChange={(event) => setDepartment(event.target.value)} className={controlClass}><option value="all">All Departments</option><option>Engineering</option><option>Management</option><option>Marketing</option><option>Support</option><option>General</option></select></section>
+    <section className="overflow-hidden rounded-xl border border-border bg-card"><div className="flex items-center justify-between border-b border-border px-4 py-3.5"><div><h2 className="text-sm font-semibold text-foreground">Active Accounts</h2><p className="mt-1 text-xs text-muted-foreground">{filtered.length} matching active users</p></div><UserCheck size={16} className="text-muted-foreground"/></div>
+      {loading ? <p className="p-10 text-center text-sm text-muted-foreground">Loading users…</p> : filtered.length ? <div className="w-full overflow-x-auto"><table className="w-full min-w-[680px] border-collapse text-left text-sm"><thead><tr className="border-b border-border bg-muted/40 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"><th className="px-4 py-3">User</th><th className="px-4 py-3">Role</th><th className="px-4 py-3">Department</th><th className="px-4 py-3">Status</th><th className="px-4 py-3 text-right">Quick Action</th></tr></thead><tbody className="divide-y divide-border">{filtered.map((user) => <tr key={user.id} className="hover:bg-muted/30"><td className="whitespace-nowrap px-4 py-3"><p className="font-medium text-foreground">{user.name}</p><p className="text-xs text-muted-foreground">{user.email}</p></td><td className="px-4 py-3"><span className="rounded border border-border bg-muted px-2 py-0.5 font-mono text-[11px] uppercase text-foreground">{user.role}</span></td><td className="px-4 py-3 text-xs text-foreground">{user.department || 'General'}</td><td className="px-4 py-3"><span className="rounded-full bg-foreground px-2 py-1 text-[11px] font-medium text-background">Active</span></td><td className="px-4 py-3 text-right"><button onClick={() => router.push('/messages/compose')} className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium text-foreground hover:bg-muted"><MessageSquare size={13}/>Message</button></td></tr>)}</tbody></table></div> : <p className="p-10 text-center text-sm text-muted-foreground">No active users match these filters.</p>}
+    </section>
+  </div>;
 }

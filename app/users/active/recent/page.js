@@ -1,145 +1,24 @@
-// app/users/active/recent/page.js
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Activity, Search, RefreshCw, Clock, ArrowUpRight } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Search, UserRound } from 'lucide-react';
 import { useUsers } from '@/hooks/useUsers';
+import UserPageHeader from '@/app/components/Users/UserPageHeader';
+import UserKpiSummary from '@/app/components/Users/UserKpiSummary';
 
-const ACTIVITY_TEMPLATES = [
-  { action: 'Authenticated Active Session', detail: 'Verified dashboard access token', type: 'auth' },
-  { action: 'Updated Inventory Ledger', detail: 'Synced product stock quantities', type: 'update' },
-  { action: 'Exported Audit Report', detail: 'Downloaded CSV valuation report', type: 'report' },
-  { action: 'Modified Role Permissions', detail: 'Reviewed RBAC security policy', type: 'security' },
-  { action: 'Updated Account Profile', detail: 'Synced department metadata in Supabase', type: 'profile' },
-];
+const formatDate = (value) => value ? new Date(value).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'Date unavailable';
 
 export default function RecentUserActivityPage() {
   const { users, loading, refreshUsers } = useUsers();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [typeFilter, setTypeFilter] = useState('all');
+  const [search, setSearch] = useState('');
+  const [role, setRole] = useState('all');
+  const recentUsers = useMemo(() => [...users].sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0)), [users]);
+  const filtered = recentUsers.filter((user) => (!search || `${user.name} ${user.email} ${user.department}`.toLowerCase().includes(search.toLowerCase())) && (role === 'all' || (user.role || 'user').toLowerCase() === role));
 
-  const activities = useMemo(() => {
-    return users.map((u, idx) => {
-      const tpl = ACTIVITY_TEMPLATES[idx % ACTIVITY_TEMPLATES.length];
-      return {
-        id: u.id,
-        name: u.name,
-        email: u.email,
-        role: u.role || 'User',
-        department: u.department || 'General',
-        action: tpl.action,
-        detail: tpl.detail,
-        type: tpl.type,
-        ip: `192.168.1.${101 + idx}`,
-        timeAgo: idx === 0 ? 'Just now' : `${idx * 4 + 2} min ago`,
-      };
-    });
-  }, [users]);
-
-  const filtered = useMemo(() => {
-    const q = searchQuery.toLowerCase();
-    return activities.filter((a) => {
-      const matchSearch =
-        a.name?.toLowerCase().includes(q) ||
-        a.action?.toLowerCase().includes(q) ||
-        a.detail?.toLowerCase().includes(q);
-      const matchType = typeFilter === 'all' || a.type === typeFilter;
-      return matchSearch && matchType;
-    });
-  }, [activities, searchQuery, typeFilter]);
-
-  return (
-    <div className="page-container max-w-7xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Activity size={22} className="text-foreground" />
-            Recent Activity
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {filtered.length} recent actions tracked across Supabase users (`public.users`)
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="px-3 py-1.5 rounded-md bg-foreground text-background text-xs font-mono font-medium inline-flex items-center gap-1.5">
-            <Clock size={13} /> {filtered.length} Recent
-          </span>
-          <button onClick={refreshUsers} className="btn btn-outline">
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-          </button>
-        </div>
-      </div>
-
-      <div className="card p-4 shadow-card border border-border flex flex-col sm:flex-row gap-3">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search by user or action..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="input pl-9 w-full"
-          />
-        </div>
-        <select
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          className="input w-full sm:w-auto"
-        >
-          <option value="all">All Types</option>
-          <option value="auth">Authentication</option>
-          <option value="update">Inventory Updates</option>
-          <option value="report">Reports</option>
-          <option value="security">Security</option>
-        </select>
-      </div>
-
-      <div className="space-y-3">
-        {loading ? (
-          <div className="card p-12 text-center text-muted-foreground border border-border">
-            Loading recent user activity...
-          </div>
-        ) : (
-          filtered.map((item) => {
-            const initials = (item.name || 'U')
-              .split(' ')
-              .map((n) => n[0])
-              .join('')
-              .toUpperCase()
-              .slice(0, 2);
-
-            return (
-              <div
-                key={item.id}
-                className="card p-4 shadow-card border border-border flex items-center justify-between gap-4 hover:bg-muted/40 transition-colors"
-              >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-10 h-10 rounded-full bg-foreground text-background flex items-center justify-center font-mono text-xs font-bold flex-shrink-0">
-                    {initials}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-foreground truncate">{item.name}</h3>
-                      <span className="px-2 py-0.5 rounded bg-muted border border-border font-mono text-[10px] uppercase text-foreground">
-                        {item.role}
-                      </span>
-                    </div>
-                    <p className="text-xs font-medium text-foreground mt-0.5 flex items-center gap-1">
-                      {item.action} <ArrowUpRight size={12} />
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {item.detail} • IP: {item.ip}
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs font-mono text-muted-foreground flex-shrink-0">
-                  {item.timeAgo}
-                </span>
-              </div>
-            );
-          })
-        )}
-      </div>
-    </div>
-  );
+  return <div className="page-container mx-auto max-w-7xl space-y-6">
+    <UserPageHeader title="Recent User Updates" description="Latest account records ordered by their live database timestamps." loading={loading} onRefresh={refreshUsers} users={filtered}/>
+    <UserKpiSummary users={users} loading={loading}/>
+    <section className="grid grid-cols-1 gap-3 rounded-xl border border-border bg-muted/20 p-3.5 sm:grid-cols-2"><div className="relative"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search by user, email, or department…" className="h-9 w-full rounded-md border border-border bg-background pl-9 pr-3 text-xs text-foreground"/></div><select value={role} onChange={(event) => setRole(event.target.value)} className="h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground"><option value="all">All Roles</option><option value="admin">Admin</option><option value="manager">Manager</option><option value="user">User</option></select></section>
+    <section className="overflow-hidden rounded-xl border border-border bg-card"><div className="flex items-center justify-between border-b border-border px-4 py-3.5"><div><h2 className="text-sm font-semibold text-foreground">Latest User Records</h2><p className="mt-1 text-xs text-muted-foreground">{filtered.length} matching records</p></div><UserRound size={16} className="text-muted-foreground"/></div>{loading ? <p className="p-10 text-center text-sm text-muted-foreground">Loading users…</p> : <div className="w-full overflow-x-auto"><table className="w-full min-w-[720px] border-collapse text-left text-sm"><thead><tr className="border-b border-border bg-muted/40 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"><th className="px-4 py-3">User</th><th className="px-4 py-3">Role</th><th className="px-4 py-3">Department</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Joined / Updated</th></tr></thead><tbody className="divide-y divide-border">{filtered.map((user) => <tr key={user.id} className="hover:bg-muted/30"><td className="whitespace-nowrap px-4 py-3"><p className="font-medium text-foreground">{user.name}</p><p className="text-xs text-muted-foreground">{user.email}</p></td><td className="px-4 py-3"><span className="rounded border border-border bg-muted px-2 py-0.5 font-mono text-[11px] uppercase text-foreground">{user.role}</span></td><td className="px-4 py-3 text-xs text-foreground">{user.department || 'General'}</td><td className="px-4 py-3 text-xs text-foreground">{user.status}</td><td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-muted-foreground">{formatDate(user.updatedAt || user.createdAt)}</td></tr>)}</tbody></table></div>}</section>
+  </div>;
 }

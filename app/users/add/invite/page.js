@@ -1,20 +1,18 @@
 // app/users/add/invite/page.js
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
   Send,
-  CheckCircle2,
-  Clock,
-  XCircle,
   Copy,
   Check,
   Plus,
   Mail,
-  RefreshCw,
 } from 'lucide-react';
 import { useUsers } from '@/hooks/useUsers';
 import { userService } from '@/services/userService';
+import UserPageHeader from '@/app/components/Users/UserPageHeader';
+import UserKpiSummary from '@/app/components/Users/UserKpiSummary';
 
 export default function InviteUsersPage() {
   const { users, loading, refreshUsers } = useUsers();
@@ -26,20 +24,6 @@ export default function InviteUsersPage() {
   const [submitting, setSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState(null);
-
-  const inviteStats = useMemo(() => {
-    const total = users.length;
-    const accepted = users.filter((u) => (u.status || 'active').toLowerCase() === 'active').length;
-    const pending = users.filter((u) => (u.status || '').toLowerCase() === 'inactive').length;
-    const suspended = users.filter((u) => (u.status || '').toLowerCase() === 'suspended').length;
-
-    return [
-      { label: 'Total Provisioned', value: total, icon: Send },
-      { label: 'Active / Accepted', value: accepted, icon: CheckCircle2 },
-      { label: 'Pending Activation', value: pending, icon: Clock },
-      { label: 'Suspended / Expired', value: suspended, icon: XCircle },
-    ];
-  }, [users]);
 
   const handleAddRow = () => {
     setEmails((prev) => [...prev, { email: '', role: 'user', department: 'General' }]);
@@ -86,20 +70,7 @@ export default function InviteUsersPage() {
 
   return (
     <div className="page-container max-w-7xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1">
-            Invite Users
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Provision and invite new team members directly into Supabase (`public.users`)
-          </p>
-        </div>
-        <button onClick={refreshUsers} className="btn btn-outline">
-          <RefreshCw size={16} className={loading ? 'animate-spin mr-2' : 'mr-2'} />
-          Sync Status
-        </button>
-      </div>
+      <UserPageHeader title="Invite Users" description="Provision new team accounts directly in the live public.users directory." loading={loading} onRefresh={refreshUsers} users={users}/>
 
       {feedback && (
         <div className="card p-4 border border-foreground bg-foreground text-background text-sm flex items-center justify-between">
@@ -111,27 +82,7 @@ export default function InviteUsersPage() {
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {inviteStats.map((s, i) => {
-          const Icon = s.icon;
-          return (
-            <div
-              key={i}
-              className="card p-5 shadow-card border border-border flex items-start justify-between"
-            >
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase">{s.label}</p>
-                <p className="text-2xl font-bold text-foreground mt-1">
-                  {loading ? '…' : s.value}
-                </p>
-              </div>
-              <div className="p-2.5 rounded-lg bg-muted border border-border">
-                <Icon size={20} className="text-foreground" />
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <UserKpiSummary users={users} loading={loading}/>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Invite Form */}

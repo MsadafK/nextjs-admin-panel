@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
-  Activity, TrendingUp, Clock, Filter, Download, Search,
+  Clock, Filter, Search,
   User, FileText, LogIn, LogOut, Edit, Trash2, Eye,
-  MessageSquare, Settings, ChevronDown, BarChart3, Users,
-  ArrowUp, ArrowDown, Minus, X, RefreshCw
+  MessageSquare, Settings, BarChart3, X, RefreshCw
 } from 'lucide-react';
 import { userService } from '@/services/userService';
+import { useUsers } from '@/hooks/useUsers';
+import UserPageHeader from '@/app/components/Users/UserPageHeader';
+import UserKpiSummary from '@/app/components/Users/UserKpiSummary';
 
 /* ── Activity type → icon + label ── */
 const TYPE_META = {
@@ -33,8 +35,8 @@ const inputCls = `px-3 py-2 text-sm bg-background border border-border rounded-m
   focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors`;
 
 export default function UserActivityPage() {
+  const { users: directoryUsers, loading: usersLoading, refreshUsers } = useUsers();
   const [activities, setActivities]         = useState([]);
-  const [activeUsersCount, setActiveUsers]  = useState(0);
   const [loading, setLoading]               = useState(true);
   const [error, setError]                   = useState(null);
 
@@ -52,7 +54,6 @@ export default function UserActivityPage() {
       setError(null);
       const data = await userService.getActivityData();
       setActivities(data.activities);
-      setActiveUsers(data.activeUsersCount);
     } catch (err) {
       console.error('Error loading user activity:', err);
       setError(err.message || 'Failed to load activity feed');
@@ -82,22 +83,6 @@ export default function UserActivityPage() {
       return matchSearch && matchType && matchRole && matchIp;
     });
   }, [activities, searchQuery, activityType, roleFilter, ipFilter]);
-
-  /* ── Dynamic Stats & Breakdown from Real Data ── */
-  const stats = useMemo(() => {
-    const todayCount = activities.filter((a) => {
-      if (!a.rawDate) return false;
-      const diffHours = (new Date() - new Date(a.rawDate)) / (1000 * 60 * 60);
-      return diffHours <= 24;
-    }).length;
-
-    return [
-      { label: 'Total Activities', value: activities.length, change: '+Live', trend: 'up', icon: Activity },
-      { label: 'Active Users', value: activeUsersCount, change: 'Online', trend: 'up', icon: Users },
-      { label: 'Avg. Session', value: '24m', change: '+4.1%', trend: 'up', icon: Clock },
-      { label: 'Actions (24h)', value: todayCount || activities.length, change: 'Synced', trend: 'neutral', icon: TrendingUp },
-    ];
-  }, [activities, activeUsersCount]);
 
   const breakdown = useMemo(() => {
     const total = Math.max(1, activities.length);
@@ -131,41 +116,9 @@ export default function UserActivityPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-5">
-      {/* ── Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
-            <span>Users</span>
-            <ChevronDown size={12} className="-rotate-90" />
-            <span>All Users</span>
-            <ChevronDown size={12} className="-rotate-90" />
-            <span className="text-foreground font-medium">Activity</span>
-          </div>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground">
-            User Activity
-          </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Live activity feed synced with Supabase (`users`, `orders`, `products`, `audit_logs`)
-          </p>
-        </div>
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <button
-            onClick={fetchActivity}
-            className="btn btn-outline h-9 px-3"
-            title="Refresh Activity"
-          >
-            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
-          </button>
-          <button
-            onClick={handleExportCSV}
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium bg-foreground text-background rounded-md hover:opacity-80 transition-opacity"
-          >
-            <Download size={14} />
-            Export CSV
-          </button>
-        </div>
-      </div>
+    <div className="page-container mx-auto max-w-7xl space-y-5">
+      <UserPageHeader title="User Activity" description="Live activity feed synced with Supabase users and audit records." loading={loading || usersLoading} onRefresh={() => { fetchActivity(); refreshUsers(); }} users={directoryUsers} onExport={handleExportCSV}/>
+      <UserKpiSummary users={directoryUsers} loading={usersLoading}/>
 
       {error && (
         <div className="card p-4 border-destructive/40 bg-destructive/10 text-destructive text-sm flex items-center justify-between">
@@ -173,32 +126,6 @@ export default function UserActivityPage() {
           <button onClick={fetchActivity} className="btn btn-outline h-8 text-xs">Retry</button>
         </div>
       )}
-
-      {/* ── Stat cards ── */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
-        {stats.map((s) => {
-          const Icon      = s.icon;
-          const TrendIcon = s.trend === 'up' ? ArrowUp : s.trend === 'down' ? ArrowDown : Minus;
-          const trendCls  = s.trend === 'up' ? 'text-foreground' : 'text-muted-foreground';
-          return (
-            <div key={s.label} className="bg-card border border-border rounded-lg p-4 sm:p-5 shadow-card">
-              <div className="flex items-center justify-between mb-3">
-                <div className="p-2 rounded-md bg-muted">
-                  <Icon size={15} className="text-muted-foreground" strokeWidth={1.75} />
-                </div>
-                <div className={`flex items-center gap-1 text-xs font-semibold ${trendCls}`}>
-                  <TrendIcon size={12} strokeWidth={2.5} />
-                  {s.change}
-                </div>
-              </div>
-              <p className="text-2xl font-semibold text-foreground">
-                {loading ? '…' : s.value}
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
-            </div>
-          );
-        })}
-      </div>
 
       {/* ── Activity breakdown ── */}
       <div className="bg-card border border-border rounded-lg shadow-card p-5">
