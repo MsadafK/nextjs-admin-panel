@@ -2,21 +2,15 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  PieChart,
-  Layers,
-  DollarSign,
-  Package,
-  TrendingUp,
-  Download,
-  RefreshCw,
-  Award,
-  BarChart3,
-} from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
+import ProductPageHeader from '@/app/components/Products/ProductPageHeader';
+import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
+
+const formatCurrency = (value) => `₹${Number(value ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export default function CategoryAnalyticsPage() {
-  const { categoriesWithStats, products, loading, error, refreshData } = useProducts();
+  const { categoriesWithStats, products, dbCategories, loading, error, refreshData } = useProducts();
 
   const analyticsData = useMemo(() => {
     const totalValuation = Math.max(
@@ -66,94 +60,15 @@ export default function CategoryAnalyticsPage() {
   };
 
   return (
-    <div className="page-container max-w-7xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <PieChart size={22} />
-            Category Analytics
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Category-wise valuation share, stock distribution, and SKU density from Supabase
-          </p>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button onClick={refreshData} className="btn btn-outline">
-            <RefreshCw size={16} className={loading ? 'animate-spin mr-2' : 'mr-2'} />
-            Sync
-          </button>
-          <button onClick={handleExportCSV} className="btn btn-primary bg-foreground text-background hover:bg-foreground/90">
-            <Download size={16} className="mr-2" />
-            Export Report
-          </button>
-        </div>
-      </div>
+    <div className="page-container mx-auto max-w-7xl space-y-6">
+      <ProductPageHeader title="Category Analytics" description="Live valuation share, stock distribution, and SKU density by category." loading={loading} onRefresh={refreshData} products={products} onExport={handleExportCSV} primaryLabel="Manage Categories" primaryHref="/products/categories/manage"/>
+      <ProductKpiSummary products={products} categories={dbCategories} loading={loading}/>
 
       {error && (
         <div className="card p-4 border-foreground bg-muted text-foreground text-sm">
           <strong>Database Error:</strong> {error}
         </div>
       )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card p-5 shadow-card border border-border flex items-start justify-between">
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase">Total Categories</p>
-            <p className="text-2xl font-semibold text-foreground mt-1">
-              {loading ? '…' : categoriesWithStats.length}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {products.length} total mapped SKUs
-            </p>
-          </div>
-          <div className="p-2.5 rounded-lg bg-muted border border-border">
-            <Layers size={20} className="text-foreground" />
-          </div>
-        </div>
-
-        <div className="card p-5 shadow-card border border-border flex items-start justify-between">
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase">Top Category</p>
-            <p className="text-xl font-semibold text-foreground mt-1 truncate">
-              {loading ? '…' : analyticsData.topCategory?.name || 'N/A'}
-            </p>
-            <p className="text-xs text-foreground font-medium mt-1 underline">
-              {analyticsData.topCategory ? `${analyticsData.topCategory.valueShare}% of total value` : ''}
-            </p>
-          </div>
-          <div className="p-2.5 rounded-lg bg-muted border border-border">
-            <Award size={20} className="text-foreground" />
-          </div>
-        </div>
-
-        <div className="card p-5 shadow-card border border-border flex items-start justify-between">
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase">Total Valuation</p>
-            <p className="text-2xl font-semibold text-foreground mt-1">
-              {loading
-                ? '…'
-                : `₹${analyticsData.totalValuation.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">Combined category value</p>
-          </div>
-          <div className="p-2.5 rounded-lg bg-muted border border-border">
-            <DollarSign size={20} className="text-foreground" />
-          </div>
-        </div>
-
-        <div className="card p-5 shadow-card border border-border flex items-start justify-between">
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase">Total Stock Units</p>
-            <p className="text-2xl font-semibold text-foreground mt-1">
-              {loading ? '…' : analyticsData.totalStock.toLocaleString('en-IN')}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">Across all active categories</p>
-          </div>
-          <div className="p-2.5 rounded-lg bg-muted border border-border">
-            <Package size={20} className="text-foreground" />
-          </div>
-        </div>
-      </div>
 
       <div className="card p-6 shadow-card space-y-5 border border-border">
         <div className="flex items-center justify-between">
@@ -168,7 +83,7 @@ export default function CategoryAnalyticsPage() {
             <div key={cat.id} className="space-y-1.5">
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <span>{cat.icon}</span>
+                  <span className="flex h-7 w-7 items-center justify-center rounded-md bg-muted font-mono text-[10px] font-semibold text-foreground">{cat.name?.slice(0, 2).toUpperCase()}</span>
                   <span className="font-semibold text-foreground">{cat.name}</span>
                   <span className="text-xs text-muted-foreground">
                     ({cat.productCount} SKUs • {cat.totalStock} units)
@@ -176,7 +91,7 @@ export default function CategoryAnalyticsPage() {
                 </div>
                 <div className="text-right">
                   <span className="font-bold text-foreground">
-                    ₹{Number(cat.totalValue ?? 0).toLocaleString('en-IN')}
+                    {formatCurrency(cat.totalValue)}
                   </span>
                   <span className="text-xs text-muted-foreground ml-2">({cat.valueShare}%)</span>
                 </div>
@@ -184,7 +99,7 @@ export default function CategoryAnalyticsPage() {
               <div className="w-full h-2.5 bg-muted border border-border rounded-full overflow-hidden">
                 <div
                   className="h-full bg-foreground rounded-full transition-all duration-500"
-                  style={{ width: `${Math.max(4, cat.valueShare)}%` }}
+                  style={{ width: `${cat.valueShare}%` }}
                 />
               </div>
             </div>
@@ -192,12 +107,12 @@ export default function CategoryAnalyticsPage() {
         </div>
       </div>
 
-      <div className="card p-0 overflow-hidden shadow-card border border-border">
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
         <div className="px-5 py-4 border-b border-border bg-muted">
           <h3 className="text-sm font-semibold text-foreground">Category Breakdown Table</h3>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="w-full overflow-x-auto">
+          <table className="w-full min-w-[760px] border-collapse text-left text-sm">
             <thead>
               <tr className="bg-muted border-b border-border">
                 <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
@@ -216,7 +131,7 @@ export default function CategoryAnalyticsPage() {
                   Inventory Value
                 </th>
                 <th className="text-right py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
-                  Growth
+                  Value Share
                 </th>
               </tr>
             </thead>
@@ -224,7 +139,7 @@ export default function CategoryAnalyticsPage() {
               {analyticsData.list.map((cat) => (
                 <tr key={cat.id} className="hover:bg-muted/50 transition-colors">
                   <td className="py-3.5 px-4 font-semibold text-foreground">
-                    <span className="mr-2">{cat.icon}</span>
+                    <span className="mr-2 inline-flex h-7 w-7 items-center justify-center rounded-md bg-foreground font-mono text-[10px] font-semibold text-background">{cat.name?.slice(0, 2).toUpperCase()}</span>
                     {cat.name}
                   </td>
                   <td className="py-3.5 px-4 text-right text-foreground">{cat.productCount}</td>
@@ -232,16 +147,13 @@ export default function CategoryAnalyticsPage() {
                     {cat.totalStock} ({cat.stockShare}%)
                   </td>
                   <td className="py-3.5 px-4 text-right text-foreground">
-                    ₹{cat.avgUnitValue.toLocaleString('en-IN')}
+                    {formatCurrency(cat.avgUnitValue)}
                   </td>
                   <td className="py-3.5 px-4 text-right font-bold text-foreground">
-                    ₹{Number(cat.totalValue ?? 0).toLocaleString('en-IN')}
+                    {formatCurrency(cat.totalValue)}
                   </td>
-                  <td className="py-3.5 px-4 text-right font-medium text-foreground">
-                    <span className="inline-flex items-center gap-1">
-                      <TrendingUp size={13} />
-                      {cat.growth}
-                    </span>
+                  <td className="py-3.5 px-4 text-right font-mono text-xs text-foreground">
+                    {cat.valueShare}%
                   </td>
                 </tr>
               ))}

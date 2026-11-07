@@ -15,10 +15,12 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useProducts } from '@/hooks/useProducts';
+import ProductPageHeader from '@/app/components/Products/ProductPageHeader';
+import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
 
 export default function InventoryAlertsPage() {
   const router = useRouter();
-  const { products, loading, error, refreshData, adjustStock } = useProducts();
+  const { products, dbCategories, loading, error, refreshData, adjustStock } = useProducts();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -74,57 +76,21 @@ export default function InventoryAlertsPage() {
     }
   };
 
+  const quickRestock = async (product, quantity) => {
+    try { await adjustStock(product.id, Number(product.stock || 0) + quantity); }
+    catch (restockError) { window.alert(`Error restocking product: ${restockError.message}`); }
+  };
+
   return (
-    <div className="page-container max-w-7xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <AlertTriangle className="text-foreground" size={22} />
-            Inventory Alerts
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Items requiring immediate attention or restocking in Supabase (`public.products`)
-          </p>
-        </div>
-        <button onClick={refreshData} className="btn btn-outline">
-          <RefreshCw size={16} className={loading ? 'animate-spin mr-2' : 'mr-2'} />
-          Sync Alerts
-        </button>
-      </div>
+    <div className="page-container mx-auto max-w-7xl space-y-6">
+      <ProductPageHeader title="Low Stock & Reorder" description="Review SKUs at or below their reorder thresholds and restock in place." loading={loading} onRefresh={refreshData} products={filteredAlerts}/>
+      <ProductKpiSummary products={products} categories={dbCategories} loading={loading}/>
 
       {error && (
         <div className="card p-4 border-foreground bg-muted text-foreground text-sm">
           <strong>Database Error:</strong> {error}
         </div>
       )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="card p-5 shadow-card border-l-4 border-l-foreground flex items-start gap-4">
-          <div className="p-3 bg-muted border border-border rounded-lg">
-            <XCircle size={24} className="text-foreground" />
-          </div>
-          <div>
-            <h3 className="text-2xl font-bold text-foreground">
-              {loading ? '…' : outOfStockCount}
-            </h3>
-            <p className="text-sm font-medium text-foreground">Out of Stock</p>
-            <p className="text-xs text-muted-foreground mt-1">Zero inventory available</p>
-          </div>
-        </div>
-
-        <div className="card p-5 shadow-card border-l-4 border-l-muted-foreground flex items-start gap-4">
-          <div className="p-3 bg-muted border border-border rounded-lg">
-            <AlertTriangle size={24} className="text-foreground" />
-          </div>
-          <div>
-            <h3 className="text-2xl font-bold text-foreground">
-              {loading ? '…' : lowStockCount}
-            </h3>
-            <p className="text-sm font-medium text-foreground">Low Stock Warnings</p>
-            <p className="text-xs text-muted-foreground mt-1">Below minimum threshold (≤ 10)</p>
-          </div>
-        </div>
-      </div>
 
       <div className="card p-4 shadow-card border border-border flex flex-col sm:flex-row gap-3">
         <div className="flex-1 relative">
@@ -202,6 +168,8 @@ export default function InventoryAlertsPage() {
                 </div>
 
                 <div className="flex sm:flex-col items-center sm:items-end gap-2 shrink-0">
+                  <button type="button" onClick={() => quickRestock(product, 10)} className="h-9 rounded-md border border-border px-3 text-xs font-medium text-foreground hover:bg-muted">+10</button>
+                  <button type="button" onClick={() => quickRestock(product, 50)} className="h-9 rounded-md border border-border px-3 text-xs font-medium text-foreground hover:bg-muted">+50</button>
                   <button
                     onClick={() => {
                       setSelectedProduct(product);

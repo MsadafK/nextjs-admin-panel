@@ -1,327 +1,47 @@
-// app/products/all/performance/page.js
 'use client';
 
-import { useState, useMemo } from 'react';
-import {
-  Activity,
-  TrendingUp,
-  DollarSign,
-  Package,
-  BarChart3,
-  Search,
-  Filter,
-  Download,
-  RefreshCw,
-  ArrowUpRight,
-  Zap,
-  CheckCircle2,
-  AlertTriangle,
-} from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Search } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
+import ProductPageHeader from '@/app/components/Products/ProductPageHeader';
+import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
+import ProductTable from '@/app/components/Products/ProductTable';
+
+const money = (value) => `₹${Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export default function ProductPerformancePage() {
-  const { products, loading, error, refreshData } = useProducts();
-
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortBy, setSortBy] = useState('score-desc');
-
-  const performanceList = useMemo(() => {
-    const totalCatalogVal = Math.max(
-      1,
-      products.reduce((sum, p) => sum + Number(p.price ?? 0) * Number(p.stock ?? 0), 0)
-    );
-
-    const enriched = products.map((p, idx) => {
-      const stock = Number(p.stock ?? 0);
-      const price = Number(p.price ?? 0);
-      const valuation = Number((price * stock).toFixed(2));
-      const revenueShare = Number(((valuation / totalCatalogVal) * 100).toFixed(1));
-
-      const stockHealth = stock === 0 ? 20 : stock <= (p.minStock || 10) ? 55 : 90;
-      const score = Math.min(99, Math.round(stockHealth * 0.6 + Math.min(40, revenueShare * 1.5)));
-      const conversionRate = Number((3.2 + ((idx * 1.1) % 4.8)).toFixed(1));
-
-      return {
-        ...p,
-        valuation,
-        revenueShare,
-        score,
-        conversionRate,
-        tier: score >= 80 ? 'High Performer' : score >= 55 ? 'Steady' : 'Needs Attention',
-      };
-    });
-
-    const filtered = enriched.filter((p) => {
-      const q = searchQuery.toLowerCase();
-      const matchSearch =
-        p.name?.toLowerCase().includes(q) ||
-        p.sku?.toLowerCase().includes(q) ||
-        p.category?.toLowerCase().includes(q);
-      const matchCat = selectedCategory === 'all' || p.category === selectedCategory;
-      return matchSearch && matchCat;
-    });
-
-    return filtered.sort((a, b) => {
-      if (sortBy === 'score-desc') return b.score - a.score;
-      if (sortBy === 'valuation-desc') return b.valuation - a.valuation;
-      if (sortBy === 'share-desc') return b.revenueShare - a.revenueShare;
-      if (sortBy === 'conversion-desc') return b.conversionRate - a.conversionRate;
-      return 0;
-    });
-  }, [products, searchQuery, selectedCategory, sortBy]);
-
-  const categories = useMemo(() => {
-    const set = new Set(products.map((p) => p.category || 'Uncategorized'));
-    return ['all', ...Array.from(set)];
-  }, [products]);
-
-  const kpis = useMemo(() => {
-    const totalVal = performanceList.reduce((sum, p) => sum + p.valuation, 0);
-    const avgScore =
-      performanceList.length > 0
-        ? Math.round(performanceList.reduce((sum, p) => sum + p.score, 0) / performanceList.length)
-        : 0;
-    const avgConv =
-      performanceList.length > 0
-        ? (
-            performanceList.reduce((sum, p) => sum + p.conversionRate, 0) /
-            performanceList.length
-          ).toFixed(1)
-        : '0.0';
-    const highPerformers = performanceList.filter((p) => p.score >= 80).length;
-
-    return [
-      {
-        label: 'Active Valuation',
-        value: `₹${totalVal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`,
-        sub: `${performanceList.length} products analyzed`,
-        icon: DollarSign,
-      },
-      {
-        label: 'Avg Efficiency Score',
-        value: `${avgScore} / 100`,
-        sub: 'Based on stock & value velocity',
-        icon: Activity,
-      },
-      {
-        label: 'Avg Conversion Rate',
-        value: `${avgConv}%`,
-        sub: '+1.4% vs last period',
-        icon: TrendingUp,
-      },
-      {
-        label: 'High Performers',
-        value: `${highPerformers} SKUs`,
-        sub: 'Score ≥ 80/100',
-        icon: Zap,
-      },
-    ];
-  }, [performanceList]);
-
-  const handleExportCSV = () => {
-    const headers = ['SKU,Product Name,Category,Price,Stock,Valuation,Revenue Share %,Efficiency Score,Tier'];
-    const rows = performanceList.map(
-      (p) =>
-        `"${p.sku}","${p.name}","${p.category}",${p.price},${p.stock},${p.valuation},${p.revenueShare}%,${p.score},"${p.tier}"`
-    );
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers, ...rows].join('\n');
-    const link = document.createElement('a');
-    link.setAttribute('href', encodeURI(csvContent));
-    link.setAttribute('download', 'product_performance_metrics.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const { products, dbCategories, loading, error, refreshData, adjustStock, removeProduct } = useProducts();
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('all');
+  const [sort, setSort] = useState('value-desc');
+  const totalValue = products.reduce((sum, product) => sum + Number(product.price || 0) * Number(product.stock || 0), 0);
+  const categoryShares = useMemo(() => {
+    const groups = products.reduce((result, product) => {
+      const name = product.category || 'Uncategorized';
+      const current = result[name] || (result[name] = { name, skus: 0, units: 0, value: 0 });
+      current.skus += 1; current.units += Number(product.stock || 0); current.value += Number(product.price || 0) * Number(product.stock || 0);
+      return result;
+    }, {});
+    return Object.values(groups).map((item) => ({ ...item, share: totalValue ? item.value / totalValue * 100 : 0 })).sort((a, b) => b.value - a.value);
+  }, [products, totalValue]);
+  const ranked = useMemo(() => products.filter((product) => {
+    const q = search.toLowerCase();
+    return `${product.name} ${product.sku} ${product.category}`.toLowerCase().includes(q) && (category === 'all' || product.category_id === category || product.category === category);
+  }).sort((a, b) => sort === 'price-desc' ? b.price - a.price : sort === 'stock-asc' ? a.stock - b.stock : sort === 'name-asc' ? a.name.localeCompare(b.name) : b.price * b.stock - a.price * a.stock), [products, search, category, sort]);
+  const exportCsv = () => {
+    const rows = ranked.map((product) => [product.name, product.sku, product.category, product.price, product.stock, Number(product.price || 0) * Number(product.stock || 0)].map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(','));
+    const url = URL.createObjectURL(new Blob([['Product,SKU,Category,Unit Price,Stock,Inventory Value', ...rows].join('\n')], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a'); link.href = url; link.download = 'product_performance.csv'; link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
+  const editCatalogProduct = (product) => { window.location.href = `/products/all/catalog?edit=${encodeURIComponent(product.id)}`; };
+  const deleteProduct = async (product) => { if (!window.confirm(`Delete “${product.name}” from the catalog?`)) return; try { await removeProduct(product.id); } catch (error) { window.alert(`Could not delete product: ${error.message}`); } };
 
-  return (
-    <div className="page-container max-w-7xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Activity size={22} />
-            Product Performance Analytics
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Real-time efficiency scores, revenue contribution, and stock velocity from Supabase (`public.products`)
-          </p>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button onClick={refreshData} className="btn btn-outline" title="Refresh Metrics">
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-            <span className="hidden sm:inline ml-2">Sync</span>
-          </button>
-          <button onClick={handleExportCSV} className="btn btn-primary bg-foreground text-background hover:bg-foreground/90">
-            <Download size={16} className="mr-2" />
-            Export CSV
-          </button>
-        </div>
-      </div>
-
-      {error && (
-        <div className="card p-4 border-foreground bg-muted text-foreground text-sm">
-          <strong>Database Error:</strong> {error}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map((kpi, idx) => {
-          const Icon = kpi.icon;
-          return (
-            <div key={idx} className="card p-5 shadow-card border border-border flex items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {kpi.label}
-                </p>
-                <p className="text-2xl font-semibold text-foreground mt-1">
-                  {loading ? '…' : kpi.value}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">{kpi.sub}</p>
-              </div>
-              <div className="p-2.5 rounded-lg bg-muted border border-border">
-                <Icon size={20} className="text-foreground" strokeWidth={1.5} />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="card p-4 shadow-card border border-border flex flex-col sm:flex-row gap-3">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search products by name, SKU, or category..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="input pl-9 w-full"
-          />
-        </div>
-
-        <div className="relative">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="input pl-9 pr-8 w-full sm:w-auto"
-          >
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat === 'all' ? 'All Categories' : cat}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="input w-full sm:w-auto"
-          >
-            <option value="score-desc">Sort by: Efficiency Score</option>
-            <option value="valuation-desc">Sort by: Valuation (High → Low)</option>
-            <option value="share-desc">Sort by: Revenue Share %</option>
-            <option value="conversion-desc">Sort by: Conversion Rate</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="card p-0 overflow-hidden shadow-card border border-border">
-        {loading ? (
-          <div className="p-12 text-center text-muted-foreground flex items-center justify-center gap-2">
-            <RefreshCw className="animate-spin" size={18} />
-            Analyzing product performance from Supabase...
-          </div>
-        ) : performanceList.length === 0 ? (
-          <div className="p-12 text-center text-muted-foreground">
-            No products match your filter criteria.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-muted border-b border-border">
-                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
-                    Product
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
-                    Category
-                  </th>
-                  <th className="text-right py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
-                    Valuation
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
-                    Catalog Share
-                  </th>
-                  <th className="text-right py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
-                    Conversion
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
-                    Efficiency Score
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-muted-foreground uppercase text-xs">
-                    Tier
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {performanceList.map((product) => (
-                  <tr key={product.id} className="hover:bg-muted/50 transition-colors">
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-md bg-muted border border-border flex items-center justify-center text-lg">
-                          {product.image}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-foreground">{product.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            SKU: {product.sku} • {product.stock} in stock
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4 text-foreground">{product.category}</td>
-                    <td className="py-3.5 px-4 text-right font-semibold text-foreground">
-                      ₹{product.valuation.toLocaleString('en-IN')}
-                    </td>
-                    <td className="py-3.5 px-4 min-w-[140px]">
-                      <div className="flex items-center gap-2">
-                        <div className="w-20 h-1.5 bg-muted border border-border rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-foreground rounded-full"
-                            style={{ width: `${Math.min(100, product.revenueShare)}%` }}
-                          />
-                        </div>
-                        <span className="text-xs font-medium text-foreground">
-                          {product.revenueShare}%
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4 text-right font-medium text-foreground">
-                      {product.conversionRate}%
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span className="font-bold text-foreground">{product.score}</span>
-                      <span className="text-xs text-muted-foreground"> / 100</span>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border border-border bg-muted text-foreground">
-                        {product.score >= 80 ? (
-                          <CheckCircle2 size={12} />
-                        ) : (
-                          <AlertTriangle size={12} />
-                        )}
-                        {product.tier}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return <div className="page-container mx-auto max-w-7xl space-y-6">
+    <ProductPageHeader title="Product Performance" description="Live category and SKU inventory valuation share from public.products." loading={loading} onRefresh={refreshData} products={ranked} onExport={exportCsv}/>
+    {error && <p role="alert" className="rounded-lg border border-border bg-muted p-3 text-sm text-foreground">{error}</p>}
+    <ProductKpiSummary products={products} categories={dbCategories} loading={loading}/>
+    <section className="grid grid-cols-1 gap-5 xl:grid-cols-2"><article className="rounded-xl border border-border bg-card p-4 sm:p-5"><h2 className="text-sm font-semibold text-foreground">Category Valuation Share</h2><p className="mt-1 text-xs text-muted-foreground">Share of total current inventory value.</p><div className="mt-5 space-y-4">{categoryShares.map((item) => <div key={item.name}><div className="mb-1.5 flex min-w-0 items-center justify-between gap-3"><span className="truncate text-sm font-medium text-foreground">{item.name} <span className="text-xs font-normal text-muted-foreground">· {item.skus} SKUs</span></span><span className="shrink-0 font-mono text-xs text-foreground">{item.share.toFixed(1)}% · {money(item.value)}</span></div><div className="h-2 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-foreground" style={{ width: `${item.share}%` }}/></div></div>)}</div></article><article className="rounded-xl border border-border bg-card p-4 sm:p-5"><h2 className="text-sm font-semibold text-foreground">Top SKUs by Inventory Value</h2><p className="mt-1 text-xs text-muted-foreground">Ranked by live price × available stock.</p><div className="mt-4 divide-y divide-border">{[...products].sort((a, b) => b.price * b.stock - a.price * a.stock).slice(0, 6).map((product, index) => <div key={product.id} className="flex items-center justify-between gap-3 py-3"><div className="flex min-w-0 items-center gap-3"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border bg-muted font-mono text-[11px] text-foreground">{index + 1}</span><span className="min-w-0"><span className="block truncate text-sm font-medium text-foreground">{product.name}</span><span className="block truncate font-mono text-[10px] text-muted-foreground">{product.sku}</span></span></div><span className="shrink-0 font-mono text-xs font-semibold text-foreground">{money(product.price * product.stock)}</span></div>)}</div>{!products.length && !loading && <p className="py-6 text-center text-sm text-muted-foreground">No products available.</p>}</article></section>
+    <section className="grid grid-cols-1 gap-3 rounded-xl border border-border bg-muted/20 p-3.5 sm:grid-cols-2 xl:grid-cols-4"><div className="relative"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search by product, SKU, or category…" className="h-9 w-full rounded-md border border-border bg-background pl-9 pr-3 text-xs text-foreground"/></div><select value={category} onChange={(event) => setCategory(event.target.value)} className="h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground"><option value="all">All Categories</option>{dbCategories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select><select value={sort} onChange={(event) => setSort(event.target.value)} className="h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground"><option value="value-desc">Valuation: High to Low</option><option value="price-desc">Price: High to Low</option><option value="stock-asc">Stock: Low to High</option><option value="name-asc">Name: A–Z</option></select></section>
+    <ProductTable products={ranked} loading={loading} onAdjustStock={adjustStock} onEdit={editCatalogProduct} onDelete={deleteProduct}/>
+  </div>;
 }

@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { productService, getCategoryIcon } from '@/services/productService';
+import { productService } from '@/services/productService';
 
 export function useProducts() {
   const [products, setProducts] = useState([]);
@@ -37,7 +37,7 @@ export function useProducts() {
   // Enrich categories with live product counts, stock units, and inventory revenue
   // Enrich categories with live product counts, stock units, and inventory revenue
   const categoriesWithStats = useMemo(() => {
-    return categories.map((cat, index) => {
+    return categories.map((cat) => {
       const catProducts = products.filter(
         (p) => p.category_id === cat.id || p.category?.toLowerCase() === cat.name?.toLowerCase()
       );
@@ -70,15 +70,11 @@ export function useProducts() {
         description: cleanDescription,
         products: catProducts.length,
         productCount: catProducts.length,
-        subcategories: Math.max(1, Math.min(8, catProducts.length + 1)),
         totalStock,
         totalValue,
         revenueValue: totalValue,
         revenue: `₹${totalValue.toLocaleString('en-IN')}`,
-        growth: `+${10 + ((index * 5) % 18)}%`,
-        icon: getCategoryIcon(cat.name),
         status: isActive ? 'active' : 'inactive',
-        featured: index < 3,
       };
     });
   }, [categories, products]);
@@ -99,6 +95,12 @@ export function useProducts() {
   const adjustStock = async (id, newStock) => {
     const updated = await productService.updateStock(id, newStock);
     setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
+    return updated;
+  };
+
+  const updateMinStock = async (id, threshold) => {
+    const updated = await productService.updateMinStock(id, threshold);
+    setProducts((prev) => prev.map((product) => (product.id === id ? updated : product)));
     return updated;
   };
 
@@ -136,6 +138,7 @@ export function useProducts() {
     addProduct,
     editProduct,
     adjustStock,
+    updateMinStock,
     updateStock: adjustStock,
     removeProduct,
     addCategory,

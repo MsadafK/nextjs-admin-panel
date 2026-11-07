@@ -131,6 +131,21 @@ export const productService = {
     return mapProductFromDB(data);
   },
 
+  async updateMinStock(id, threshold) {
+    const { data: sampleRows, error: inspectError } = await supabase.from('products').select('*').limit(1);
+    if (inspectError) throw inspectError;
+    if (!sampleRows?.length || !Object.prototype.hasOwnProperty.call(sampleRows[0], 'min_stock_level')) {
+      throw new Error('This products table does not expose a reorder threshold column.');
+    }
+    const { data, error } = await supabase.from('products')
+      .update({ min_stock_level: Math.max(0, Number(threshold) || 0), updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select('*, categories ( id, name )')
+      .single();
+    if (error) throw error;
+    return mapProductFromDB(data);
+  },
+
   // Alias in case any page calls updateProductStock
   async updateProductStock(id, newStockQuantity) {
     return this.updateStock(id, newStockQuantity);

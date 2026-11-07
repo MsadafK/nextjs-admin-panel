@@ -15,11 +15,12 @@ import {
   Eye,
 } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
-import { getCategoryIcon } from '@/services/productService';
+import ProductPageHeader from '@/app/components/Products/ProductPageHeader';
+import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
 
 export default function AddCategoryPage() {
   const router = useRouter();
-  const { addCategory, categoriesWithStats, loading } = useProducts();
+  const { addCategory, categoriesWithStats, products, dbCategories, loading, refreshData } = useProducts();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -86,29 +87,12 @@ export default function AddCategoryPage() {
     }
   };
 
-  const previewIcon = getCategoryIcon(formData.name || 'Category');
+  const previewIcon = (formData.name || 'C').slice(0, 2).toUpperCase();
 
   return (
-    <div className="page-container max-w-6xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-foreground mb-1 flex items-center gap-2">
-            <Tag size={22} className="text-foreground" />
-            Add New Category
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Create a new product category in Supabase (`public.categories`)
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => router.push('/products/categories/manage')}
-          className="btn btn-outline self-start sm:self-auto"
-        >
-          <ArrowLeft size={15} className="mr-2" />
-          Manage Categories
-        </button>
-      </div>
+    <div className="page-container mx-auto max-w-7xl space-y-6">
+      <ProductPageHeader title="Add New Category" description="Create a category in the live public.categories table." loading={loading} onRefresh={refreshData} products={products} primaryLabel="Manage Categories" primaryHref="/products/categories/manage"/>
+      <ProductKpiSummary products={products} categories={dbCategories} loading={loading}/>
 
       {error && (
         <div className="card p-4 border-foreground bg-muted text-foreground text-sm flex items-center gap-2">
@@ -137,10 +121,10 @@ export default function AddCategoryPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <form
           onSubmit={handleSubmit}
-          className="lg:col-span-2 card p-6 space-y-5 shadow-card border border-border"
+          className="rounded-xl border border-border bg-background p-5 shadow-card sm:p-6 space-y-5 xl:col-span-2"
         >
           <div className="flex items-center gap-2 border-b border-border pb-3">
             <Layers size={18} className="text-foreground" />
@@ -285,7 +269,7 @@ export default function AddCategoryPage() {
                     className="flex items-center justify-between p-2.5 rounded-md bg-muted border border-border text-xs"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <span>{cat.icon}</span>
+                      <span className="flex h-7 w-7 items-center justify-center rounded bg-foreground font-mono text-[10px] text-background">{cat.name?.slice(0, 2).toUpperCase()}</span>
                       <span className="font-medium text-foreground truncate">{cat.name}</span>
                     </div>
                     <span className="text-muted-foreground flex-shrink-0">
