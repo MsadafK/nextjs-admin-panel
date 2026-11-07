@@ -52,6 +52,8 @@ const parseRow = (row) => {
     isRead: Boolean(row.is_read ?? row.read ?? row.read_at ?? false),
     createdAt: row.created_at ?? row.createdAt ?? null,
     userId: row.user_id ?? null,
+    recipientId: row.recipient_id ?? null,
+    category: row.category ?? row.type ?? 'General',
     actionUrl: row.action_url ?? '',
     ...flags,
   };
@@ -81,11 +83,11 @@ export const notificationService = {
     return messages.filter((message) => !message.isRead && !message.draft && !message.archived).length;
   },
 
-  async createMessage({ title, body, status = 'SENT', userId = null }) {
+  async createMessage({ title, body, status = 'SENT', userId = null, type = 'info', isRead = false }) {
     const columns = await inspectColumns();
     const markers = tags.filter((tag) => tag !== 'STARRED' && (tag === status || (status === 'SENT' && tag === 'SENT'))).map((tag) => `[${tag}]`).join(' ');
     const messageBody = `${markers}${markers ? '\n' : ''}${body || ''}`;
-    const candidate = { title, subject: title, message: messageBody, content: messageBody, body: messageBody, type: 'info', is_read: false, read: false, user_id: userId, action_url: null };
+    const candidate = { title, subject: title, message: messageBody, content: messageBody, body: messageBody, type, category: type, is_read: isRead, read: isRead, user_id: userId, recipient_id: userId, action_url: null };
     const payload = Object.fromEntries(Object.entries(candidate).filter(([key, value]) => columns.includes(key) && value !== undefined));
     const { data, error } = await supabase.from('notifications').insert(payload).select('*').single();
     if (error) throw error;
@@ -112,6 +114,8 @@ export const notificationService = {
       title: updates.title ?? current.title,
       subject: updates.title ?? current.title,
       message: body, content: body, body,
+      type: updates.type ?? current.type,
+      category: updates.type ?? current.category,
       is_read: updates.isRead ?? current.isRead, read: updates.isRead ?? current.isRead,
       read_at: updates.isRead === true ? new Date().toISOString() : updates.isRead === false ? null : undefined,
       is_starred: flagState.starred, is_archived: flagState.archived,
