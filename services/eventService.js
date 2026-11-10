@@ -23,17 +23,34 @@ const localISTDateTimeToUTC = (date, time) => {
   return new Date(Date.UTC(year, month - 1, day, hour - 5, minute - 30)).toISOString();
 };
 
-const toEvent = (row) => ({
+let hasLocationColumn;
+const supportsLocation = async () => {
+  if (hasLocationColumn !== undefined) return hasLocationColumn;
+  const { error } = await supabase.from('events').select('location').limit(0);
+  hasLocationColumn = !error;
+  return hasLocationColumn;
+};
+const withLocationDescription = (description, location) => {
+  const cleanDescription = String(description || '').replace(/\n?\[LOCATION:[\s\S]*?\]$/, '').trim();
+  return location ? `${cleanDescription}${cleanDescription ? '\n' : ''}[LOCATION:${String(location).replace(/\]/g, '')}]` : cleanDescription || null;
+};
+
+const toEvent = (row) => {
+  const rawDescription = row.description || '';
+  const locationMatch = rawDescription.match(/(?:\n)?\[LOCATION:([\s\S]*?)\]$/);
+  return ({
   id: row.id,
   title: row.title || 'Untitled Event',
-  description: row.description || '',
+  description: locationMatch ? rawDescription.replace(/\n?\[LOCATION:[\s\S]*?\]$/, '').trim() : rawDescription,
+  location: row.location || row.meeting_link || locationMatch?.[1] || '',
   startTime: row.start_date || row.start_time || row.event_date || row.created_at,
   endTime: row.end_date || row.end_time || null,
   category: row.event_type || row.category || row.type || 'Meeting',
   recurring: Boolean(row.is_recurring),
   recurrencePattern: row.recurrence_pattern || '',
   createdAt: row.created_at,
-});
+  });
+};
 
 export const eventService = {
   async getEvents() {
@@ -43,30 +60,34 @@ export const eventService = {
   },
 
   async createEvent(form) {
+    const locationColumn = await supportsLocation();
     const payload = {
       title: form.title.trim(),
-      description: form.description?.trim() || null,
+      description: locationColumn ? (form.description?.trim() || null) : withLocationDescription(form.description, form.location),
       start_date: localISTDateTimeToUTC(form.date, form.startTime),
       end_date: form.endTime ? localISTDateTimeToUTC(form.date, form.endTime) : null,
       event_type: form.category || 'Meeting',
       is_recurring: Boolean(form.recurring),
       recurrence_pattern: form.recurring ? (form.recurrencePattern || 'weekly') : null,
     };
+    if (locationColumn) payload.location = form.location?.trim() || null;
     const { data, error } = await supabase.from('events').insert(payload).select('*').single();
     if (error) throw error;
     return toEvent(data);
   },
 
   async updateEvent(id, form) {
+    const locationColumn = await supportsLocation();
     const payload = {
       title: form.title.trim(),
-      description: form.description?.trim() || null,
+      description: locationColumn ? (form.description?.trim() || null) : withLocationDescription(form.description, form.location),
       start_date: localISTDateTimeToUTC(form.date, form.startTime),
       end_date: form.endTime ? localISTDateTimeToUTC(form.date, form.endTime) : null,
       event_type: form.category || 'Meeting',
       is_recurring: Boolean(form.recurring),
       recurrence_pattern: form.recurring ? (form.recurrencePattern || 'weekly') : null,
     };
+    if (locationColumn) payload.location = form.location?.trim() || null;
     const { data, error } = await supabase.from('events').update(payload).eq('id', id).select('*').single();
     if (error) throw error;
     return toEvent(data);
