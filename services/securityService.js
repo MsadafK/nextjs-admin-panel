@@ -23,6 +23,19 @@ export const securityService = {
     };
   },
 
+  async logSecurityCheck() {
+    const { data: sample, error: inspectError } = await supabase.from('audit_logs').select('*').limit(1);
+    if (inspectError) throw inspectError;
+    const columns = sample?.length ? Object.keys(sample[0]) : ['id', 'action', 'event_type', 'resource_type', 'severity', 'details', 'created_at'];
+    const candidates = {
+      action: 'Manual security check', event_type: 'security_check', resource_type: 'workspace',
+      severity: 'info', details: 'Security review initiated from the admin console.', created_at: new Date().toISOString(),
+    };
+    const payload = Object.fromEntries(Object.entries(candidates).filter(([key]) => columns.includes(key)));
+    const { error } = await supabase.from('audit_logs').insert(payload);
+    if (error) throw error;
+  },
+
   async updateUserRole(id, role) {
     const { data, error } = await supabase.from('users').update({ role: role.toLowerCase() }).eq('id', id).select('*').single();
     if (error) throw error;

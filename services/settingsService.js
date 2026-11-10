@@ -24,6 +24,7 @@ export const settingsService = {
       email: updates.email.trim(),
       department: updates.department.trim(),
       role: updates.role.toLowerCase(),
+      status: (updates.status || 'active').toLowerCase(),
     };
     const { data, error } = await supabase.from('users').update(payload).eq('id', id).select('*').single();
     if (error) throw error;
