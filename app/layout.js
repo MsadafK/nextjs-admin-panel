@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { FontsProvider } from './contexts/FontsContext';
+import { AuthProvider } from './contexts/AuthContext';
 import ClientLayoutWrapper from './components/ClientLayoutWrapper';
 import './globals.css';
 
@@ -26,8 +27,9 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <LanguageProvider>
             <FontsProvider>
-              {/*Humara saara client logic is wrapper ke andar hai*/}
-              <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
+              <AuthProvider>
+                <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
+              </AuthProvider>
             </FontsProvider>
           </LanguageProvider>
         </ThemeProvider>

@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+.auth-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@media (min-width: 1280px) {
+  .auth-shell {
+    background: linear-gradient(to right, #09090b 0 50%, hsl(var(--background)) 50% 100%);
+  }
+}
+
 /* ============================================================
    PHASE 0.1 — shadCN Design System
    Neutral: Zinc | Philosophy: Stripe / Vercel / Linear

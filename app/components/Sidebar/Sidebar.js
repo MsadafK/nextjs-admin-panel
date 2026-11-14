@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ChevronDown, PanelLeftClose, PanelLeftOpen, Shield, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { useAuth } from '@/app/contexts/AuthContext';
 import { menuItems } from './MenuItems';
 import { notificationService } from '@/services/notificationService';
 import { supabase } from '@/lib/supabase';
@@ -37,6 +38,10 @@ export default function Sidebar({
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useLanguage() || {};
+  const { currentUser } = useAuth();
+  const profileName = currentUser?.name || 'John Doe';
+  const profileEmail = currentUser?.email || 'john@nexstore.com';
+  const profileInitials = currentUser?.initials || 'JD';
   const [unreadCount, setUnreadCount] = useState(0);
   const [expanded, setExpanded] = useState({});
 
@@ -160,8 +165,8 @@ export default function Sidebar({
 
       {(!isCollapsed || isMobile) && <div className="mt-auto shrink-0 border-t border-border bg-background p-3">
         <div className="flex items-center gap-2.5 rounded-lg border border-border bg-muted/30 p-2.5 transition-colors hover:bg-muted/60">
-          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-semibold text-background">JD<span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background bg-muted-foreground"/></span>
-          <span className="min-w-0 flex-1"><span className="block truncate text-[13px] font-medium tracking-tight">John Doe</span><span className="block truncate text-[11px] text-muted-foreground">john@nexstore.com</span></span>
+          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-xs font-semibold text-background">{profileInitials}<span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background bg-muted-foreground"/></span>
+          <span className="min-w-0 flex-1"><span className="block truncate text-[13px] font-medium tracking-tight">{profileName}</span><span className="block truncate text-[11px] text-muted-foreground">{profileEmail}</span></span>
         </div>
       </div>}
     </aside>

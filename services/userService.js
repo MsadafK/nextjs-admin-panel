@@ -63,7 +63,7 @@ export const userService = {
 
   async createUser(userData) {
     const payload = {
-      id: crypto.randomUUID(),
+      id: userData.id || crypto.randomUUID(),
       full_name: userData.name,
       email: userData.email,
       role: (userData.role || 'User').toLowerCase(),

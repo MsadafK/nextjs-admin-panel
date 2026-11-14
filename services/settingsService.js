@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 
 export const settingsService = {
-  async getAdminProfile() {
+  async getAdminProfile(preferredEmail = '') {
     let authUserId = null;
     try {
       const { data } = await supabase.auth.getUser();
@@ -11,7 +11,8 @@ export const settingsService = {
     const { data: users, error } = await supabase.from('users').select('*');
     if (error) throw error;
     const rows = (users || []).filter((user) => user.is_deleted !== true);
-    const profile = rows.find((user) => String(user.id) === String(authUserId))
+    const profile = rows.find((user) => preferredEmail && String(user.email || '').toLowerCase() === preferredEmail.toLowerCase())
+      || rows.find((user) => String(user.id) === String(authUserId))
       || rows.find((user) => String(user.role || '').toLowerCase() === 'admin')
       || rows[0]
       || null;

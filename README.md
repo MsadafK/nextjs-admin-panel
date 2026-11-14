@@ -24,10 +24,10 @@ The workspace is organized into four navigation pillars:
 | Overview | Dashboard, Analytics, Reports | 19 |
 | Management | Users, Products & Inventory | 22 |
 | Workspace | Calendar, Messages, Notifications | 30 |
-| System | Security, Performance, Settings | 19 |
-| **Total** |  | **90** |
+| System | Security, Performance, Settings, Authentication | 22 |
+| **Total** |  | **93** |
 
-**Route count note:** this checkout contains 90 `app/**/page.js` files, including the root dashboard. The requested 94-route count does not match the current App Router file inventory. The list below includes every implemented static page route; this README does not invent four additional routes.
+**Route count note:** this checkout contains 93 `app/**/page.js` files, including the root dashboard and the three authentication pages. The requested 94-route count does not match the current App Router file inventory. The list below includes every implemented static page route; this README does not invent an additional route.
 
 ## Architecture
 
@@ -201,6 +201,12 @@ All entries below correspond to static `page.js` routes in `app/`. Route groups 
 **Settings**
 
 - `/settings`
+
+**Authentication**
+
+- `/login`
+- `/signup`
+- `/forgot-password`
 
 ## Supabase data model
 

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Activity, ArrowRight, Bell, Check, ChevronRight, Languages, LogOut, Mail, Menu, Moon, Search, Settings, Shield, Sun, User } from 'lucide-react';
 import { useTheme } from '@/app/contexts/ThemeContext';
+import { useAuth } from '@/app/contexts/AuthContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { menuItems } from './Sidebar/MenuItems';
 import { notificationService } from '@/services/notificationService';
@@ -40,6 +41,8 @@ const QUICK_LINKS = [
   { href: '/security/audit/security', label: 'Security', category: 'System' },
   { href: '/performance/skills', label: 'Performance', category: 'System' },
   { href: '/settings', label: 'Settings', category: 'System' },
+  { href: '/login', label: 'Sign In / Switch Account', category: 'Account' },
+  { href: '/signup', label: 'Create Account', category: 'Account' },
 ];
 const COMMAND_ROUTES = [...QUICK_LINKS, ...ROUTES.filter((route) => !QUICK_LINKS.some((quick) => quick.href === route.href))];
 const COMMAND_ACTIONS = [
@@ -59,6 +62,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const pathname = usePathname();
   const router = useRouter();
   const { isDark, toggleDarkMode } = useTheme();
+  const { currentUser, signOut } = useAuth();
   const { language, t, setLanguage } = useLanguage() || {};
   const [notifications, setNotifications] = useState([]);
   const [inboxMessages, setInboxMessages] = useState([]);
@@ -70,6 +74,9 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const [showLanguage, setShowLanguage] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const dark = isDark || sidebarDarkMode;
+  const profileName = currentUser?.name || 'John Doe';
+  const profileEmail = currentUser?.email || 'john@nexstore.com';
+  const profileInitials = currentUser?.initials || 'JD';
 
   const commandInputRef = useRef(null);
   const inboxRef = useRef(null);
@@ -169,12 +176,6 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const markAllNotificationsRead = async () => {
     await Promise.all(notifications.filter((notification) => notification.unread).map((notification) => markRead(notification.id)));
   };
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setShowProfile(false);
-    router.push('/');
-  };
-
   return <>
     <header className="sticky top-0 z-40 flex h-14 w-full items-center justify-between gap-3 border-b border-border bg-background/85 px-3 backdrop-blur-md sm:px-6">
       <div className="flex min-w-0 flex-1 items-center gap-2">
@@ -222,9 +223,9 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
         </div>
 
         <div className="relative" ref={profileRef}>
-          <button onClick={() => { setShowProfile((open) => !open); setShowInbox(false); setShowNotifications(false); setShowLanguage(false); }} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-foreground font-mono text-xs font-semibold text-background" aria-label="Open profile menu" aria-expanded={showProfile}>JD</button>
+          <button onClick={() => { setShowProfile((open) => !open); setShowInbox(false); setShowNotifications(false); setShowLanguage(false); }} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-foreground font-mono text-xs font-semibold text-background" aria-label="Open profile menu" aria-expanded={showProfile}>{profileInitials}</button>
           {showProfile && <div className={`absolute right-0 top-11 w-60 p-1.5 ${panelClass}`}>
-            <div className="mb-1 flex items-center gap-2.5 border-b border-border px-3 py-2.5"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-foreground font-mono text-xs font-semibold text-background">JD</span><span className="min-w-0"><span className="block truncate text-sm font-bold">John Doe</span><span className="block truncate text-xs text-muted-foreground">john@nexstore.com</span></span></div>
+            <div className="mb-1 flex items-center gap-2.5 border-b border-border px-3 py-2.5"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-foreground font-mono text-xs font-semibold text-background">{profileInitials}</span><span className="min-w-0"><span className="block truncate text-sm font-bold">{profileName}</span><span className="block truncate text-xs text-muted-foreground">{profileEmail}</span></span></div>
             <div className="p-0.5">{[{ label: 'Profile', href: '/settings', icon: User }, { label: 'Account Settings', href: '/settings', icon: Settings }, { label: 'Security', href: '/security/audit/security', icon: Shield }].map(({ label, href, icon: Icon }) => <button key={label} onClick={() => { setShowProfile(false); router.push(href); }} className="flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted"><Icon size={15}/>{label}</button>)}</div>
             <div className="mt-1 border-t border-border pt-1"><button onClick={signOut} className="flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted"><LogOut size={15}/>Sign Out</button></div>
           </div>}

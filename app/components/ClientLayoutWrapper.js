@@ -1,12 +1,17 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 import Sidebar from './Sidebar/Sidebar';
 import Navbar from './Navbar';
 import SettingsButton from './Setting/SettingsButton';
 
 export default function ClientLayoutWrapper({ children }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { currentUser, authReady, resumeDemo } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [position, setPosition] = useState('left');
   const [contentWidth, setContentWidth] = useState('fluid');
@@ -15,7 +20,12 @@ export default function ClientLayoutWrapper({ children }) {
   const [sidebarDarkMode, setSidebarDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { currentTheme, customColors, isDark, colorMode, setColorMode } = useTheme();
+  const { currentTheme, customColors, isDark, colorMode, setColorMode, toggleDarkMode } = useTheme();
+  const isAuthRoute = ['/login', '/signup', '/forgot-password'].includes(pathname);
+
+  useEffect(() => {
+    if (authReady && !isAuthRoute && !currentUser) router.replace('/login');
+  }, [authReady, currentUser, isAuthRoute, router]);
 
   useEffect(() => {
     if (currentTheme === 'custom' && customColors) document.documentElement.style.setProperty('--color-primary-500', customColors.primary);
@@ -72,6 +82,15 @@ export default function ClientLayoutWrapper({ children }) {
   const collapsed = !isMobile && isCollapsed;
   const finalSidebarDark = isDark || sidebarDarkMode;
   const contentOffset = !isMobile ? (position === 'right' ? (collapsed ? 'mr-16' : 'mr-64') : (collapsed ? 'ml-16' : 'ml-64')) : '';
+
+  if (isAuthRoute) return <div className="flex min-h-dvh flex-col bg-background text-foreground">
+    <header className="absolute right-0 top-0 z-20 flex items-center gap-2 p-3 sm:p-5">
+      <button type="button" onClick={toggleDarkMode} className="h-9 rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-muted">{isDark ? 'Switch to Light' : 'Switch to Dark'}</button>
+      <button type="button" onClick={resumeDemo} className="h-9 rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-muted">Back to Live Demo →</button>
+    </header>
+    {children}
+  </div>;
+  if (authReady && !currentUser) return null;
 
   return <div className="min-h-screen bg-background text-foreground">
     <Sidebar

@@ -6,6 +6,7 @@ import { Check, Moon, RotateCcw, Save, Settings, Sun, UserRound, SlidersHorizont
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { settingsService } from '@/services/settingsService';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/app/contexts/AuthContext';
 
 const STORAGE_KEY = 'workspace_preferences';
 const DEFAULT_PREFERENCES = { workspaceName: 'AdminPro Workspace', supportEmail: '', currency: 'INR', timezone: 'Asia/Kolkata', dateFormat: 'DD MMM YYYY', emailAlerts: true, securityAuditLogging: true, autoRefresh: true };
@@ -14,6 +15,7 @@ const Toggle = ({ checked, onChange, label }) => <label className="flex cursor-p
 
 export default function SettingsPage() {
   const { isDark } = useTheme();
+  const { currentUser, updateCurrentUser } = useAuth();
   const [profileId, setProfileId] = useState(null);
   const [profile, setProfile] = useState({ name: '', email: '', department: '', role: 'admin', status: 'active' });
   const [savedProfile, setSavedProfile] = useState(null);
@@ -29,7 +31,7 @@ export default function SettingsPage() {
     setLoading(true); setError('');
     try {
       const [user, saved, tableResults] = await Promise.all([
-        settingsService.getAdminProfile(),
+        settingsService.getAdminProfile(currentUser?.email || ''),
         Promise.resolve().then(() => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch { return null; } }),
         Promise.all(['products', 'categories', 'users', 'orders', 'events', 'notifications'].map((table) => supabase.from(table).select('*', { count: 'exact', head: true }))),
       ]);
@@ -43,7 +45,7 @@ export default function SettingsPage() {
       setConnectedTables(tableResults.filter((result) => !result.error).length);
     } catch (loadError) { setError(loadError.message || 'Could not load workspace settings.'); }
     finally { setLoading(false); }
-  }, []);
+  }, [currentUser?.email]);
   useEffect(() => { load(); }, [load]);
 
   const changePreference = (key, value) => setPreferences((current) => {
@@ -61,6 +63,7 @@ export default function SettingsPage() {
       const nextPreferences = { ...preferences, darkMode: isDark };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(nextPreferences));
       setProfile(nextProfile); setSavedProfile(nextProfile); setSavedPreferences(preferences); setSuccess('Admin profile and workspace preferences saved.');
+      updateCurrentUser({ id: updated.id, ...nextProfile });
     } catch (saveError) { setError(saveError.message || 'Could not save workspace settings.'); }
     finally { setSaving(false); }
   };
