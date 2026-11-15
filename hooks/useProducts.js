@@ -3,8 +3,10 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { productService } from '@/services/productService';
+import { useAuth } from '@/app/contexts/AuthContext';
 
 export function useProducts() {
+  const { isAdmin, isManager } = useAuth();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,48 +83,56 @@ export function useProducts() {
 
   /* ── Product Actions ── */
   const addProduct = async (productData) => {
+    if (!isManager) throw new Error('Creating products requires Manager or Admin privileges.');
     const created = await productService.createProduct(productData);
     setProducts((prev) => [created, ...prev]);
     return created;
   };
 
   const editProduct = async (id, updates) => {
+    if (!isManager) throw new Error('Editing products requires Manager or Admin privileges.');
     const updated = await productService.updateProduct(id, updates);
     setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
     return updated;
   };
 
   const adjustStock = async (id, newStock) => {
+    if (!isManager) throw new Error('Adjusting stock requires Manager or Admin privileges.');
     const updated = await productService.updateStock(id, newStock);
     setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
     return updated;
   };
 
   const updateMinStock = async (id, threshold) => {
+    if (!isManager) throw new Error('Updating stock thresholds requires Manager or Admin privileges.');
     const updated = await productService.updateMinStock(id, threshold);
     setProducts((prev) => prev.map((product) => (product.id === id ? updated : product)));
     return updated;
   };
 
   const removeProduct = async (id) => {
+    if (!isAdmin) throw new Error('Deleting products requires Admin privileges.');
     await productService.deleteProduct(id);
     setProducts((prev) => prev.filter((p) => p.id !== id));
   };
 
   /* ── Category Actions ── */
   const addCategory = async (catData) => {
+    if (!isManager) throw new Error('Creating categories requires Manager or Admin privileges.');
     const created = await productService.createCategory(catData);
     setCategories((prev) => [...prev, created]);
     return created;
   };
 
   const editCategory = async (id, updates) => {
+    if (!isManager) throw new Error('Editing categories requires Manager or Admin privileges.');
     const updated = await productService.updateCategory(id, updates);
     setCategories((prev) => prev.map((c) => (c.id === id ? updated : c)));
     return updated;
   };
 
   const removeCategory = async (id) => {
+    if (!isAdmin) throw new Error('Deleting categories requires Admin privileges.');
     await productService.deleteCategory(id);
     setCategories((prev) => prev.filter((c) => c.id !== id));
   };

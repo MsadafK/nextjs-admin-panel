@@ -2,12 +2,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Edit, Trash2, RefreshCw, X, Check } from 'lucide-react';
+import { Search, Edit, Lock, Trash2, RefreshCw, X, Check } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
+import { useAuth } from '@/app/contexts/AuthContext';
 import ProductPageHeader from '@/app/components/Products/ProductPageHeader';
 import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
 
 export default function ManageCategoriesPage() {
+  const { isAdmin, isManager } = useAuth();
   const {
     categoriesWithStats,
     products,
@@ -176,18 +178,20 @@ export default function ManageCategoriesPage() {
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-end gap-1">
                         <button
+                          disabled={!isManager}
                           onClick={() => handleOpenModal(cat, 'edit')}
-                          className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium text-foreground hover:bg-muted"
+                          className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
                           title="Edit"
                         >
-                          <Edit size={13} /> Rename
+                          {!isManager && <Lock size={12}/>}<Edit size={13} /> Rename
                         </button>
                         <button
+                          disabled={!isAdmin}
                           onClick={() => handleDelete(cat.id, cat.name)}
-                          className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium text-foreground hover:bg-muted"
-                          title="Delete"
+                          className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+                          title={!isAdmin ? 'Requires Admin privileges' : 'Delete'}
                         >
-                          <Trash2 size={13} /> Delete
+                          {!isAdmin && <Lock size={12}/>}<Trash2 size={13} /> Delete
                         </button>
                       </div>
                     </td>

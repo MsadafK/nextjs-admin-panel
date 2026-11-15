@@ -8,6 +8,7 @@ import { useAuth } from '@/app/contexts/AuthContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { menuItems } from './Sidebar/MenuItems';
 import { notificationService } from '@/services/notificationService';
+import { DEMO_ACCOUNTS } from '@/services/authService';
 import { supabase } from '@/lib/supabase';
 
 const LABELS = {
@@ -62,7 +63,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const pathname = usePathname();
   const router = useRouter();
   const { isDark, toggleDarkMode } = useTheme();
-  const { currentUser, signOut } = useAuth();
+  const { currentUser, signOut, switchDemoRole } = useAuth();
   const { language, t, setLanguage } = useLanguage() || {};
   const [notifications, setNotifications] = useState([]);
   const [inboxMessages, setInboxMessages] = useState([]);
@@ -90,7 +91,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
       setInboxMessages(rows.filter((row) => !row.archived && !row.draft && !row.sent).map((row) => ({
         id: row.id, title: row.title, body: row.body, time: row.createdAt ? new Date(row.createdAt).toLocaleString() : '', unread: !row.isRead,
       })));
-      setNotifications(rows.map((row) => ({ id: row.id, title: row.title, time: row.createdAt ? new Date(row.createdAt).toLocaleString() : '', unread: !row.isRead, href: '/messages' })));
+      setNotifications(rows.map((row) => ({ id: row.id, title: row.title, body: row.body, type: row.type, time: row.createdAt ? new Date(row.createdAt).toLocaleString() : '', unread: !row.isRead, sent: row.sent, draft: row.draft, archived: row.archived, href: '/messages' })));
     } catch (error) { console.error('Could not load notifications:', error); }
   }, []);
 
@@ -110,7 +111,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   }, [refreshCounts]);
 
   const unreadInboxCount = inboxMessages.filter((message) => message.unread).length;
-  const unreadNotificationCount = notifications.filter((notification) => notification.unread).length;
+  const unreadNotificationCount = notifications.filter((notification) => notification.unread && !notification.archived && !notification.draft && !notification.sent).length;
   const commandResults = useMemo(() => {
     const all = [...COMMAND_ROUTES, ...COMMAND_ACTIONS];
     const query = commandQuery.trim().toLowerCase();
@@ -167,6 +168,8 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
     if (result.href) navigate(result.href);
   };
   const markRead = async (id) => {
+    setInboxMessages((items) => items.map((item) => item.id === id ? { ...item, unread: false } : item));
+    setNotifications((items) => items.map((item) => item.id === id ? { ...item, unread: false } : item));
     try { await notificationService.updateMessage(id, { isRead: true }); }
     catch (error) { console.error('Could not mark notification as read:', error); }
   };
@@ -200,8 +203,8 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
             <Mail size={17}/>{unreadInboxCount > 0 && <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground px-1 font-mono text-[10px] font-semibold text-background">{unreadInboxCount > 99 ? '99+' : unreadInboxCount}</span>}
           </button>
           {showInbox && <div className={`absolute right-0 top-11 z-50 flex max-h-[min(32rem,calc(100dvh-4.5rem))] w-[min(20rem,calc(100vw-1.5rem))] flex-col overflow-hidden ${panelClass}`}>
-            <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3"><h2 className="text-sm font-semibold">Messages</h2>{unreadInboxCount > 0 && <button onClick={markAllInboxRead} className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>}</div>
-            <div className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">{inboxMessages.length ? inboxMessages.map((message) => <button key={message.id} onClick={() => { if (message.unread) markRead(message.id); setShowInbox(false); router.push('/messages/inbox/unread'); }} className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-muted/60"><span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border ${message.unread ? 'bg-foreground text-background' : 'bg-muted text-foreground'}`}><Mail size={14}/></span><span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{message.title}</span><span className="shrink-0 text-[10px] text-muted-foreground">{message.time}</span></span><span className="mt-0.5 block truncate text-xs text-muted-foreground">{message.body}</span></span></button>) : <p className="px-4 py-8 text-center text-sm text-muted-foreground">No messages yet.</p>}</div>
+            <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3"><div className="flex items-center gap-2"><h2 className="text-sm font-semibold">Messages</h2><span className="rounded-full bg-foreground px-1.5 py-0.5 font-mono text-[10px] font-semibold text-background">{unreadInboxCount} unread</span></div>{unreadInboxCount > 0 && <button onClick={markAllInboxRead} className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>}</div>
+            <div className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">{inboxMessages.length ? inboxMessages.map((message) => <div key={message.id} className="flex items-center gap-2 px-2"><button onClick={() => { if (message.unread) markRead(message.id); setShowInbox(false); router.push('/messages/inbox/unread'); }} className="flex min-w-0 flex-1 items-start gap-3 px-2 py-3 text-left hover:bg-muted/60"><span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border ${message.unread ? 'bg-foreground text-background' : 'bg-muted text-foreground'}`}><Mail size={14}/></span><span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{message.title}</span><span className="shrink-0 text-[10px] text-muted-foreground">{message.time}</span></span><span className="mt-0.5 block truncate text-xs text-muted-foreground">{message.body}</span></span></button>{message.unread && <button onClick={() => markRead(message.id)} className="shrink-0 rounded border border-border px-2 py-1 text-[10px] font-medium text-foreground hover:bg-muted">Mark read</button>}</div>) : <p className="px-4 py-8 text-center text-sm text-muted-foreground">No messages yet.</p>}</div>
             <button onClick={() => { setShowInbox(false); router.push('/messages/inbox'); }} className="shrink-0 border-t border-border px-4 py-3 text-sm font-medium hover:bg-muted/60">Open inbox</button>
           </div>}
         </div>
@@ -211,9 +214,9 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
             <Bell size={17}/>{unreadNotificationCount > 0 && <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground px-1 font-mono text-[10px] font-semibold text-background">{unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}</span>}
           </button>
           {showNotifications && <div className={`absolute right-0 top-11 z-50 flex max-h-[min(32rem,calc(100dvh-4.5rem))] w-[min(20rem,calc(100vw-1.5rem))] flex-col overflow-hidden ${panelClass}`}>
-            <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3"><h2 className="text-sm font-semibold">Notifications</h2>{unreadNotificationCount > 0 && <button onClick={markAllNotificationsRead} className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>}</div>
-            <div className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">{notifications.length ? notifications.map((notification) => <button key={notification.id} onClick={() => { if (notification.unread) markRead(notification.id); setShowNotifications(false); router.push(notification.href); }} className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-muted/60"><span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border ${notification.unread ? 'bg-foreground text-background' : 'bg-muted text-foreground'}`}><Bell size={14}/></span><span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{notification.title}</span><span className="shrink-0 text-[10px] text-muted-foreground">{notification.time}</span></span><span className="mt-0.5 block text-xs text-muted-foreground">{notification.unread ? 'Unread' : 'Read'}</span></span></button>) : <p className="px-4 py-8 text-center text-sm text-muted-foreground">No notifications yet.</p>}</div>
-            <button onClick={() => { setShowNotifications(false); router.push('/messages'); }} className="shrink-0 border-t border-border px-4 py-3 text-sm font-medium hover:bg-muted/60">Open notifications</button>
+            <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3"><div className="flex items-center gap-2"><h2 className="text-sm font-semibold">Notifications</h2><span className="rounded-full bg-foreground px-1.5 py-0.5 font-mono text-[10px] font-semibold text-background">{unreadNotificationCount} unread</span></div>{unreadNotificationCount > 0 && <button onClick={markAllNotificationsRead} className="text-xs text-muted-foreground hover:text-foreground">Mark all read</button>}</div>
+            <div className="min-h-0 flex-1 divide-y divide-border overflow-y-auto">{notifications.length ? notifications.map((notification) => <div key={notification.id} className="flex items-center gap-2 px-2"><button onClick={() => { if (notification.unread) markRead(notification.id); setShowNotifications(false); router.push(notification.href); }} className="flex min-w-0 flex-1 items-start gap-3 px-2 py-3 text-left hover:bg-muted/60"><span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border ${notification.unread ? 'bg-foreground text-background' : 'bg-muted text-foreground'}`}><Bell size={14}/></span><span className="min-w-0 flex-1"><span className="flex items-center justify-between gap-2"><span className="truncate text-sm font-medium">{notification.title}</span><span className="shrink-0 text-[10px] text-muted-foreground">{notification.time}</span></span><span className="mt-0.5 block truncate text-xs text-muted-foreground">{notification.body || notification.type || (notification.unread ? 'Unread' : 'Read')}</span></span></button>{notification.unread && <button onClick={() => markRead(notification.id)} className="shrink-0 rounded border border-border px-2 py-1 text-[10px] font-medium text-foreground hover:bg-muted">Mark read</button>}</div>) : <p className="px-4 py-8 text-center text-sm text-muted-foreground">No notifications yet.</p>}</div>
+            <button onClick={() => { setShowNotifications(false); router.push('/notifications'); }} className="shrink-0 border-t border-border px-4 py-3 text-sm font-medium hover:bg-muted/60">Open notifications</button>
           </div>}
         </div>
 
@@ -226,6 +229,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
           <button onClick={() => { setShowProfile((open) => !open); setShowInbox(false); setShowNotifications(false); setShowLanguage(false); }} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-foreground font-mono text-xs font-semibold text-background" aria-label="Open profile menu" aria-expanded={showProfile}>{profileInitials}</button>
           {showProfile && <div className={`absolute right-0 top-11 w-60 p-1.5 ${panelClass}`}>
             <div className="mb-1 flex items-center gap-2.5 border-b border-border px-3 py-2.5"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-foreground font-mono text-xs font-semibold text-background">{profileInitials}</span><span className="min-w-0"><span className="block truncate text-sm font-bold">{profileName}</span><span className="block truncate text-xs text-muted-foreground">{profileEmail}</span></span></div>
+            <div className="border-b border-border px-2.5 py-2"><p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Instant Role Switch (Demo)</p><div className="space-y-0.5">{DEMO_ACCOUNTS.map((account) => { const selected = String(currentUser?.role || '').toLowerCase() === account.role.toLowerCase(); return <button key={account.email} type="button" onClick={async () => { try { await switchDemoRole(account); setShowProfile(false); } catch (error) { console.error('Could not switch demo role:', error); } }} className={`flex min-h-9 w-full items-center justify-between gap-2 rounded-md px-2 text-left text-xs transition-colors ${selected ? 'bg-muted font-semibold text-foreground' : 'text-foreground hover:bg-muted'}`}><span className="min-w-0 truncate">{account.role} <span className="text-muted-foreground">({account.name})</span></span>{selected && <Check size={13} className="shrink-0"/>}</button>; })}</div></div>
             <div className="p-0.5">{[{ label: 'Profile', href: '/settings', icon: User }, { label: 'Account Settings', href: '/settings', icon: Settings }, { label: 'Security', href: '/security/audit/security', icon: Shield }].map(({ label, href, icon: Icon }) => <button key={label} onClick={() => { setShowProfile(false); router.push(href); }} className="flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted"><Icon size={15}/>{label}</button>)}</div>
             <div className="mt-1 border-t border-border pt-1"><button onClick={signOut} className="flex min-h-10 w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-foreground transition-colors hover:bg-muted"><LogOut size={15}/>Sign Out</button></div>
           </div>}

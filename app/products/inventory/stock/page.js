@@ -1,8 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Search } from 'lucide-react';
+import { Lock, Search } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
+import { useAuth } from '@/app/contexts/AuthContext';
 import ProductPageHeader, { exportProductsCsv } from '@/app/components/Products/ProductPageHeader';
 import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
 import ProductTable from '@/app/components/Products/ProductTable';
@@ -10,6 +11,7 @@ import ProductTable from '@/app/components/Products/ProductTable';
 const controlClass = 'h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground';
 
 export default function InventoryStockPage() {
+  const { isManager } = useAuth();
   const { products, dbCategories, loading, error, refreshData, adjustStock, updateMinStock } = useProducts();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
@@ -25,6 +27,7 @@ export default function InventoryStockPage() {
   const risks = products.filter((product) => statusOf(product) !== 'in-stock');
   const healthCounts = { healthy: products.filter((product) => statusOf(product) === 'in-stock').length, low: products.filter((product) => statusOf(product) === 'low-stock').length, out: products.filter((product) => statusOf(product) === 'out-of-stock').length };
   const updateThreshold = async (product, value) => {
+    if (!isManager) return;
     const next = Number(value);
     if (!Number.isFinite(next) || next < 0 || next === Number(product.minStock ?? 10)) return;
     setSavingThreshold(product.id); setThresholdError('');
@@ -33,6 +36,7 @@ export default function InventoryStockPage() {
     finally { setSavingThreshold(null); }
   };
   const restock = async (product, amount) => {
+    if (!isManager) return;
     try { await adjustStock(product.id, Number(product.stock || 0) + amount); }
     catch (restockError) { window.alert(`Could not restock product: ${restockError.message}`); }
   };
@@ -46,6 +50,6 @@ export default function InventoryStockPage() {
     <section className="grid grid-cols-1 gap-3 rounded-xl border border-border bg-muted/20 p-3.5 sm:grid-cols-2 xl:grid-cols-4"><div className="relative"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search by product name, SKU, or category..." className={`${controlClass} pl-9`}/></div><select value={category} onChange={(event) => setCategory(event.target.value)} className={controlClass}><option value="all">All Categories</option>{dbCategories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select><select value={stockLevel} onChange={(event) => setStockLevel(event.target.value)} className={controlClass}><option value="all">All Stock Levels</option><option value="in-stock">In Stock</option><option value="low-stock">Low Stock</option><option value="out-of-stock">Out of Stock</option></select><select value={sort} onChange={(event) => setSort(event.target.value)} className={controlClass}><option value="stock-asc">Stock: Low to High</option><option value="price-desc">Price: High to Low</option><option value="value-desc">Valuation: High to Low</option><option value="name-asc">Name: A–Z</option></select></section>
     <ProductTable products={filtered} loading={loading} onAdjustStock={adjustStock} onQuickRestock={(product) => restock(product, 10)} onEdit={editCatalogProduct}/>
 
-    <section className="overflow-hidden rounded-xl border border-border bg-card"><div className="border-b border-border px-4 py-3.5"><h2 className="text-sm font-semibold text-foreground">Reorder Controls</h2><p className="mt-1 text-xs text-muted-foreground">Update each SKU threshold or quickly add stock. Changes sync to Supabase.</p></div>{thresholdError && <p role="alert" className="mx-4 mt-3 rounded-md border border-border bg-muted p-2 text-xs text-foreground">{thresholdError}</p>}{risks.length ? <div className="divide-y divide-border">{risks.map((product) => <div key={product.id} className="flex min-w-0 flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><p className="truncate text-sm font-medium text-foreground">{product.name}</p><p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">{product.sku} · {product.stock} units available</p></div><div className="flex flex-wrap items-center gap-2"><label className="flex h-8 items-center gap-2 rounded-md border border-border px-2 text-[11px] text-muted-foreground">Reorder at<input aria-label={`Reorder threshold for ${product.name}`} type="number" min="0" defaultValue={product.minStock ?? 10} key={`${product.id}-${product.minStock}`} onBlur={(event) => updateThreshold(product, event.target.value)} className="w-14 bg-transparent text-right font-mono text-xs text-foreground outline-none"/>{savingThreshold === product.id && <span className="text-foreground">Saving</span>}</label><button type="button" onClick={() => restock(product, 10)} className="h-8 rounded-md border border-border px-2.5 text-xs font-medium text-foreground hover:bg-muted">+10</button><button type="button" onClick={() => restock(product, 50)} className="h-8 rounded-md border border-border px-2.5 text-xs font-medium text-foreground hover:bg-muted">+50</button></div></div>)}</div> : <p className="p-6 text-sm text-muted-foreground">All products are above their reorder thresholds.</p>}</section>
+    <section className="overflow-hidden rounded-xl border border-border bg-card"><div className="border-b border-border px-4 py-3.5"><h2 className="text-sm font-semibold text-foreground">Reorder Controls</h2><p className="mt-1 text-xs text-muted-foreground">Update each SKU threshold or quickly add stock. Changes sync to Supabase.</p></div>{thresholdError && <p role="alert" className="mx-4 mt-3 rounded-md border border-border bg-muted p-2 text-xs text-foreground">{thresholdError}</p>}{risks.length ? <div className="divide-y divide-border">{risks.map((product) => <div key={product.id} className="flex min-w-0 flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><p className="truncate text-sm font-medium text-foreground">{product.name}</p><p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">{product.sku} · {product.stock} units available</p></div><div className="flex flex-wrap items-center gap-2"><label className="flex h-8 items-center gap-2 rounded-md border border-border px-2 text-[11px] text-muted-foreground">Reorder at<input aria-label={`Reorder threshold for ${product.name}`} title={!isManager ? 'Requires Manager or Admin privileges' : undefined} disabled={!isManager} type="number" min="0" defaultValue={product.minStock ?? 10} key={`${product.id}-${product.minStock}`} onBlur={(event) => updateThreshold(product, event.target.value)} className="w-14 bg-transparent text-right font-mono text-xs text-foreground outline-none disabled:cursor-not-allowed disabled:opacity-50"/>{!isManager && <Lock size={12}/>}{savingThreshold === product.id && <span className="text-foreground">Saving</span>}</label><button type="button" disabled={!isManager} title={!isManager ? 'Requires Manager or Admin privileges' : undefined} onClick={() => restock(product, 10)} className="inline-flex h-8 items-center gap-1 rounded-md border border-border px-2.5 text-xs font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50">{!isManager && <Lock size={12}/>}+10</button><button type="button" disabled={!isManager} title={!isManager ? 'Requires Manager or Admin privileges' : undefined} onClick={() => restock(product, 50)} className="inline-flex h-8 items-center gap-1 rounded-md border border-border px-2.5 text-xs font-medium text-foreground hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50">{!isManager && <Lock size={12}/>}+50</button></div></div>)}</div> : <p className="p-6 text-sm text-muted-foreground">All products are above their reorder thresholds.</p>}</section>
   </div>;
 }

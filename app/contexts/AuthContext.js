@@ -133,9 +133,20 @@ export function AuthProvider({ children }) {
     router.replace('/');
   }, [establishSession, router]);
 
+  const switchDemoRole = useCallback(async (account) => {
+    const user = await authService.getDemoAccount(account);
+    if (user.status.toLowerCase() === 'suspended') throw new Error('This account is suspended. Contact a workspace administrator.');
+    return establishSession(user, 'Demo Role Switched');
+  }, [establishSession]);
+
+  const role = String(currentUser?.role || '').trim().toLowerCase();
+  const isAdmin = role === 'admin';
+  const isManager = isAdmin || role === 'manager';
+  const isUser = role === 'user';
+
   const value = useMemo(() => ({
-    currentUser, authReady, signInWithEmail, switchDemoAccount, signUp, signOut, resumeDemo, updateCurrentUser,
-  }), [currentUser, authReady, signInWithEmail, switchDemoAccount, signUp, signOut, resumeDemo, updateCurrentUser]);
+    currentUser, authReady, isAdmin, isManager, isUser, signInWithEmail, switchDemoAccount, switchDemoRole, signUp, signOut, resumeDemo, updateCurrentUser,
+  }), [currentUser, authReady, isAdmin, isManager, isUser, signInWithEmail, switchDemoAccount, switchDemoRole, signUp, signOut, resumeDemo, updateCurrentUser]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
