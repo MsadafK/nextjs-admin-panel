@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Activity, CalendarDays, Download, Package, Printer, RefreshCw, Search, Users } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
 import { productService } from '@/services/productService';
 import { userService } from '@/services/userService';
 import { eventService, parseSupabaseDate } from '@/services/eventService';
 import { notificationService } from '@/services/notificationService';
+import { orderService } from '@/services/orderService';
+import SalesOrdersManager from '@/app/components/Sales/SalesOrdersManager';
 
 const PAGE_TITLES = {
   'analytics/realtime/health': 'Realtime System Health', 'analytics/realtime/sales': 'Realtime Sales Analytics',
@@ -69,7 +70,7 @@ export default function AnalyticsReportsManager({ mode }) {
     setLoading(true);
     const results = await Promise.allSettled([
       productService.getProducts(), userService.getUsers(), eventService.getEvents(),
-      notificationService.getNotifications(), supabase.from('orders').select('*').order('created_at', { ascending: false }),
+      notificationService.getNotifications(), orderService.fetchOrders(),
     ]);
     const load = (index, label) => {
       const result = results[index];
@@ -82,12 +83,12 @@ export default function AnalyticsReportsManager({ mode }) {
     setEvents(load(2, 'Events'));
     setNotifications(load(3, 'Notifications'));
     const orderResult = results[4];
-    if (orderResult.status === 'fulfilled' && !orderResult.value.error) {
-      setOrders(orderResult.value.data || []);
+    if (orderResult.status === 'fulfilled') {
+      setOrders(orderResult.value || []);
       setOrdersAvailable(true);
     } else {
       setOrders([]); setOrdersAvailable(false);
-      const error = orderResult.status === 'rejected' ? orderResult.reason : orderResult.value.error;
+      const error = orderResult.reason;
       errors.push(`Orders unavailable; sales value falls back to product catalog valuation. ${error?.message || ''}`.trim());
     }
     setErrors(errors);
@@ -110,14 +111,12 @@ export default function AnalyticsReportsManager({ mode }) {
       Category: item.role || 'User', Role: item.role || 'User', Department: item.department || 'General',
       Status: item.status || 'Active', Units: 1, Value: 0, Date: item.createdAt || '',
     }));
-    const productById = new Map(products.map((item) => [String(item.id), item]));
     const orderRows = orders.map((order) => {
-      const product = productById.get(String(order.product_id));
       return {
-        Record: 'Order', Name: order.order_number || String(order.id || 'Order'), Product: product?.name || 'Product unavailable',
-        SKU: product?.sku || '', Category: product?.category || 'Uncategorized', Department: '', Role: '',
+        Record: 'Order', Name: order.orderNumber || String(order.id || 'Order'), Product: order.productName || 'Product unavailable',
+        SKU: order.sku || '', Category: products.find((item) => String(item.id) === String(order.productId))?.category || 'Uncategorized', Department: '', Role: '',
         Status: order.status || 'Pending', Units: number(order.quantity),
-        Value: number(order.total_amount ?? (number(order.unit_price) * number(order.quantity))), Date: order.created_at || '',
+        Value: number(order.totalAmount), Date: order.createdAt || '',
       };
     });
     const eventRows = events.map((item) => ({
@@ -245,6 +244,7 @@ export default function AnalyticsReportsManager({ mode }) {
     {errors.length > 0 && <div role="status" className="rounded-md border border-border bg-muted p-3 text-sm text-muted-foreground">{errors.join(' ')}</div>}
     {family === 'sales' && (!ordersAvailable || !orders.length) && <p className="text-xs text-muted-foreground">Order rows are unavailable; sales value shares use live product catalog value.</p>}
     <section aria-label="Route summary" className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">{kpis.map(([label, value], index) => { const Icon = kpiIcons[index] || Activity; const context = family === 'sales' ? ['Live order and catalog total', `${orderCount} recorded orders`, 'Average per order', `Leading category: ${topRevenueCategory}`][index] : family === 'users' ? ['Live workspace directory', 'Accounts marked active', 'Privileged accounts', 'Restricted or inactive accounts'][index] : family === 'products' ? ['Live inventory value', 'Units in active stock', `${uniqueSkus} distinct catalog SKUs`, 'Products at reorder threshold'][index] : ['Workspace products', 'Active workspace accounts', 'Events from today IST onward', 'Live notifications'][index]; return <article key={label} className="min-w-0 rounded-xl border border-border bg-card p-4 sm:p-5"><div className="flex items-start justify-between gap-2"><p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</p><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-muted/70 text-foreground"><Icon size={15}/></span></div><p className="mt-3 break-words font-mono text-2xl font-bold tracking-tight text-foreground">{value}</p><div className="mt-3 flex flex-wrap items-center gap-2"><span className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] uppercase text-foreground">LIVE</span><span className="text-xs text-muted-foreground">{context}</span></div></article>; })}</section>
+    {family === 'sales' && <SalesOrdersManager products={products} onOrdersChanged={refresh}/>}
     <section className="grid grid-cols-1 gap-3 rounded-xl border border-border bg-muted/20 p-3.5 sm:grid-cols-2 xl:grid-cols-4"><label className="relative"><span className="sr-only">Search records</span><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"/><input aria-label="Search records" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search by name, email, SKU, or record..." className="h-9 w-full rounded-md border border-border bg-background px-3 pl-9 text-xs text-foreground"/></label><label className="text-[11px] font-medium text-muted-foreground"><span className="sr-only">Category or role</span><select aria-label={family === 'users' ? 'Filter by role or department' : 'Filter by category'} value={category} onChange={(event) => setCategory(event.target.value)} className="h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground"><option value="all">All {family === 'users' ? 'roles and departments' : 'categories'}</option>{filterOptions.map((item) => <option key={item} value={item}>{item}</option>)}</select></label><label className="text-[11px] font-medium text-muted-foreground"><span className="sr-only">From</span><input aria-label="From date" type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} className="h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground"/></label><label className="text-[11px] font-medium text-muted-foreground"><span className="sr-only">To</span><input aria-label="To date" type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} className="h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground"/></label></section>
     {activeFilters && <div className="flex justify-end"><button onClick={resetFilters} className="h-8 rounded-md border border-border px-3 text-xs font-medium text-foreground hover:bg-muted">Reset Filters</button></div>}
     {family === 'sales' && <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">{barList('Order / Sales Value by Category', revenueByCategory, currency)}{barList('Product Value Share', revenueByProduct, currency)}</section>}

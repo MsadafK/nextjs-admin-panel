@@ -1,6 +1,16 @@
 import { supabase } from '@/lib/supabase';
 
+const WORKSPACE_PREFERENCES_KEY = 'workspace_preferences';
+
 export const settingsService = {
+  getWorkspacePreferences() {
+    if (typeof window === 'undefined') return { workspaceName: 'AdminPro Workspace', supportEmail: '' };
+    try {
+      const stored = JSON.parse(window.localStorage.getItem(WORKSPACE_PREFERENCES_KEY) || 'null');
+      return { workspaceName: stored?.workspaceName || 'AdminPro Workspace', supportEmail: stored?.supportEmail || '' };
+    } catch { return { workspaceName: 'AdminPro Workspace', supportEmail: '' }; }
+  },
+
   async getAdminProfile(preferredEmail = '') {
     let authUserId = null;
     try {
