@@ -166,4 +166,20 @@ export const orderService = {
     const { error } = await supabase.from('orders').delete().eq('id', id);
     if (error) throw error;
   },
+
+  async restoreOrder(order, { isAdmin = false } = {}) {
+    if (!isAdmin) throw new Error('Restoring deleted orders requires Admin privileges.');
+    const columns = await inspectOrderColumns();
+    const source = order?.raw || {};
+    const candidate = Object.keys(source).length ? source : {
+      id: order.id, order_number: order.orderNumber, customer_name: order.customerName,
+      customer_email: order.customerEmail, product_id: order.productId, product_name: order.productName,
+      sku: order.sku, quantity: order.quantity, unit_price: order.unitPrice, total_amount: order.totalAmount,
+      status: order.status, created_at: order.createdAt,
+    };
+    const payload = filteredPayload(candidate, columns);
+    const { data, error } = await insertWithColumnFallback('orders', payload, columns, true);
+    if (error) throw error;
+    return mapOrder(data);
+  },
 };

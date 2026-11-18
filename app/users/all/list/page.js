@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Check, Lock, Pencil, Search, Trash2, UserRound, X } from 'lucide-react';
 import { useUsers } from '@/hooks/useUsers';
 import { useAuth } from '@/app/contexts/AuthContext';
+import { useToast } from '@/app/contexts/ToastContext';
 import UserPageHeader from '@/app/components/Users/UserPageHeader';
 import UserKpiSummary from '@/app/components/Users/UserKpiSummary';
 
@@ -14,6 +15,7 @@ const displayDate = (value) => value ? new Date(value).toLocaleDateString('en-IN
 export default function UserListPage() {
   const router = useRouter();
   const { isAdmin, isManager } = useAuth();
+  const { pushToast } = useToast();
   const { users, loading, error, refreshUsers, editUser, removeUser } = useUsers();
   const [query, setQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
@@ -33,8 +35,12 @@ export default function UserListPage() {
   }), [users, query, roleFilter, statusFilter, departmentFilter]);
 
   const toggleStatus = async (user) => {
-    const nextStatus = (user.status || 'active').toLowerCase() === 'suspended' ? 'active' : 'suspended';
-    try { await editUser(user.id, { ...user, status: nextStatus }); }
+    const previousStatus = (user.status || 'active').toLowerCase();
+    const nextStatus = previousStatus === 'suspended' ? 'active' : 'suspended';
+    try {
+      await editUser(user.id, { ...user, status: nextStatus });
+      pushToast({ title: nextStatus === 'suspended' ? 'User suspended' : 'User activated', subtitle: user.name, onUndo: async () => { await editUser(user.id, { ...user, status: previousStatus }); } });
+    }
     catch (updateError) { window.alert(`Failed to update status: ${updateError.message}`); }
   };
   const deleteUser = async (user) => {

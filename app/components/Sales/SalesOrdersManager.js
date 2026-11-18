@@ -6,6 +6,7 @@ import { orderService } from '@/services/orderService';
 import { productService } from '@/services/productService';
 import { settingsService } from '@/services/settingsService';
 import { useAuth } from '@/app/contexts/AuthContext';
+import { useToast } from '@/app/contexts/ToastContext';
 
 const STATUSES = ['pending', 'processing', 'shipped', 'completed', 'cancelled'];
 const money = (value) => `₹${Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -15,6 +16,7 @@ const statusLabel = (value) => String(value || 'pending').replace(/^./, (letter)
 
 export default function SalesOrdersManager({ products: availableProducts = [], onOrdersChanged }) {
   const { isAdmin, isManager } = useAuth();
+  const { pushToast } = useToast();
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState(availableProducts);
   const [loading, setLoading] = useState(true);
@@ -52,6 +54,11 @@ export default function SalesOrdersManager({ products: availableProducts = [], o
     try {
       const updated = await orderService.updateOrderStatus(order.id, status);
       setOrders((current) => current.map((item) => String(item.id) === String(order.id) ? updated : item));
+      pushToast({ title: 'Order status updated', subtitle: `${order.orderNumber}: ${statusLabel(order.status)} → ${statusLabel(status)}`, onUndo: async () => {
+        const restored = await orderService.updateOrderStatus(order.id, order.status);
+        setOrders((current) => current.map((item) => String(item.id) === String(order.id) ? restored : item));
+        onOrdersChanged?.();
+      } });
       onOrdersChanged?.();
     } catch (updateError) { setError(updateError.message || 'Could not update order status.'); }
     finally { setBusyId(null); }
@@ -64,6 +71,11 @@ export default function SalesOrdersManager({ products: availableProducts = [], o
     try {
       await orderService.deleteOrder(order.id, { isAdmin });
       setOrders((current) => current.filter((item) => String(item.id) !== String(order.id)));
+      pushToast({ title: 'Order deleted', subtitle: `${order.orderNumber} removed from the sales ledger`, onUndo: async () => {
+        const restored = await orderService.restoreOrder(order, { isAdmin });
+        setOrders((current) => [restored, ...current]);
+        onOrdersChanged?.();
+      } });
       onOrdersChanged?.();
     } catch (deleteError) { setError(deleteError.message || 'Could not delete this order.'); }
     finally { setBusyId(null); }

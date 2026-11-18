@@ -4,9 +4,11 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { productService } from '@/services/productService';
 import { useAuth } from '@/app/contexts/AuthContext';
+import { useToast } from '@/app/contexts/ToastContext';
 
 export function useProducts() {
   const { isAdmin, isManager } = useAuth();
+  const { pushToast } = useToast();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,8 +100,14 @@ export function useProducts() {
 
   const adjustStock = async (id, newStock) => {
     if (!isManager) throw new Error('Adjusting stock requires Manager or Admin privileges.');
+    const previousProduct = products.find((product) => String(product.id) === String(id));
+    const previousStock = Number(previousProduct?.stock || 0);
     const updated = await productService.updateStock(id, newStock);
     setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
+    pushToast({ title: 'Product stock updated', subtitle: `${updated.name}: ${previousStock} → ${Number(updated.stock || 0)} units`, onUndo: async () => {
+      const reverted = await productService.updateStock(id, previousStock);
+      setProducts((prev) => prev.map((product) => (String(product.id) === String(id) ? reverted : product)));
+    } });
     return updated;
   };
 

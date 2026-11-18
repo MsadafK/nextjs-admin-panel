@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { authService, DEMO_ACCOUNTS, mapAuthUser } from '@/services/authService';
 import { userService } from '@/services/userService';
 import { supabase } from '@/lib/supabase';
+import { useToast } from '@/app/contexts/ToastContext';
 
 const STORAGE_KEY = 'adminpro_auth_user';
 const SIGNED_OUT_KEY = 'adminpro_signed_out';
@@ -17,6 +18,7 @@ const loadStoredUser = () => {
 
 export function AuthProvider({ children }) {
   const router = useRouter();
+  const { pushToast } = useToast();
   const [currentUser, setCurrentUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
 
@@ -136,8 +138,10 @@ export function AuthProvider({ children }) {
   const switchDemoRole = useCallback(async (account) => {
     const user = await authService.getDemoAccount(account);
     if (user.status.toLowerCase() === 'suspended') throw new Error('This account is suspended. Contact a workspace administrator.');
-    return establishSession(user, 'Demo Role Switched');
-  }, [establishSession]);
+    const activeUser = await establishSession(user, 'Demo Role Switched');
+    pushToast({ title: `Switched active role to ${String(activeUser.role || 'user').toUpperCase()}`, subtitle: activeUser.name });
+    return activeUser;
+  }, [establishSession, pushToast]);
 
   const role = String(currentUser?.role || '').trim().toLowerCase();
   const isAdmin = role === 'admin';

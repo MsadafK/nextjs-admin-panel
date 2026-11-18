@@ -5,6 +5,7 @@ import { Activity, Download, KeyRound, Lock, RefreshCw, Search, Shield, Users, U
 import { securityService } from '@/services/securityService';
 import { useAuth } from '@/app/contexts/AuthContext';
 import RbacStatusBanner from '@/app/components/RbacStatusBanner';
+import { useToast } from '@/app/contexts/ToastContext';
 
 const TITLES = {
   'audit/security': 'Security Audit Logs', 'audit/system': 'System Audit Logs', 'audit/users': 'User Audit Logs',
@@ -22,6 +23,7 @@ const exportRows = (rows) => {
 
 export default function SecurityManager({ mode }) {
   const { isAdmin, isManager } = useAuth();
+  const { pushToast } = useToast();
   const [data, setData] = useState({ users: [], auditLogs: [], notifications: [], apiKeys: [], permissions: [], errors: [] });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -99,7 +101,11 @@ export default function SecurityManager({ mode }) {
     if (field === 'status' && !isAdmin) return;
     setError('');
     const updater = field === 'role' ? securityService.updateUserRole : securityService.updateUserStatus;
-    try { await updater(user.id, value); await refresh(); }
+    try {
+      await updater(user.id, value);
+      await refresh();
+      if (field === 'status') pushToast({ title: value === 'suspended' ? 'User suspended' : 'User status updated', subtitle: user.full_name || user.email, onUndo: async () => { await updater(user.id, user.status || 'active'); await refresh(); } });
+    }
     catch (err) { setError(err.message || 'Could not update user access.'); }
   };
   const savePermission = async (event) => {

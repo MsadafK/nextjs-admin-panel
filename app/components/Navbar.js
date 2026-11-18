@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Activity, ArrowRight, Bell, Check, ChevronRight, Languages, LogOut, Mail, Menu, Moon, Search, Settings, Shield, Sun, User } from 'lucide-react';
+import { Activity, ArrowRight, Bell, Check, ChevronRight, Languages, Lock, LogOut, Mail, Menu, Moon, Package, Search, Settings, Shield, ShoppingCart, Sun, User, Users } from 'lucide-react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
@@ -10,6 +10,10 @@ import { menuItems } from './Sidebar/MenuItems';
 import { notificationService } from '@/services/notificationService';
 import { DEMO_ACCOUNTS } from '@/services/authService';
 import { supabase } from '@/lib/supabase';
+import { userService } from '@/services/userService';
+import { productService } from '@/services/productService';
+import { orderService } from '@/services/orderService';
+import { useToast } from '@/app/contexts/ToastContext';
 
 const LABELS = {
   dashboard: 'Dashboard', all_users: 'All Users', user_list: 'User List', add_user: 'Add User',
@@ -46,11 +50,7 @@ const QUICK_LINKS = [
   { href: '/signup', label: 'Create Account', category: 'Account' },
 ];
 const COMMAND_ROUTES = [...QUICK_LINKS, ...ROUTES.filter((route) => !QUICK_LINKS.some((quick) => quick.href === route.href))];
-const COMMAND_ACTIONS = [
-  { id: 'toggle-theme', label: 'Toggle Dark / Light Theme', category: 'Quick Actions', action: 'toggle-theme' },
-  { id: 'go-settings', label: 'Go to Settings', category: 'Quick Actions', href: '/settings' },
-  { id: 'compose-message', label: 'Compose Message', category: 'Quick Actions', href: '/messages/compose' },
-];
+const COMMAND_TABS = ['All', 'Actions', 'Users', 'Products', 'Orders', 'Pages'];
 const LANGUAGES = [
   { code: 'en', name: 'English' }, { code: 'es', name: 'Español' },
   { code: 'fr', name: 'Français' }, { code: 'de', name: 'Deutsch' },
@@ -58,18 +58,33 @@ const LANGUAGES = [
 const LANGUAGE_CODES = { en: 'EN', es: 'ES', fr: 'FR', de: 'DE' };
 const panelClass = 'z-[100] rounded-xl border border-border bg-background bg-white dark:bg-zinc-950 opacity-100 shadow-xl ring-1 ring-black/5';
 const iconButtonClass = 'relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-transparent text-muted-foreground transition-colors hover:border-border hover:bg-muted/60 hover:text-foreground';
+const fuzzyMatch = (query, text) => {
+  const needle = query.toLowerCase().trim();
+  const value = String(text || '').toLowerCase();
+  if (!needle) return true;
+  if (value.includes(needle)) return true;
+  let cursor = 0;
+  for (const letter of value) if (letter === needle[cursor]) cursor += 1;
+  return cursor === needle.length;
+};
+const money = (value) => `₹${Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarDarkMode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { isDark, toggleDarkMode } = useTheme();
   const { currentUser, signOut, switchDemoRole } = useAuth();
+  const { pushToast } = useToast();
   const { language, t, setLanguage } = useLanguage() || {};
   const [notifications, setNotifications] = useState([]);
   const [inboxMessages, setInboxMessages] = useState([]);
   const [commandOpen, setCommandOpen] = useState(false);
   const [commandQuery, setCommandQuery] = useState('');
+  const [commandTab, setCommandTab] = useState('All');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [entityResults, setEntityResults] = useState({ users: [], products: [], orders: [] });
+  const [entityLoading, setEntityLoading] = useState(false);
+  const [entityError, setEntityError] = useState('');
   const [showInbox, setShowInbox] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showLanguage, setShowLanguage] = useState(false);
@@ -84,6 +99,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const notificationsRef = useRef(null);
   const languageRef = useRef(null);
   const profileRef = useRef(null);
+  const spotlightCache = useRef({ expiresAt: 0, users: [], products: [], orders: [] });
 
   const refreshCounts = useCallback(async () => {
     try {
@@ -112,12 +128,59 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
 
   const unreadInboxCount = inboxMessages.filter((message) => message.unread).length;
   const unreadNotificationCount = notifications.filter((notification) => notification.unread && !notification.archived && !notification.draft && !notification.sent).length;
+  const commandActions = useMemo(() => [
+    ...DEMO_ACCOUNTS.map((account) => ({ id: `role-${account.role.toLowerCase()}`, label: `Switch Role: ${account.role} (${account.name})`, description: 'Instant demo role switch', category: 'Actions', action: 'switch-role', account, icon: Shield })),
+    { id: 'toggle-theme', label: `Toggle Theme: ${isDark ? 'Light' : 'Dark'} Mode`, description: 'Change the workspace appearance', category: 'Actions', action: 'toggle-theme', icon: isDark ? Sun : Moon },
+    { id: 'create-order', label: 'Quick Action: Create New Order', description: 'Open the live sales pipeline', category: 'Actions', href: '/reports/sales/daily?createOrder=1', icon: ShoppingCart },
+    { id: 'add-product', label: 'Quick Action: Add New Product', description: 'Create a catalog product', category: 'Actions', href: '/products/add', icon: Package },
+    { id: 'invite-user', label: 'Quick Action: Invite User', description: 'Invite a workspace member', category: 'Actions', href: '/users/add/invite', icon: Users },
+    { id: 'sign-out', label: 'Sign Out of Workspace', description: 'End the current session', category: 'Actions', action: 'sign-out', icon: LogOut },
+  ], [isDark]);
+
+  useEffect(() => {
+    if (!commandOpen) return undefined;
+    const query = commandQuery.trim();
+    const needsEntities = query.length >= 2 || ['Users', 'Products', 'Orders'].includes(commandTab);
+    if (!needsEntities) { setEntityResults({ users: [], products: [], orders: [] }); setEntityError(''); setEntityLoading(false); return undefined; }
+    let active = true;
+    const timer = window.setTimeout(async () => {
+      setEntityLoading(true); setEntityError('');
+      try {
+        let data = spotlightCache.current;
+        if (Date.now() >= data.expiresAt) {
+          const settled = await Promise.allSettled([userService.getUsers(), productService.getProducts(), orderService.fetchOrders()]);
+          data = {
+            expiresAt: Date.now() + 30000,
+            users: settled[0].status === 'fulfilled' ? settled[0].value : [],
+            products: settled[1].status === 'fulfilled' ? settled[1].value : [],
+            orders: settled[2].status === 'fulfilled' ? settled[2].value : [],
+          };
+          spotlightCache.current = data;
+          if (settled.every((item) => item.status === 'rejected')) throw settled[0].reason || new Error('Live workspace search is unavailable.');
+          if (settled.some((item) => item.status === 'rejected')) setEntityError('Some live records could not be loaded.');
+        }
+        if (!active) return;
+        setEntityResults(data);
+      } catch (error) {
+        if (active) { setEntityError(error.message || 'Live workspace search is unavailable.'); setEntityResults({ users: [], products: [], orders: [] }); }
+      } finally { if (active) setEntityLoading(false); }
+    }, query.length >= 2 ? 220 : 0);
+    return () => { active = false; window.clearTimeout(timer); };
+  }, [commandOpen, commandQuery, commandTab]);
+
   const commandResults = useMemo(() => {
-    const all = [...COMMAND_ROUTES, ...COMMAND_ACTIONS];
-    const query = commandQuery.trim().toLowerCase();
-    const results = query ? all.filter((item) => `${item.label} ${item.category}`.toLowerCase().includes(query)) : all;
-    return results.slice(0, 12);
-  }, [commandQuery]);
+    const entityItems = [
+      ...entityResults.users.map((user) => ({ id: `user-${user.id}`, label: user.name || user.email || 'Workspace User', description: user.email || '', category: 'Users', entityType: 'Users', href: '/users/all/list', initials: user.avatar || user.initials || 'U', badge: user.role || 'User', icon: Users })),
+      ...entityResults.products.map((product) => ({ id: `product-${product.id}`, label: product.name || 'Product', description: `${product.sku || 'No SKU'} · ${money(product.price)}`, category: 'Products', entityType: 'Products', href: '/products/all/catalog', badge: `${Number(product.stock || 0)} in stock`, icon: Package })),
+      ...entityResults.orders.map((order) => ({ id: `order-${order.id}`, label: `#${order.orderNumber}`, description: `${order.customerName || 'Customer'} · ${money(order.totalAmount)}`, category: 'Orders', entityType: 'Orders', href: '/reports/sales/daily', badge: order.status || 'pending', icon: ShoppingCart })),
+    ];
+    const routeItems = COMMAND_ROUTES.map((route, index) => ({ ...route, id: `page-${route.href}-${index}`, category: 'Pages', description: route.category || 'Workspace route' }));
+    const all = [...commandActions, ...entityItems, ...routeItems];
+    const source = commandTab === 'All' ? all : all.filter((item) => item.category === commandTab);
+    const query = commandQuery.trim();
+    const matched = query ? source.filter((item) => fuzzyMatch(query, `${item.label} ${item.description} ${item.badge || ''} ${item.category}`)) : source;
+    return matched.slice(0, 32);
+  }, [commandActions, commandTab, commandQuery, entityResults]);
 
   const activeRoute = useMemo(() => ROUTES.find((route) => normalizePath(route.href) === normalizePath(pathname)), [pathname]);
   const breadcrumbs = useMemo(() => {
@@ -129,7 +192,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
 
   const openCommand = useCallback(() => {
     setShowInbox(false); setShowNotifications(false); setShowLanguage(false); setShowProfile(false);
-    setCommandQuery(''); setSelectedIndex(0); setCommandOpen(true);
+    setCommandQuery(''); setCommandTab('All'); setSelectedIndex(0); setCommandOpen(true);
   }, []);
   const closeCommand = useCallback(() => setCommandOpen(false), []);
 
@@ -152,6 +215,10 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   }, [commandOpen]);
 
   useEffect(() => {
+    setSelectedIndex((index) => Math.min(index, Math.max(0, commandResults.length - 1)));
+  }, [commandResults.length]);
+
+  useEffect(() => {
     const onOutside = (event) => {
       if (inboxRef.current && !inboxRef.current.contains(event.target)) setShowInbox(false);
       if (notificationsRef.current && !notificationsRef.current.contains(event.target)) setShowNotifications(false);
@@ -163,8 +230,20 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   }, []);
 
   const navigate = (href) => { closeCommand(); router.push(href); };
-  const activateResult = (result) => {
-    if (result.action === 'toggle-theme') { toggleDarkMode(); closeCommand(); return; }
+  const activateResult = async (result) => {
+    if (result.action === 'toggle-theme') {
+      toggleDarkMode();
+      pushToast({ title: `Theme switched to ${isDark ? 'light' : 'dark'} mode` });
+      closeCommand();
+      return;
+    }
+    if (result.action === 'switch-role') {
+      closeCommand();
+      try { await switchDemoRole(result.account); }
+      catch (error) { pushToast({ title: 'Role switch failed', subtitle: error.message || 'Unable to switch demo role.' }); }
+      return;
+    }
+    if (result.action === 'sign-out') { closeCommand(); await signOut(); return; }
     if (result.href) navigate(result.href);
   };
   const markRead = async (id) => {
@@ -237,18 +316,27 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
       </div>
     </header>
 
-    {commandOpen && <div className="fixed inset-0 z-[80] flex items-start justify-center bg-black/50 p-3 pt-[12vh] backdrop-blur-sm sm:p-6 sm:pt-[14vh]" onMouseDown={(event) => { if (event.target === event.currentTarget) closeCommand(); }}>
-      <section role="dialog" aria-modal="true" aria-label="Quick search" className="w-full max-w-xl overflow-hidden rounded-xl border border-border bg-background shadow-2xl">
-        <div className="flex items-center gap-3 border-b border-border px-4"><Search size={18} className="shrink-0 text-muted-foreground"/><input ref={commandInputRef} value={commandQuery} onChange={(event) => { setCommandQuery(event.target.value); setSelectedIndex(0); }} onKeyDown={(event) => {
-          if (event.key === 'ArrowDown') { event.preventDefault(); setSelectedIndex((index) => Math.min(index + 1, commandResults.length - 1)); }
+    {commandOpen && <div className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-black/50 p-3 pt-[8vh] backdrop-blur-sm sm:p-6 sm:pt-[10vh]" onMouseDown={(event) => { if (event.target === event.currentTarget) closeCommand(); }}>
+      <section role="dialog" aria-modal="true" aria-label="Live Workspace Spotlight" className="flex max-h-[84dvh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border bg-background shadow-2xl">
+        <div className="flex shrink-0 items-center gap-3 border-b border-border px-4"><Search size={18} className="shrink-0 text-muted-foreground"/><input ref={commandInputRef} value={commandQuery} onChange={(event) => { setCommandQuery(event.target.value); setSelectedIndex(0); }} onKeyDown={(event) => {
+          if (event.key === 'ArrowDown') { event.preventDefault(); setSelectedIndex((index) => Math.min(index + 1, Math.max(0, commandResults.length - 1))); }
           if (event.key === 'ArrowUp') { event.preventDefault(); setSelectedIndex((index) => Math.max(0, index - 1)); }
           if (event.key === 'Enter' && commandResults[selectedIndex]) { event.preventDefault(); activateResult(commandResults[selectedIndex]); }
-        }} placeholder="Search routes and actions..." className="h-12 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"/><kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">ESC</kbd></div>
-        <div className="max-h-[min(65vh,28rem)] overflow-y-auto p-2">{commandResults.length ? commandResults.map((result, index) => {
-          const Icon = result.icon || (result.action === 'toggle-theme' ? (isDark ? Sun : Moon) : result.href?.includes('settings') ? Settings : result.href?.includes('messages') ? Mail : Activity);
-          return <button key={result.id || `${result.href}-${result.label}`} onMouseEnter={() => setSelectedIndex(index)} onClick={() => activateResult(result)} className={`flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-left ${index === selectedIndex ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'}`}><Icon size={16} className="shrink-0"/><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{result.label}</span><span className="block truncate text-xs text-muted-foreground">{result.category || 'Route'}</span></span>{result.action ? <span className="text-[10px] text-muted-foreground">Action</span> : <ArrowRight size={14} className="shrink-0 text-muted-foreground"/>}</button>;
-        }) : <p className="px-4 py-10 text-center text-sm text-muted-foreground">No matching routes or actions.</p>}</div>
-        <div className="flex items-center gap-4 border-t border-border px-4 py-2 text-[10px] text-muted-foreground"><span>↑↓ Navigate</span><span>↵ Open</span><span>Esc Close</span></div>
+        }} placeholder="Search workspace, records, and actions..." className="h-12 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"/><kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">ESC</kbd></div>
+        <div role="tablist" aria-label="Spotlight categories" className="flex shrink-0 gap-1 overflow-x-auto border-b border-border px-3 py-2">{COMMAND_TABS.map((tab) => <button key={tab} type="button" role="tab" aria-selected={commandTab === tab} onClick={() => { setCommandTab(tab); setSelectedIndex(0); requestAnimationFrame(() => commandInputRef.current?.focus()); }} className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${commandTab === tab ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}>{tab}</button>)}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto p-2">
+          {entityError && <p role="status" className="mb-2 rounded-md border border-border bg-muted px-3 py-2 text-xs text-muted-foreground">{entityError}</p>}
+          {commandResults.length ? <div className="space-y-1">{commandResults.map((result, index) => {
+            const Icon = result.icon || Activity;
+            return <button key={result.id} type="button" role="option" aria-selected={index === selectedIndex} onMouseEnter={() => setSelectedIndex(index)} onClick={() => activateResult(result)} className={`flex min-h-12 w-full min-w-0 items-center gap-3 rounded-md px-3 py-2 text-left transition-colors ${index === selectedIndex ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'}`}>
+              {result.entityType === 'Users' ? <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-[10px] font-semibold text-background">{result.initials}</span> : <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-foreground"><Icon size={15}/></span>}
+              <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{result.label}</span><span className="block truncate text-xs text-muted-foreground">{result.description || result.category}</span></span>
+              {result.badge && <span className="max-w-28 shrink-0 truncate rounded border border-border bg-background px-2 py-1 font-mono text-[9px] uppercase text-foreground">{result.badge}</span>}
+              {result.action ? <span className="shrink-0 text-[10px] font-mono text-muted-foreground">Run</span> : <ArrowRight size={14} className="shrink-0 text-muted-foreground"/>}
+            </button>;
+          })}</div> : entityLoading ? <p className="px-4 py-10 text-center text-sm text-muted-foreground">Searching live workspace records…</p> : <p className="px-4 py-10 text-center text-sm text-muted-foreground">{commandQuery.length < 2 && ['Users', 'Products', 'Orders'].includes(commandTab) ? 'No matching live records.' : 'No matching pages, actions, or records.'}</p>}
+        </div>
+        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-border px-4 py-2 text-[10px] text-muted-foreground"><span className="truncate">{entityLoading ? 'Syncing live records…' : `${commandResults.length} results · ${ROUTES.length} dashboard routes`}</span><span className="shrink-0">↑↓ Navigate · ↵ Open · Esc Close</span></div>
       </section>
     </div>}
   </>;

@@ -3,6 +3,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { FontsProvider } from './contexts/FontsContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { ToastProvider } from './contexts/ToastContext';
 import ClientLayoutWrapper from './components/ClientLayoutWrapper';
 import './globals.css';
 
@@ -27,9 +28,11 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <LanguageProvider>
             <FontsProvider>
-              <AuthProvider>
-                <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
-              </AuthProvider>
+              <ToastProvider>
+                <AuthProvider>
+                  <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
+                </AuthProvider>
+              </ToastProvider>
             </FontsProvider>
           </LanguageProvider>
         </ThemeProvider>
