@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Activity, ArrowRight, Bell, Check, ChevronRight, Languages, Lock, LogOut, Mail, Menu, Moon, Package, Search, Settings, Shield, ShoppingCart, Sparkles, Sun, User, Users } from 'lucide-react';
+import { Activity, ArrowRight, Bell, Check, ChevronRight, KanbanSquare, Languages, Lock, LogOut, Mail, Menu, Moon, Package, Search, Settings, Shield, ShoppingCart, Sparkles, Sun, User, Users } from 'lucide-react';
 import { useTheme } from '@/app/contexts/ThemeContext';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
@@ -132,6 +132,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
     ...DEMO_ACCOUNTS.map((account) => ({ id: `role-${account.role.toLowerCase()}`, label: `Switch Role: ${account.role} (${account.name})`, description: 'Instant demo role switch', category: 'Actions', action: 'switch-role', account, icon: Shield })),
     { id: 'toggle-theme', label: `Toggle Theme: ${isDark ? 'Light' : 'Dark'} Mode`, description: 'Change the workspace appearance', category: 'Actions', action: 'toggle-theme', icon: isDark ? Sun : Moon },
     { id: 'create-order', label: 'Quick Action: Create New Order', description: 'Open the live sales pipeline', category: 'Actions', href: '/reports/sales/daily?createOrder=1', icon: ShoppingCart },
+    { id: 'orders-kanban', label: '> Orders: Open Kanban Pipeline Board', description: 'Open the sales orders board', category: 'Actions', href: '/reports/sales/daily?ordersView=kanban', icon: KanbanSquare },
     { id: 'add-product', label: 'Quick Action: Add New Product', description: 'Create a catalog product', category: 'Actions', href: '/products/add', icon: Package },
     { id: 'invite-user', label: 'Quick Action: Invite User', description: 'Invite a workspace member', category: 'Actions', href: '/users/add/invite', icon: Users },
     { id: 'sign-out', label: 'Sign Out of Workspace', description: 'End the current session', category: 'Actions', action: 'sign-out', icon: LogOut },
