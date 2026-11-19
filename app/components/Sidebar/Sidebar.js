@@ -163,7 +163,7 @@ export default function Sidebar({
         })}
       </nav>
 
-      {(!isCollapsed || isMobile) && <div className="mt-auto shrink-0 border-t border-border bg-background p-3">
+      {(!isCollapsed || isMobile) && <div role="group" aria-label="Sidebar signed-in user" className="mt-auto shrink-0 border-t border-border bg-background p-3">
         <div className="flex items-center gap-2.5 rounded-lg border border-border bg-muted/30 p-2.5 transition-colors hover:bg-muted/60">
           <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground font-mono text-xs font-semibold text-background">{profileInitials}<span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background bg-muted-foreground"/></span>
           <span className="min-w-0 flex-1"><span className="block truncate text-[13px] font-medium tracking-tight">{profileName}</span><span className="block truncate text-[11px] text-muted-foreground">{profileEmail}</span></span>

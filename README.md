@@ -272,7 +272,13 @@ npm run dev     # Start the Next.js development server
 npm run lint    # Run Next.js ESLint checks
 npm run build   # Create a production build
 npm run start   # Serve a completed production build
+npm run test:e2e     # Run core Chromium end-to-end journeys
+npm run test:e2e:ui  # Open the Playwright test runner UI
 ```
+
+## Automated E2E Testing
+
+The Playwright Chromium suite lives in `tests/e2e/saas-core-flows.spec.js`. Install the project dependencies and Chromium (`npx playwright install chromium`), then run `npm run test:e2e` or `npm run test:e2e:ui`. The suite covers five journeys: demo sign-in and role switching, User-to-Admin RBAC controls, Ctrl+K Spotlight search, the Orders ledger/Kanban stages and invoice preview, and sample-batch import validation. The development server starts automatically when needed and an existing server on `localhost:3000` is reused.
 
 ## Vercel deployment
 
