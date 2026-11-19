@@ -167,6 +167,12 @@ export const orderService = {
     if (error) throw error;
   },
 
+  async rollbackImportedOrder(id, { isManager = false } = {}) {
+    if (!isManager) throw new Error('Rolling back an imported order requires Manager or Admin privileges.');
+    const { error } = await supabase.from('orders').delete().eq('id', id);
+    if (error) throw error;
+  },
+
   async restoreOrder(order, { isAdmin = false } = {}) {
     if (!isAdmin) throw new Error('Restoring deleted orders requires Admin privileges.');
     const columns = await inspectOrderColumns();

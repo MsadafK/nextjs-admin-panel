@@ -1,5 +1,5 @@
-import AnalyticsReportsManager from '@/app/AnalyticsReportsManager';
+import DataImportManager from '@/app/components/Import/DataImportManager';
 
 export default function Page() {
-  return <AnalyticsReportsManager mode="reports/import/history" />;
+  return <DataImportManager mode="history" />;
 }
