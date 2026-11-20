@@ -1,5 +1,9 @@
 import { supabase } from '@/lib/supabase';
 
+// Production demo access is opt-in and should only be enabled on an isolated showcase project.
+export const isDemoModeEnabled = process.env.NODE_ENV === 'development'
+  || process.env.NEXT_PUBLIC_ENABLE_DEMO_MODE === 'true';
+
 export const DEMO_ACCOUNTS = [
   { name: 'John Doe', email: 'john@nexstore.com', role: 'Admin', department: 'Management', initials: 'JD' },
   { name: 'Sarah Smith', email: 'manager@example.com', role: 'Manager', department: 'Management', initials: 'SS' },
@@ -31,6 +35,7 @@ export const authService = {
   },
 
   async getDemoAccount(account) {
+    if (!isDemoModeEnabled) throw new Error('Demo access is disabled for this deployment.');
     const preset = typeof account === 'string'
       ? DEMO_ACCOUNTS.find((item) => item.email.toLowerCase() === account.toLowerCase())
       : account;

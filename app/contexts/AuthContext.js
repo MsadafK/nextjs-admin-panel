@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authService, DEMO_ACCOUNTS, mapAuthUser } from '@/services/authService';
+import { authService, DEMO_ACCOUNTS, isDemoModeEnabled, mapAuthUser } from '@/services/authService';
 import { userService } from '@/services/userService';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/app/contexts/ToastContext';
@@ -68,6 +68,7 @@ export function AuthProvider({ children }) {
   }, [establishSession]);
 
   const switchDemoAccount = useCallback(async (account) => {
+    if (!isDemoModeEnabled) throw new Error('Demo access is disabled for this deployment.');
     const user = await authService.getDemoAccount(account);
     if (user.status.toLowerCase() === 'suspended') throw new Error('This account is suspended. Contact a workspace administrator.');
     await establishSession(user, 'User Login');
@@ -123,12 +124,14 @@ export function AuthProvider({ children }) {
   }, [currentUser?.id, persistUser, signOut]);
 
   const resumeDemo = useCallback(async () => {
+    if (!isDemoModeEnabled) throw new Error('Demo access is disabled for this deployment.');
     const user = await authService.getDemoAccount(DEMO_ACCOUNTS[0]);
     await establishSession(user, 'User Login');
     router.replace('/');
   }, [establishSession, router]);
 
   const switchDemoRole = useCallback(async (account) => {
+    if (!isDemoModeEnabled) throw new Error('Demo access is disabled for this deployment.');
     const user = await authService.getDemoAccount(account);
     if (user.status.toLowerCase() === 'suspended') throw new Error('This account is suspended. Contact a workspace administrator.');
     const activeUser = await establishSession(user, 'Demo Role Switched');
@@ -142,7 +145,7 @@ export function AuthProvider({ children }) {
   const isUser = role === 'user';
 
   const value = useMemo(() => ({
-    currentUser, authReady, isAdmin, isManager, isUser, signInWithEmail, switchDemoAccount, switchDemoRole, signUp, signOut, resumeDemo, updateCurrentUser,
+    currentUser, authReady, isAdmin, isManager, isUser, isDemoModeEnabled, signInWithEmail, switchDemoAccount, switchDemoRole, signUp, signOut, resumeDemo, updateCurrentUser,
   }), [currentUser, authReady, isAdmin, isManager, isUser, signInWithEmail, switchDemoAccount, switchDemoRole, signUp, signOut, resumeDemo, updateCurrentUser]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

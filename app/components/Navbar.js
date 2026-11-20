@@ -73,7 +73,7 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const pathname = usePathname();
   const router = useRouter();
   const { isDark, toggleDarkMode } = useTheme();
-  const { currentUser, signOut, switchDemoRole } = useAuth();
+  const { currentUser, signOut, switchDemoRole, isDemoModeEnabled } = useAuth();
   const { pushToast } = useToast();
   const { language, t, setLanguage } = useLanguage() || {};
   const [notifications, setNotifications] = useState([]);
@@ -129,14 +129,14 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const unreadInboxCount = inboxMessages.filter((message) => message.unread).length;
   const unreadNotificationCount = notifications.filter((notification) => notification.unread && !notification.archived && !notification.draft && !notification.sent).length;
   const commandActions = useMemo(() => [
-    ...DEMO_ACCOUNTS.map((account) => ({ id: `role-${account.role.toLowerCase()}`, label: `Switch Role: ${account.role} (${account.name})`, description: 'Instant demo role switch', category: 'Actions', action: 'switch-role', account, icon: Shield })),
+    ...(isDemoModeEnabled ? DEMO_ACCOUNTS.map((account) => ({ id: `role-${account.role.toLowerCase()}`, label: `Switch Role: ${account.role} (${account.name})`, description: 'Instant demo role switch', category: 'Actions', action: 'switch-role', account, icon: Shield })) : []),
     { id: 'toggle-theme', label: `Toggle Theme: ${isDark ? 'Light' : 'Dark'} Mode`, description: 'Change the workspace appearance', category: 'Actions', action: 'toggle-theme', icon: isDark ? Sun : Moon },
     { id: 'create-order', label: 'Quick Action: Create New Order', description: 'Open the live sales pipeline', category: 'Actions', href: '/reports/sales/daily?createOrder=1', icon: ShoppingCart },
     { id: 'orders-kanban', label: '> Orders: Open Kanban Pipeline Board', description: 'Open the sales orders board', category: 'Actions', href: '/reports/sales/daily?ordersView=kanban', icon: KanbanSquare },
     { id: 'add-product', label: 'Quick Action: Add New Product', description: 'Create a catalog product', category: 'Actions', href: '/products/add', icon: Package },
     { id: 'invite-user', label: 'Quick Action: Invite User', description: 'Invite a workspace member', category: 'Actions', href: '/users/add/invite', icon: Users },
     { id: 'sign-out', label: 'Sign Out of Workspace', description: 'End the current session', category: 'Actions', action: 'sign-out', icon: LogOut },
-  ], [isDark]);
+  ], [isDark, isDemoModeEnabled]);
 
   useEffect(() => {
     if (!commandOpen) return undefined;
@@ -309,13 +309,13 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
           <button onClick={() => { setShowProfile((open) => !open); setShowInbox(false); setShowNotifications(false); setShowLanguage(false); }} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-foreground font-mono text-xs font-semibold text-background" aria-label="Open profile menu" aria-expanded={showProfile}>{profileInitials}</button>
           {showProfile && <div className={`absolute right-0 top-11 w-72 max-w-[calc(100vw-1.5rem)] p-1.5 ${panelClass}`}>
             <div className="mb-1 flex items-center gap-2.5 border-b border-border px-3 py-2.5"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-foreground font-mono text-xs font-semibold text-background">{profileInitials}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{profileName}</span><span className="block truncate text-xs text-muted-foreground">{profileEmail}</span></span><span className="shrink-0 rounded border border-border bg-muted/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-foreground">{currentUser?.role || 'Admin'}</span></div>
-            <div className="my-1 rounded-lg border border-border/60 bg-muted/30 p-2">
+            {isDemoModeEnabled && <div className="my-1 rounded-lg border border-border/60 bg-muted/30 p-2">
               <div className="mb-2 flex items-center justify-between gap-2"><span className="flex min-w-0 items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"><Sparkles size={12} className="shrink-0"/>Instant Role Switch</span><span className="shrink-0 rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider text-muted-foreground">Demo</span></div>
               <div className="flex flex-col gap-1.5">{DEMO_ACCOUNTS.map((account) => { const selected = String(currentUser?.role || '').toLowerCase() === account.role.toLowerCase(); const access = account.role === 'Admin' ? 'Full Admin Access' : account.role === 'Manager' ? 'Manager Access' : 'Read-Only User'; return <button key={account.email} type="button" aria-pressed={selected} onClick={async () => { try { await switchDemoRole(account); setShowProfile(false); } catch (error) { console.error('Could not switch demo role:', error); } }} className={`flex w-full items-center justify-between gap-2.5 rounded-md border px-2.5 py-2 text-left transition-all ${selected ? 'border-foreground bg-foreground text-background shadow-sm' : 'border-transparent bg-background/80 text-foreground hover:border-border hover:bg-muted'}`}>
                 <span className="flex min-w-0 items-center gap-2"><span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${selected ? 'bg-background text-foreground' : 'border border-border bg-muted text-foreground'}`}>{account.initials}</span><span className="min-w-0"><span className="block truncate text-xs font-medium leading-none">{account.name}</span><span className={`mt-1 block text-[10px] ${selected ? 'text-background/75' : 'text-muted-foreground'}`}>{access}</span></span></span>
                 <span className="flex shrink-0 items-center gap-1"><span className={`rounded border px-1.5 py-0.5 font-mono text-[9px] uppercase ${selected ? 'border-background/30 bg-background/10 text-background' : 'border-border bg-muted/60 text-foreground'}`}>{account.role}</span>{selected && <Check size={14} className="shrink-0"/>}</span>
               </button>; })}</div>
-            </div>
+            </div>}
             <div className="p-0.5">{[{ label: 'Profile', href: '/settings', icon: User }, { label: 'Account Settings', href: '/settings', icon: Settings }, { label: 'Security', href: '/security/audit/security', icon: Shield }].map(({ label, href, icon: Icon }) => <button key={label} onClick={() => { setShowProfile(false); router.push(href); }} className="flex min-h-9 w-full items-center gap-2.5 rounded-md px-3 py-2 text-left text-xs font-medium text-foreground transition-colors hover:bg-muted"><Icon size={15}/>{label}</button>)}</div>
             <div className="mt-1 border-t border-border pt-1"><button onClick={signOut} className="flex min-h-9 w-full items-center gap-2.5 rounded-md px-3 py-2 text-left text-xs font-medium text-foreground transition-colors hover:bg-muted"><LogOut size={15}/>Sign Out</button></div>
           </div>}

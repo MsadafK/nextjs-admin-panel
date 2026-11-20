@@ -257,6 +257,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_PUBLIC_ANON_KEY
 
 Use the project URL and anon/public key from **Supabase → Project Settings → API**. Do not put a service-role key in this file. `.env.local` should remain untracked.
 
+Demo role switching is enabled automatically in local development. Production deployments keep it disabled unless `NEXT_PUBLIC_ENABLE_DEMO_MODE=true` is set. Only enable that flag on an isolated showcase deployment backed by a separate demo Supabase project; never enable demo role switching against customer workspaces.
+
 Start the development server:
 
 ```bash

@@ -11,7 +11,7 @@ import SettingsButton from './Setting/SettingsButton';
 export default function ClientLayoutWrapper({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, authReady, resumeDemo } = useAuth();
+  const { currentUser, authReady, resumeDemo, isDemoModeEnabled } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [position, setPosition] = useState('left');
   const [contentWidth, setContentWidth] = useState('fluid');
@@ -86,7 +86,7 @@ export default function ClientLayoutWrapper({ children }) {
   if (isAuthRoute) return <div className="flex min-h-dvh flex-col bg-background text-foreground">
     <header className="absolute right-0 top-0 z-20 flex items-center gap-2 p-3 sm:p-5">
       <button type="button" onClick={toggleDarkMode} className="h-9 rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-muted">{isDark ? 'Switch to Light' : 'Switch to Dark'}</button>
-      <button type="button" onClick={resumeDemo} className="h-9 rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-muted">Back to Live Demo →</button>
+      {isDemoModeEnabled && <button type="button" onClick={resumeDemo} className="h-9 rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-muted">Back to Live Demo →</button>}
     </header>
     {children}
   </div>;
