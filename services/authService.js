@@ -42,33 +42,20 @@ export const authService = {
 
   async signInWithEmail(email, password) {
     const normalizedEmail = email.trim().toLowerCase();
-    let authError = null;
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
-      if (!error && data?.user) {
-        const publicRow = await this.findPublicUserByEmail(normalizedEmail).catch(() => null);
-        const user = publicRow ? mapAuthUser(publicRow) : mapAuthUser({
-          id: data.user.id,
-          email: data.user.email,
-          full_name: data.user.user_metadata?.full_name,
-          role: data.user.user_metadata?.role,
-          department: data.user.user_metadata?.department,
-        });
-        if (user.status.toLowerCase() === 'suspended') throw new Error('This account is suspended. Contact a workspace administrator.');
-        return user;
-      }
-      authError = error;
-    } catch (error) {
-      if (error.message?.includes('suspended')) throw error;
-      authError = error;
-    }
+    const { data, error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
+    if (error) throw error;
+    if (!data?.user) throw new Error('Supabase Auth did not return a signed-in user.');
 
-    // Demo fallback: workspace directory users can enter without a Supabase Auth account.
-    // Production deployments should require Supabase Auth and remove/disable this fallback.
-    const directoryRow = await this.findPublicUserByEmail(normalizedEmail).catch(() => null);
-    if (!directoryRow) throw new Error(authError?.message || 'No workspace account was found for this email.');
-    const user = mapAuthUser(directoryRow);
-    if (user.status.toLowerCase() === 'suspended' || directoryRow.is_deleted) {
+    const publicRow = await this.findPublicUserByEmail(normalizedEmail).catch(() => null);
+    const user = publicRow ? mapAuthUser(publicRow) : mapAuthUser({
+      id: data.user.id,
+      email: data.user.email,
+      full_name: data.user.user_metadata?.full_name,
+      // Auth user metadata is user-editable and must never grant a privileged role.
+      role: 'user',
+      department: data.user.user_metadata?.department,
+    });
+    if (user.status.toLowerCase() === 'suspended' || publicRow?.is_deleted) {
       throw new Error('This account is suspended. Contact a workspace administrator.');
     }
     return user;
