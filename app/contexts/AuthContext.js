@@ -81,11 +81,13 @@ export function AuthProvider({ children }) {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: userData.email,
       password: userData.password,
-      options: { data: { full_name: userData.name, role: userData.role, department: userData.department } },
+      options: { data: { full_name: userData.name, role: 'user', department: userData.department } },
     });
     if (authError) throw authError;
-    const created = await userService.createUser({ ...userData, id: authData.user?.id });
+    if (!authData?.user?.id) throw new Error('Supabase Auth did not return a new account.');
+    const created = await userService.createUser({ ...userData, role: 'user', id: authData.user?.id });
     const user = mapAuthUser(created);
+    if (!authData.session) return { requiresEmailConfirmation: true };
     await establishSession(user, 'User Account Registered');
     router.replace('/');
     return user;
