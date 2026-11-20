@@ -7,14 +7,7 @@ import { userService } from '@/services/userService';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/app/contexts/ToastContext';
 
-const STORAGE_KEY = 'adminpro_auth_user';
-const SIGNED_OUT_KEY = 'adminpro_signed_out';
 const AuthContext = createContext(null);
-
-const loadStoredUser = () => {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); }
-  catch { return null; }
-};
 
 export function AuthProvider({ children }) {
   const router = useRouter();
@@ -25,10 +18,6 @@ export function AuthProvider({ children }) {
   const persistUser = useCallback((user) => {
     const normalizedUser = mapAuthUser(user);
     setCurrentUser(normalizedUser);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalizedUser));
-      localStorage.removeItem(SIGNED_OUT_KEY);
-    } catch { /* keep in-memory session when browser storage is unavailable */ }
     window.dispatchEvent(new CustomEvent('adminpro:auth-updated', { detail: normalizedUser }));
     return normalizedUser;
   }, []);
@@ -37,24 +26,27 @@ export function AuthProvider({ children }) {
     let active = true;
     const initialize = async () => {
       let initialUser = null;
-      const signedOut = localStorage.getItem(SIGNED_OUT_KEY) === 'true';
-      if (!signedOut) {
-        const stored = loadStoredUser();
-        if (stored?.email) {
-          const latest = await authService.findPublicUserByEmail(stored.email).catch(() => null);
-          initialUser = latest ? mapAuthUser(latest) : mapAuthUser(stored);
-        } else {
-          initialUser = await authService.getDemoAccount(DEMO_ACCOUNTS[0]);
+      try {
+        // A profile cached in localStorage is display data, never proof of identity.
+        // Only a Supabase Auth session can restore an authenticated workspace session.
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        const authUser = data?.session?.user;
+        if (authUser?.id && authUser.email) {
+          const profile = await authService.findPublicUserByEmail(authUser.email);
+          if (profile && String(profile.id) === String(authUser.id)) {
+            const mapped = mapAuthUser(profile);
+            if (mapped.status.toLowerCase() !== 'suspended' && profile.is_deleted !== true) initialUser = mapped;
+          }
         }
-        if (initialUser?.status?.toLowerCase() === 'suspended') initialUser = null;
+      } catch (error) {
+        // Fail closed when the persisted session or its workspace profile cannot be verified.
+        console.error('Could not verify the saved Supabase session:', error.message);
       }
       if (!active) return;
       setCurrentUser(initialUser);
-      if (initialUser) {
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(initialUser)); } catch { /* storage is optional */ }
-      } else if (signedOut) {
-        try { localStorage.removeItem(STORAGE_KEY); } catch { /* storage is optional */ }
-      }
+      try { localStorage.removeItem('adminpro_auth_user'); } catch { /* legacy profile cache is optional */ }
+      try { localStorage.removeItem('adminpro_signed_out'); } catch { /* legacy sign-out marker is optional */ }
       setAuthReady(true);
     };
     initialize();
@@ -102,7 +94,6 @@ export function AuthProvider({ children }) {
   const updateCurrentUser = useCallback((user) => persistUser(user), [persistUser]);
 
   const signOut = useCallback(async () => {
-    try { localStorage.setItem(SIGNED_OUT_KEY, 'true'); localStorage.removeItem(STORAGE_KEY); } catch { /* explicit sign out remains in memory */ }
     setCurrentUser(null);
     window.dispatchEvent(new CustomEvent('adminpro:auth-updated', { detail: null }));
     router.replace('/login');
