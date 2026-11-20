@@ -24,33 +24,58 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     let active = true;
-    const initialize = async () => {
-      let initialUser = null;
+    let hydrationVersion = 0;
+    const hydrateFromSession = async (authUser) => {
+      const version = ++hydrationVersion;
+      if (!authUser?.id || !authUser.email) {
+        if (active && version === hydrationVersion) setCurrentUser(null);
+        return;
+      }
       try {
         // A profile cached in localStorage is display data, never proof of identity.
-        // Only a Supabase Auth session can restore an authenticated workspace session.
-        const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
-        const authUser = data?.session?.user;
-        if (authUser?.id && authUser.email) {
-          const profile = await authService.findPublicUserByEmail(authUser.email);
-          if (profile && String(profile.id) === String(authUser.id)) {
-            const mapped = mapAuthUser(profile);
-            if (mapped.status.toLowerCase() !== 'suspended' && profile.is_deleted !== true) initialUser = mapped;
-          }
-        }
+        // Only a matching Supabase Auth identity and workspace profile can restore a session.
+        const profile = await authService.findPublicUserByEmail(authUser.email);
+        const matchesAuthIdentity = profile && String(profile.id) === String(authUser.id);
+        const mapped = matchesAuthIdentity ? mapAuthUser(profile) : null;
+        const allowedUser = mapped?.status?.toLowerCase() !== 'suspended' && profile?.is_deleted !== true ? mapped : null;
+        if (active && version === hydrationVersion) setCurrentUser(allowedUser);
       } catch (error) {
         // Fail closed when the persisted session or its workspace profile cannot be verified.
         console.error('Could not verify the saved Supabase session:', error.message);
+        if (active && version === hydrationVersion) setCurrentUser(null);
       }
-      if (!active) return;
-      setCurrentUser(initialUser);
-      try { localStorage.removeItem('adminpro_auth_user'); } catch { /* legacy profile cache is optional */ }
-      try { localStorage.removeItem('adminpro_signed_out'); } catch { /* legacy sign-out marker is optional */ }
-      setAuthReady(true);
+    };
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user) {
+        hydrationVersion += 1;
+        setCurrentUser(null);
+        setAuthReady(true);
+        return;
+      }
+      // Defer database reads until after Supabase finishes its auth event callback.
+      window.setTimeout(() => { if (active) hydrateFromSession(session.user); }, 0);
+    });
+
+    const initialize = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        await hydrateFromSession(data?.session?.user);
+      } catch (error) {
+        console.error('Could not load the Supabase session:', error.message);
+        setCurrentUser(null);
+      } finally {
+        try { localStorage.removeItem('adminpro_auth_user'); } catch { /* legacy profile cache is optional */ }
+        try { localStorage.removeItem('adminpro_signed_out'); } catch { /* legacy sign-out marker is optional */ }
+        if (active) setAuthReady(true);
+      }
     };
     initialize();
-    return () => { active = false; };
+    return () => {
+      active = false;
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   const establishSession = useCallback(async (user, auditAction = 'User Login') => {
