@@ -51,16 +51,14 @@ export const authService = {
     if (error) throw error;
     if (!data?.user) throw new Error('Supabase Auth did not return a signed-in user.');
 
-    const publicRow = await this.findPublicUserByEmail(normalizedEmail).catch(() => null);
-    const user = publicRow ? mapAuthUser(publicRow) : mapAuthUser({
-      id: data.user.id,
-      email: data.user.email,
-      full_name: data.user.user_metadata?.full_name,
-      // Auth user metadata is user-editable and must never grant a privileged role.
-      role: 'user',
-      department: data.user.user_metadata?.department,
-    });
+    const publicRow = await this.findPublicUserByEmail(normalizedEmail);
+    if (!publicRow || String(publicRow.id) !== String(data.user.id)) {
+      await supabase.auth.signOut();
+      throw new Error('No matching workspace profile exists for this authenticated account. Contact your workspace administrator.');
+    }
+    const user = mapAuthUser(publicRow);
     if (user.status.toLowerCase() === 'suspended' || publicRow?.is_deleted) {
+      await supabase.auth.signOut();
       throw new Error('This account is suspended. Contact a workspace administrator.');
     }
     return user;
