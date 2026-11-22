@@ -5,6 +5,7 @@ import { Activity, Database, Download, Gauge, RefreshCw, Search, Zap } from 'luc
 import { performanceService } from '@/services/performanceService';
 
 const TITLES = {
+  overview: 'System Performance & Latency',
   feedback: 'System Performance & Latency', 'kras/my': 'Database Health & Row Metrics', 'kras/reports': 'Query Benchmarks',
   'kras/team': 'Database Health & Row Metrics', 'meetings/actions': 'Query Benchmarks', 'meetings/my': 'System Performance & Latency',
   'meetings/templates': 'Query Benchmarks', reviews: 'System Performance & Latency', skills: 'Database Health & Row Metrics',
