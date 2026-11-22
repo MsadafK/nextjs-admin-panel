@@ -59,7 +59,7 @@ const downloadExcelWorkbook = (rows, filename) => {
   }).join('')}</Row>`).join('');
   const workbook = `<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Workspace Report"><Table>${xmlRows}</Table></Worksheet></Workbook>`;
   const url = URL.createObjectURL(new Blob([`\uFEFF${workbook}`], { type: 'application/vnd.ms-excel;charset=utf-8' }));
-  const link = document.createElement('a'); link.href = url; link.download = `${filename}.xls`; link.click(); URL.revokeObjectURL(url);
+  const link = document.createElement('a'); link.href = url; link.download = `${filename}.xml`; link.click(); URL.revokeObjectURL(url);
 };
 
 const sum = (rows, key) => rows.reduce((total, row) => total + number(row[key]), 0);
@@ -253,7 +253,7 @@ export default function AnalyticsReportsManager({ mode }) {
 
   const exportRoute = mode.startsWith('reports/export/');
   const exportAction = mode === 'reports/export/excel'
-    ? { label: 'Download Excel Workbook (.xls)', onClick: () => downloadExcelWorkbook(tableRows, 'workspace-report') }
+    ? { label: 'Download Excel XML Workbook (.xml)', onClick: () => downloadExcelWorkbook(tableRows, 'workspace-report') }
     : mode === 'reports/export/pdf'
       ? { label: 'Print / Save as PDF', onClick: () => window.print(), Icon: Printer }
       : { label: 'Export CSV', onClick: () => downloadCsv(tableRows, 'workspace-report') };
