@@ -1,5 +1,5 @@
-import PerformanceManager from '@/app/PerformanceManager';
+import { redirect } from 'next/navigation';
 
-export default function Page() {
-  return <PerformanceManager mode="feedback" />;
+export default function LegacyPerformanceFeedbackRoute() {
+  redirect('/performance');
 }

@@ -156,17 +156,8 @@ export function LanguageProvider({ children }) {
         security_events: 'Security Events',
 
         // Performance Submenu
-        kras: 'KRAs',
-        meetings: 'Meetings',
-        feedback: 'Feedback',
-        reviews: 'Reviews',
-        skills: 'Skills',
-        my_kras: 'My KRAs',
-        team_kras: 'Team KRAs',
-        kra_reports: 'KRA Reports',
-        my_meetings: 'My Meetings',
-        action_items: 'Action Items',
-        agenda_templates: 'Agenda Templates',
+        database_health: 'Database Health',
+        query_benchmarks: 'Query Benchmarks',
 
         // Notifications
         notification_new_user: 'New user registered',
@@ -336,17 +327,8 @@ export function LanguageProvider({ children }) {
         security_events: 'Eventos de Seguridad',
 
         // Performance Submenu
-        kras: 'KRAs',
-        meetings: 'Reuniones',
-        feedback: 'Comentarios',
-        reviews: 'Revisiones',
-        skills: 'Habilidades',
-        my_kras: 'Mis KRAs',
-        team_kras: 'KRAs del Equipo',
-        kra_reports: 'Informes KRA',
-        my_meetings: 'Mis Reuniones',
-        action_items: 'Elementos de Acción',
-        agenda_templates: 'Plantillas de Agenda',
+        database_health: 'Salud de la Base de Datos',
+        query_benchmarks: 'Pruebas de Consultas',
 
         // Notifications
         notification_new_user: 'Nuevo usuario registrado',
@@ -516,17 +498,8 @@ export function LanguageProvider({ children }) {
         security_events: 'Événements de Sécurité',
 
         // Performance Submenu
-        kras: 'KRAs',
-        meetings: 'Réunions',
-        feedback: 'Retour',
-        reviews: 'Revues',
-        skills: 'Compétences',
-        my_kras: 'Mes KRAs',
-        team_kras: 'KRAs de l\'Équipe',
-        kra_reports: 'Rapports KRA',
-        my_meetings: 'Mes Réunions',
-        action_items: 'Éléments d\'Action',
-        agenda_templates: 'Modèles d\'Ordre du Jour',
+        database_health: 'Santé de la Base de Données',
+        query_benchmarks: 'Benchmarks de Requêtes',
 
         // Notifications
         notification_new_user: 'Nouvel utilisateur enregistré',
@@ -696,17 +669,8 @@ export function LanguageProvider({ children }) {
         security_events: 'Sicherheitsereignisse',
 
         // Performance Submenu
-        kras: 'KRAs',
-        meetings: 'Besprechungen',
-        feedback: 'Feedback',
-        reviews: 'Bewertungen',
-        skills: 'Fähigkeiten',
-        my_kras: 'Meine KRAs',
-        team_kras: 'Team-KRAs',
-        kra_reports: 'KRA-Berichte',
-        my_meetings: 'Meine Besprechungen',
-        action_items: 'Aktionspunkte',
-        agenda_templates: 'Agenda-Vorlagen',
+        database_health: 'Datenbankstatus',
+        query_benchmarks: 'Abfrage-Benchmarks',
 
         // Notifications
         notification_new_user: 'Neuer Benutzer registriert',

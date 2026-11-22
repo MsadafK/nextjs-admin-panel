@@ -3,7 +3,7 @@ import {
   Shield, Package, User, UserPlus, UserCheck, TrendingUp, PieChart, Activity, 
   ShoppingCart, Factory as Inventory, Tags, FileBarChart as BarChartIcon, 
   Download, Upload, MessageSquare, Send, Archive, CalendarDays, Clock, Bell, 
-  Lock, Key, Database, Target, Video, CheckSquare, LayoutTemplate as TemplateIcon 
+  Lock, Key, Database, CheckSquare, LayoutTemplate as TemplateIcon
 } from 'lucide-react';
 
 export const menuItems = [
@@ -279,29 +279,8 @@ export const menuItems = [
     label: 'performance', 
     href: '/performance',
     subItems: [
-      { 
-        icon: Target, 
-        label: 'kras', 
-        href: '/performance/kras',
-        childItems: [
-          { icon: TrendingUp, label: 'my_kras', href: '/performance/kras/my' },
-          { icon: Users, label: 'team_kras', href: '/performance/kras/team' },
-          { icon: BarChart3, label: 'kra_reports', href: '/performance/kras/reports' }
-        ]
-      },
-      { 
-        icon: Video, 
-        label: 'meetings', 
-        href: '/performance/meetings',
-        childItems: [
-          { icon: Calendar, label: 'my_meetings', href: '/performance/meetings/my' },
-          { icon: CheckSquare, label: 'action_items', href: '/performance/meetings/actions' },
-          { icon: TemplateIcon, label: 'agenda_templates', href: '/performance/meetings/templates' }
-        ]
-      },
-      { icon: MessageSquare, label: 'feedback', href: '/performance/feedback' },
-      { icon: TrendingUp, label: 'reviews', href: '/performance/reviews' },
-      { icon: Target, label: 'skills', href: '/performance/skills' }
+      { icon: Database, label: 'database_health', href: '/performance/health' },
+      { icon: BarChart3, label: 'query_benchmarks', href: '/performance/benchmarks' }
     ]
   },
   { 

@@ -8,9 +8,6 @@ const TITLES = {
   overview: 'System Performance & Latency',
   health: 'Database Health & Row Metrics',
   benchmarks: 'Query Benchmarks',
-  feedback: 'System Performance & Latency', 'kras/my': 'Database Health & Row Metrics', 'kras/reports': 'Query Benchmarks',
-  'kras/team': 'Database Health & Row Metrics', 'meetings/actions': 'Query Benchmarks', 'meetings/my': 'System Performance & Latency',
-  'meetings/templates': 'Query Benchmarks', reviews: 'System Performance & Latency', skills: 'Database Health & Row Metrics',
 };
 const SUBTITLES = {
   overview: 'Live latency and row-count overview for connected workspace tables.',
