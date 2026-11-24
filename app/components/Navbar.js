@@ -95,6 +95,8 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const profileInitials = currentUser?.initials || 'JD';
 
   const commandInputRef = useRef(null);
+  const commandDialogRef = useRef(null);
+  const commandReturnFocusRef = useRef(null);
   const inboxRef = useRef(null);
   const notificationsRef = useRef(null);
   const languageRef = useRef(null);
@@ -192,10 +194,14 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
   const currentTitle = breadcrumbs.at(-1) || 'Dashboard';
 
   const openCommand = useCallback(() => {
+    commandReturnFocusRef.current = document.activeElement;
     setShowInbox(false); setShowNotifications(false); setShowLanguage(false); setShowProfile(false);
     setCommandQuery(''); setCommandTab('All'); setSelectedIndex(0); setCommandOpen(true);
   }, []);
-  const closeCommand = useCallback(() => setCommandOpen(false), []);
+  const closeCommand = useCallback(() => {
+    setCommandOpen(false);
+    requestAnimationFrame(() => commandReturnFocusRef.current?.focus?.());
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -211,8 +217,13 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
 
   useEffect(() => {
     if (!commandOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     const frame = requestAnimationFrame(() => commandInputRef.current?.focus());
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
+    };
   }, [commandOpen]);
 
   useEffect(() => {
@@ -324,7 +335,15 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
     </header>
 
     {commandOpen && <div className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-black/50 p-3 pt-[8vh] backdrop-blur-sm sm:p-6 sm:pt-[10vh]" onMouseDown={(event) => { if (event.target === event.currentTarget) closeCommand(); }}>
-      <section role="dialog" aria-modal="true" aria-label="Live Workspace Spotlight" className="flex max-h-[84dvh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border bg-background shadow-2xl">
+      <section ref={commandDialogRef} role="dialog" aria-modal="true" aria-label="Live Workspace Spotlight" onKeyDown={(event) => {
+        if (event.key !== 'Tab') return;
+        const focusable = commandDialogRef.current?.querySelectorAll('button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+        if (!focusable?.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }} className="flex max-h-[84dvh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border bg-background shadow-2xl">
         <div className="flex shrink-0 items-center gap-3 border-b border-border px-4"><Search size={18} className="shrink-0 text-muted-foreground"/><input ref={commandInputRef} value={commandQuery} onChange={(event) => { setCommandQuery(event.target.value); setSelectedIndex(0); }} onKeyDown={(event) => {
           if (event.key === 'ArrowDown') { event.preventDefault(); setSelectedIndex((index) => Math.min(index + 1, Math.max(0, commandResults.length - 1))); }
           if (event.key === 'ArrowUp') { event.preventDefault(); setSelectedIndex((index) => Math.max(0, index - 1)); }
