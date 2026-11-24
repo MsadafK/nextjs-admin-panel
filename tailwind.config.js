@@ -53,11 +53,6 @@ module.exports = {
           foreground: 'hsl(var(--popover-foreground))',
         },
 
-        /* Legacy dynamic theme support — keep for ThemeContext compatibility */
-        custom: {
-          500: 'var(--color-custom-500, #10b981)',
-          600: 'var(--color-custom-600, #059669)',
-        },
       },
 
       /* ── Border Radius ── */
@@ -95,15 +90,6 @@ module.exports = {
   },
 
   safelist: [
-    /* Dynamic theme classes used by ThemeContext.getThemeColors() */
-    {
-      pattern:
-        /(bg|text|hover:bg|ring|border|hover:border|focus:ring)-(emerald|blue|purple|orange|rose)-(50|400|500|600|700|900)/,
-    },
-    {
-      pattern:
-        /(bg|text|hover:bg|ring|border|hover:border|focus:ring)-(emerald|blue|purple|orange|rose)-(50|400|500|600|700|900)\/(10|20|25|30|40|50|60|70|80|90)/,
-    },
     /* Dark mode sidebar/navbar variants */
     { pattern: /(bg|text|border)-(zinc|gray)-(50|100|200|300|400|500|600|700|800|900|950)/ },
   ],

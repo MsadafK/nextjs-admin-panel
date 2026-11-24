@@ -81,7 +81,7 @@ export const S = {
     dark ? 'text-zinc-100' : 'text-zinc-900',
 
   /* ── Badge (unread count) ── */
-  badge: () => 'bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-medium',
+  badge: () => 'bg-foreground text-background text-xs px-1.5 py-0.5 rounded-full font-medium',
 
   /* ── Position menu (settings popover) ── */
   positionMenu: (dark) =>

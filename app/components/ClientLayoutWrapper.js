@@ -20,16 +20,12 @@ export default function ClientLayoutWrapper({ children }) {
   const [sidebarDarkMode, setSidebarDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { currentTheme, customColors, isDark, colorMode, setColorMode, toggleDarkMode } = useTheme();
+  const { isDark, colorMode, setColorMode, toggleDarkMode } = useTheme();
   const isAuthRoute = ['/login', '/signup', '/forgot-password'].includes(pathname);
 
   useEffect(() => {
     if (authReady && !isAuthRoute && !currentUser) router.replace('/login');
   }, [authReady, currentUser, isAuthRoute, router]);
-
-  useEffect(() => {
-    if (currentTheme === 'custom' && customColors) document.documentElement.style.setProperty('--color-primary-500', customColors.primary);
-  }, [currentTheme, customColors]);
 
   useEffect(() => {
     const savedPosition = localStorage.getItem('sidebarPosition');

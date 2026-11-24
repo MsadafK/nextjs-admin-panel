@@ -33,8 +33,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Primary (theme accent — kept flexible for ThemeContext) */
-    --primary: 142 76% 36%;           /* emerald-600 default */
+    /* Primary and focus rings stay neutral across light and dark mode. */
+    --primary: 240 10% 3.9%;
     --primary-foreground: 0 0% 100%;
 
     /* Surfaces */
@@ -48,13 +48,13 @@
     --accent-foreground: 240 5.9% 10%;
 
     /* Destructive */
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 240 10% 3.9%;
     --destructive-foreground: 0 0% 98%;
 
     /* Borders & Inputs */
     --border: 240 5.9% 90%;           /* zinc-200 */
     --input: 240 5.9% 90%;
-    --ring: 142 76% 36%;
+    --ring: 240 10% 3.9%;
 
     /* Sidebar */
     --sidebar-bg: 0 0% 100%;
@@ -82,8 +82,8 @@
     --popover: 240 10% 7%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 142 70% 45%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 10% 3.9%;
 
     --secondary: 240 3.7% 15.9%;     /* zinc-800 */
     --secondary-foreground: 0 0% 98%;
@@ -94,12 +94,12 @@
     --accent: 240 3.7% 15.9%;
     --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 0% 98%;
+    --destructive-foreground: 240 10% 3.9%;
 
     --border: 240 3.7% 15.9%;        /* zinc-800 */
     --input: 240 3.7% 15.9%;
-    --ring: 142 70% 45%;
+    --ring: 0 0% 98%;
 
     --sidebar-bg: 240 10% 5.5%;      /* zinc-900 */
     --sidebar-border: 240 3.7% 13%;
