@@ -80,6 +80,7 @@ export default function ClientLayoutWrapper({ children }) {
   const contentOffset = !isMobile ? (position === 'right' ? (collapsed ? 'mr-16' : 'mr-64') : (collapsed ? 'ml-16' : 'ml-64')) : '';
 
   if (isAuthRoute) return <div className="flex min-h-dvh flex-col bg-background text-foreground">
+    <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-md focus:bg-foreground focus:px-4 focus:py-2 focus:text-xs focus:font-medium focus:text-background">Skip to content</a>
     <header className="absolute right-0 top-0 z-20 flex items-center gap-2 p-3 sm:p-5">
       <button type="button" onClick={toggleDarkMode} className="h-9 rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-muted">{isDark ? 'Switch to Light' : 'Switch to Dark'}</button>
       {isDemoModeEnabled && <button type="button" onClick={resumeDemo} className="h-9 rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-muted">Back to Live Demo →</button>}
@@ -89,6 +90,7 @@ export default function ClientLayoutWrapper({ children }) {
   if (authReady && !currentUser) return null;
 
   return <div className="min-h-screen bg-background text-foreground">
+    <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-md focus:bg-foreground focus:px-4 focus:py-2 focus:text-xs focus:font-medium focus:text-background">Skip to content</a>
     <Sidebar
       isCollapsed={collapsed}
       onToggle={() => setIsCollapsed((current) => !current)}
@@ -100,7 +102,7 @@ export default function ClientLayoutWrapper({ children }) {
     />
     <div className={`flex min-h-screen flex-col transition-[margin] duration-200 ${contentOffset}`}>
       <Navbar onMenuClick={toggleMobileMenu} sidebarPosition={position} sidebarDarkMode={finalSidebarDark}/>
-      <main className="flex-1 bg-muted/30 dark:bg-background"><div className={contentWidth === 'boxed' ? 'mx-auto w-full max-w-[1440px]' : 'w-full'}>{children}</div></main>
+      <main id="main-content" tabIndex={-1} className="flex-1 bg-muted/30 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground dark:bg-background"><div className={contentWidth === 'boxed' ? 'mx-auto w-full max-w-[1440px]' : 'w-full'}>{children}</div></main>
     </div>
     <SettingsButton
       sidebarPosition={position}
