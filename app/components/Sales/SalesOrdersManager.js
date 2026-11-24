@@ -51,6 +51,20 @@ export default function SalesOrdersManager({ products: availableProducts = [], o
   useEffect(() => { setProducts(availableProducts); }, [availableProducts]);
   useEffect(() => { window.localStorage.setItem('adminpro_orders_view', viewMode); }, [viewMode]);
 
+  useEffect(() => {
+    if (!invoiceOrder) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setInvoiceOrder(null);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [invoiceOrder]);
+
   const selectedProduct = products.find((product) => String(product.id) === String(form.productId)) || null;
   const quantity = Math.max(1, Number(form.quantity) || 1);
   const unitPrice = Number(selectedProduct?.price || 0);
