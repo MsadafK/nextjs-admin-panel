@@ -3,18 +3,20 @@
 import { useState } from 'react';
 import { Lock, Minus, Plus, Pencil, Trash2 } from 'lucide-react';
 import { useAuth } from '@/app/contexts/AuthContext';
+import { useToast } from '@/app/contexts/ToastContext';
 
 const money = (value) => `₹${Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export default function ProductTable({ products = [], loading = false, onEdit, onDelete, onAdjustStock, onQuickRestock }) {
   const { isAdmin, isManager } = useAuth();
+  const { pushToast } = useToast();
   const [updatingId, setUpdatingId] = useState(null);
   const maxStock = Math.max(1, ...products.map((product) => Number(product.stock || 0)));
   const adjust = async (product, delta) => {
     if (!onAdjustStock) return;
     setUpdatingId(product.id);
     try { await onAdjustStock(product.id, Math.max(0, Number(product.stock || 0) + delta)); }
-    catch (error) { window.alert(`Unable to update stock: ${error.message}`); }
+    catch (error) { pushToast({ title: 'Stock update failed', subtitle: error.message || 'Unable to update this product.' }); }
     finally { setUpdatingId(null); }
   };
   return <section className="overflow-hidden rounded-xl border border-border bg-card">

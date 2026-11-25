@@ -6,10 +6,12 @@ import { useProducts } from '@/hooks/useProducts';
 import ProductPageHeader from '@/app/components/Products/ProductPageHeader';
 import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
 import ProductTable from '@/app/components/Products/ProductTable';
+import { useToast } from '@/app/contexts/ToastContext';
 
 const money = (value) => `₹${Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export default function ProductPerformancePage() {
+  const { pushToast } = useToast();
   const { products, dbCategories, loading, error, refreshData, adjustStock, removeProduct } = useProducts();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
@@ -34,7 +36,7 @@ export default function ProductPerformancePage() {
     const link = document.createElement('a'); link.href = url; link.download = 'product_performance.csv'; link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
   const editCatalogProduct = (product) => { window.location.href = `/products/all/catalog?edit=${encodeURIComponent(product.id)}`; };
-  const deleteProduct = async (product) => { if (!window.confirm(`Delete “${product.name}” from the catalog?`)) return; try { await removeProduct(product.id); } catch (error) { window.alert(`Could not delete product: ${error.message}`); } };
+  const deleteProduct = async (product) => { if (!window.confirm(`Delete “${product.name}” from the catalog?`)) return; try { await removeProduct(product.id); } catch (error) { pushToast({ title: 'Product deletion failed', subtitle: error.message || 'Could not delete this product.' }); } };
 
   return <div className="page-container mx-auto max-w-7xl space-y-6">
     <ProductPageHeader title="Product Performance" description="Live category and SKU inventory valuation share from public.products." loading={loading} onRefresh={refreshData} products={ranked} onExport={exportCsv}/>

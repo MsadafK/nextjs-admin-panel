@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { Lock, Search } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
 import { useAuth } from '@/app/contexts/AuthContext';
+import { useToast } from '@/app/contexts/ToastContext';
 import ProductPageHeader, { exportProductsCsv } from '@/app/components/Products/ProductPageHeader';
 import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
 import ProductTable from '@/app/components/Products/ProductTable';
@@ -12,6 +13,7 @@ const controlClass = 'h-9 w-full rounded-md border border-border bg-background p
 
 export default function InventoryStockPage() {
   const { isManager } = useAuth();
+  const { pushToast } = useToast();
   const { products, dbCategories, loading, error, refreshData, adjustStock, updateMinStock } = useProducts();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
@@ -38,7 +40,7 @@ export default function InventoryStockPage() {
   const restock = async (product, amount) => {
     if (!isManager) return;
     try { await adjustStock(product.id, Number(product.stock || 0) + amount); }
-    catch (restockError) { window.alert(`Could not restock product: ${restockError.message}`); }
+    catch (restockError) { pushToast({ title: 'Restock failed', subtitle: restockError.message || 'Could not update product stock.' }); }
   };
   const editCatalogProduct = (product) => { window.location.href = `/products/all/catalog?edit=${encodeURIComponent(product.id)}`; };
 

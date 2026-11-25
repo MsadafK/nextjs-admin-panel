@@ -6,10 +6,12 @@ import { useProducts } from '@/hooks/useProducts';
 import ProductPageHeader, { exportProductsCsv } from '@/app/components/Products/ProductPageHeader';
 import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
 import ProductTable from '@/app/components/Products/ProductTable';
+import { useToast } from '@/app/contexts/ToastContext';
 
 const controlClass = 'h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground outline-none focus:border-foreground';
 
 export default function ProductCatalogPage() {
+  const { pushToast } = useToast();
   const { products, dbCategories, loading, error, refreshData, editProduct, adjustStock, removeProduct } = useProducts();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
@@ -39,13 +41,13 @@ export default function ProductCatalogPage() {
   const deleteProduct = async (product) => {
     if (!window.confirm(`Delete “${product.name}” from the catalog?`)) return;
     try { await removeProduct(product.id); }
-    catch (deleteError) { window.alert(`Could not delete product: ${deleteError.message}`); }
+    catch (deleteError) { pushToast({ title: 'Product deletion failed', subtitle: deleteError.message || 'Could not delete this product.' }); }
   };
   const saveEdit = async (event) => {
     event.preventDefault(); if (!editing) return;
     setSaving(true);
     try { await editProduct(editing.id, editing); setEditing(null); }
-    catch (editError) { window.alert(`Could not save product: ${editError.message}`); }
+    catch (editError) { pushToast({ title: 'Product update failed', subtitle: editError.message || 'Could not save product changes.' }); }
     finally { setSaving(false); }
   };
 

@@ -15,11 +15,13 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useProducts } from '@/hooks/useProducts';
+import { useToast } from '@/app/contexts/ToastContext';
 import ProductPageHeader from '@/app/components/Products/ProductPageHeader';
 import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
 
 export default function InventoryAlertsPage() {
   const router = useRouter();
+  const { pushToast } = useToast();
   const { products, dbCategories, loading, error, refreshData, adjustStock } = useProducts();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -70,7 +72,7 @@ export default function InventoryAlertsPage() {
       await adjustStock(selectedProduct.id, newStock);
       setSelectedProduct(null);
     } catch (err) {
-      alert('Error updating stock: ' + err.message);
+      pushToast({ title: 'Stock update failed', subtitle: err.message || 'Unable to update product stock.' });
     } finally {
       setSubmittingModal(false);
     }
@@ -78,7 +80,7 @@ export default function InventoryAlertsPage() {
 
   const quickRestock = async (product, quantity) => {
     try { await adjustStock(product.id, Number(product.stock || 0) + quantity); }
-    catch (restockError) { window.alert(`Error restocking product: ${restockError.message}`); }
+    catch (restockError) { pushToast({ title: 'Restock failed', subtitle: restockError.message || 'Unable to restock this product.' }); }
   };
 
   return (

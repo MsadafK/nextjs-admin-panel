@@ -5,11 +5,13 @@ import { useState } from 'react';
 import { Search, Edit, Lock, Trash2, RefreshCw, X, Check } from 'lucide-react';
 import { useProducts } from '@/hooks/useProducts';
 import { useAuth } from '@/app/contexts/AuthContext';
+import { useToast } from '@/app/contexts/ToastContext';
 import ProductPageHeader from '@/app/components/Products/ProductPageHeader';
 import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
 
 export default function ManageCategoriesPage() {
   const { isAdmin, isManager } = useAuth();
+  const { pushToast } = useToast();
   const {
     categoriesWithStats,
     products,
@@ -64,7 +66,7 @@ export default function ManageCategoriesPage() {
       setModalMode(null);
       setCurrentCategory(null);
     } catch (err) {
-      alert('Error saving category: ' + err.message);
+      pushToast({ title: 'Category save failed', subtitle: err.message || 'Unable to save this category.' });
     } finally {
       setSubmitting(false);
     }
@@ -80,7 +82,7 @@ export default function ManageCategoriesPage() {
     try {
       await removeCategory(id);
     } catch (err) {
-      alert('Failed to delete category: ' + err.message);
+      pushToast({ title: 'Category deletion failed', subtitle: err.message || 'Unable to delete this category.' });
     }
   };
 
