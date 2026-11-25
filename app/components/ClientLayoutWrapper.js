@@ -87,7 +87,8 @@ export default function ClientLayoutWrapper({ children }) {
     </header>
     {children}
   </div>;
-  if (authReady && !currentUser) return null;
+  if (!authReady) return <div role="status" aria-live="polite" className="flex min-h-dvh items-center justify-center bg-background px-4 text-foreground"><div className="flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm"><span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-foreground"/><span>Verifying workspace session…</span></div></div>;
+  if (!currentUser) return null;
 
   return <div className="min-h-screen bg-background text-foreground">
     <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-md focus:bg-foreground focus:px-4 focus:py-2 focus:text-xs focus:font-medium focus:text-background">Skip to content</a>
