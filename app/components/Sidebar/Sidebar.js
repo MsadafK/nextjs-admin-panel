@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ChevronDown, PanelLeftClose, PanelLeftOpen, Shield, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { menuItems } from './MenuItems';
@@ -17,6 +18,7 @@ const NAV_SECTIONS = [
 ];
 
 const normalizePath = (path = '') => path.replace(/\/$/, '') || '/';
+const navigationId = (item) => `sidebar-group-${String(item.href || item.label).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
 const findRouteTrail = (items, pathname, parents = []) => {
   for (const item of items) {
     const trail = [...parents, item];
@@ -100,9 +102,9 @@ export default function Sidebar({
 
   const renderLeaf = (item, level = 2) => {
     const active = normalizePath(item.href) === normalizePath(pathname);
-    return <button key={`${item.label}-${item.href}`} type="button" title={isCollapsed ? translate(item.label) : undefined} onClick={() => navigate(item.href)} className={`flex min-h-10 w-full min-w-0 items-center rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors ${active ? 'bg-foreground text-background font-medium shadow-2xs' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'} ${level === 3 ? 'text-[12.5px]' : ''}`}>
+    return <Link key={`${item.label}-${item.href}`} href={item.href} aria-current={active ? 'page' : undefined} title={isCollapsed ? translate(item.label) : undefined} onClick={closeAfterNavigation} className={`flex min-h-10 w-full min-w-0 items-center rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors ${active ? 'bg-foreground text-background font-medium shadow-2xs' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'} ${level === 3 ? 'text-[12.5px]' : ''}`}>
       <span className="min-w-0 truncate capitalize">{translate(item.label)}</span>
-    </button>;
+    </Link>;
   };
 
   const renderNested = (item, level = 2) => {
@@ -113,10 +115,10 @@ export default function Sidebar({
     const isOpen = Boolean(expanded[key]);
     const branchActive = containsRoute(item, pathname);
     return <div key={`${item.label}-${key}`} className="space-y-0.5">
-      <button type="button" aria-expanded={isOpen} onClick={() => toggleGroup(item)} className={`flex min-h-10 w-full min-w-0 items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors ${branchActive ? 'bg-muted/60 font-semibold text-foreground' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'}`}>
+      <button type="button" aria-expanded={isOpen} aria-controls={navigationId(item)} onClick={() => toggleGroup(item)} className={`flex min-h-10 w-full min-w-0 items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-left text-[13px] transition-colors ${branchActive ? 'bg-muted/60 font-semibold text-foreground' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'}`}>
         <span className="min-w-0 truncate capitalize">{translate(item.label)}</span><ChevronDown size={14} className={`shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}/>
       </button>
-      {isOpen && <div className="ml-5 space-y-0.5 border-l border-border pl-3">
+      {isOpen && <div id={navigationId(item)} className="ml-5 space-y-0.5 border-l border-border pl-3">
         {children.map((child) => child.subItems || child.childItems ? renderNested(child, level + 1) : renderLeaf(child, level + 1))}
       </div>}
     </div>;
@@ -151,12 +153,16 @@ export default function Sidebar({
               const branchActive = containsRoute(item, pathname);
               const label = translate(item.label);
               return <div key={item.label} className="mb-0.5">
-                <button type="button" title={isCollapsed && !isMobile ? label : undefined} aria-expanded={hasChildren ? isOpen : undefined} onClick={() => hasChildren ? (isCollapsed && !isMobile ? onToggle?.() : toggleGroup(item)) : navigate(item.href)} className={`relative flex h-9 min-h-10 w-full min-w-0 items-center justify-between gap-2.5 rounded-md px-3 text-[13px] font-medium transition-all lg:min-h-0 ${exactActive ? 'bg-foreground text-background shadow-2xs' : branchActive ? 'bg-muted/60 text-foreground font-semibold' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'} ${isCollapsed && !isMobile ? 'justify-center px-0' : ''}`}>
+                {hasChildren ? <button type="button" title={isCollapsed && !isMobile ? label : undefined} aria-expanded={!isCollapsed || isMobile ? isOpen : undefined} aria-controls={!isCollapsed || isMobile ? navigationId(item) : undefined} onClick={() => isCollapsed && !isMobile ? onToggle?.() : toggleGroup(item)} className={`relative flex h-9 min-h-10 w-full min-w-0 items-center justify-between gap-2.5 rounded-md px-3 text-[13px] font-medium transition-all lg:min-h-0 ${branchActive ? 'bg-muted/60 text-foreground font-semibold' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'} ${isCollapsed && !isMobile ? 'justify-center px-0' : ''}`}>
                   <span className={`flex min-w-0 items-center gap-2.5 ${isCollapsed && !isMobile ? 'justify-center' : ''}`}><Icon size={16} strokeWidth={1.75} className="shrink-0"/>{(!isCollapsed || isMobile) && <span className="min-w-0 truncate capitalize">{label}</span>}</span>
                   {(!isCollapsed || isMobile) && <span className="flex shrink-0 items-center gap-2">{item.label === 'messages' && unreadCount > 0 && <span aria-label={`${unreadCount} unread messages`} className="rounded-full bg-foreground px-1.5 py-0.5 text-[10px] font-semibold leading-none text-background">{unreadCount > 99 ? '99+' : unreadCount}</span>}{hasChildren && <ChevronDown size={14} className={`shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}/>}</span>}
                   {isCollapsed && !isMobile && item.label === 'messages' && unreadCount > 0 && <span className="absolute right-1 top-1.5 h-2 w-2 rounded-full bg-foreground ring-2 ring-background"/>}
-                </button>
-                {hasChildren && isOpen && (!isCollapsed || isMobile) && <div className="ml-5 space-y-0.5 border-l border-border pl-3 pt-0.5">{(item.subItems || item.childItems).map((child) => renderNested(child, 2))}</div>}
+                </button> : <Link href={item.href} aria-current={exactActive ? 'page' : undefined} title={isCollapsed && !isMobile ? label : undefined} onClick={closeAfterNavigation} className={`relative flex h-9 min-h-10 w-full min-w-0 items-center justify-between gap-2.5 rounded-md px-3 text-[13px] font-medium transition-all lg:min-h-0 ${exactActive ? 'bg-foreground text-background shadow-2xs' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'} ${isCollapsed && !isMobile ? 'justify-center px-0' : ''}`}>
+                  <span className={`flex min-w-0 items-center gap-2.5 ${isCollapsed && !isMobile ? 'justify-center' : ''}`}><Icon size={16} strokeWidth={1.75} className="shrink-0"/>{(!isCollapsed || isMobile) && <span className="min-w-0 truncate capitalize">{label}</span>}</span>
+                  {(!isCollapsed || isMobile) && item.label === 'messages' && unreadCount > 0 && <span aria-label={`${unreadCount} unread messages`} className="rounded-full bg-foreground px-1.5 py-0.5 text-[10px] font-semibold leading-none text-background">{unreadCount > 99 ? '99+' : unreadCount}</span>}
+                  {isCollapsed && !isMobile && item.label === 'messages' && unreadCount > 0 && <span aria-hidden="true" className="absolute right-1 top-1.5 h-2 w-2 rounded-full bg-foreground ring-2 ring-background"/>}
+                </Link>}
+                {hasChildren && isOpen && (!isCollapsed || isMobile) && <div id={navigationId(item)} className="ml-5 space-y-0.5 border-l border-border pl-3 pt-0.5">{(item.subItems || item.childItems).map((child) => renderNested(child, 2))}</div>}
               </div>;
             })}
           </section>;
