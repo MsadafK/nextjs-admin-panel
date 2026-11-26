@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CalendarDays, Clock3, Pencil, Plus, RefreshCw, Search, Trash2, X, Download, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import { eventService, formatEventDate, parseSupabaseDate } from '@/services/eventService';
+import ConfirmDialog from '@/app/components/ConfirmDialog';
 
 const emptyForm = { title: '', date: '', startTime: '', endTime: '', description: '', category: 'Meeting', recurring: false, recurrencePattern: 'weekly' };
 const control = 'h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground outline-none';
@@ -45,6 +46,8 @@ export default function CalendarEventsPage({ mode = 'calendar' }) {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const [showForm, setShowForm] = useState(mode === 'createEvent' || mode === 'createReminder');
   const [showAllEvents, setShowAllEvents] = useState(false);
   const [selectedDate, setSelectedDate] = useState(todayKey());
@@ -104,12 +107,23 @@ export default function CalendarEventsPage({ mode = 'calendar' }) {
     } catch (err) { setError(err.message || 'Could not save event.'); }
     finally { setSaving(false); }
   };
-  const remove = async (id) => {
+  const remove = (id) => {
     const event = events.find((item) => item.id === id);
-    if (event && !window.confirm(`Delete “${event.title}”?`)) return;
-    setError(''); setEvents((current) => current.filter((item) => item.id !== id));
-    try { await eventService.deleteEvent(id); }
-    catch (err) { setError(err.message || 'Could not delete event.'); await refresh(); }
+    if (event) setDeleteTarget(event);
+  };
+  const confirmRemove = async () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget.id;
+    setDeleting(true); setError(''); setEvents((current) => current.filter((item) => item.id !== id));
+    try {
+      await eventService.deleteEvent(id);
+      setDeleteTarget(null);
+    } catch (err) {
+      setError(err.message || 'Could not delete event.');
+      await refresh();
+    } finally {
+      setDeleting(false);
+    }
   };
   const exportCsv = (list = visibleEvents) => {
     const rows = list.map((event) => [event.title, event.category, event.startTime, event.endTime, event.description].map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(','));
@@ -136,5 +150,6 @@ export default function CalendarEventsPage({ mode = 'calendar' }) {
       <section className="grid grid-cols-1 gap-3 rounded-xl border border-border bg-muted/20 p-3.5 sm:grid-cols-2 xl:grid-cols-4"><div className="relative"><Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search event title, location, or description..." className={`${control} pl-9`}/></div><select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className={control}><option value="all">All Types</option>{['Meeting', 'Deadline', 'Launch', 'Reminder', 'Team Event', 'Review'].map((type) => <option key={type} value={type.toLowerCase()}>{type}</option>)}</select><select value={timeFilter} onChange={(e) => setTimeFilter(e.target.value)} className={control}><option value="all">All Events</option><option value="upcoming">Upcoming</option><option value="past">Past</option></select><div className="flex h-9 items-center rounded-md border border-border bg-background px-3 text-xs text-muted-foreground">{visibleEvents.length} matching events</div></section>
       {loading ? <p className="py-10 text-center text-sm text-muted-foreground">Loading events…</p> : visibleEvents.length === 0 && !showAllEvents ? <div className="rounded-xl border border-border bg-muted p-10 text-center"><CalendarDays className="mx-auto mb-3"/><p className="text-sm">{events.length ? `No ${config.title.toLowerCase()} match these filters.` : 'No events found.'}</p>{events.length > 0 && <><p className="mt-1 text-sm text-muted-foreground">There are {events.length} events in your calendar.</p><button className="mt-3 h-9 rounded-md border border-border px-4 text-xs font-medium hover:bg-background" onClick={() => setShowAllEvents(true)}>View all calendar events ({events.length})</button></>}</div> : <div className="w-full overflow-x-auto rounded-xl border border-border bg-card"><table className="w-full min-w-[780px] border-collapse text-left text-sm"><thead><tr className="border-b border-border bg-muted/40 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"><th className="px-4 py-3">Event Title & Description</th><th className="px-4 py-3">Type</th><th className="px-4 py-3">Date & Time</th><th className="px-4 py-3">Status</th><th className="px-4 py-3 text-right">Actions</th></tr></thead><tbody className="divide-y divide-border">{(showAllEvents ? events : visibleEvents).map((event) => { const dateKey = istParts(event.startTime).date; const status = dateKey === todayKey() ? 'Today' : dateKey > todayKey() ? 'Upcoming' : 'Past'; return <tr key={event.id} className="hover:bg-muted/30"><td className="max-w-[360px] px-4 py-3.5"><p className="truncate font-semibold">{event.title}</p><p className="mt-0.5 truncate text-xs text-muted-foreground">{event.description || 'No description'}</p></td><td className="whitespace-nowrap px-4 py-3.5"><span className="rounded border border-border bg-muted px-2 py-0.5 font-mono text-[10px] uppercase">{event.category}</span></td><td className="whitespace-nowrap px-4 py-3.5"><p className="text-xs">{formatEventDate(event.startTime, { day: '2-digit', month: 'short', year: 'numeric' })}</p><p className="mt-0.5 font-mono text-[10px] text-muted-foreground">{formatEventDate(event.startTime, { timeStyle: 'short' })}–{event.endTime ? formatEventDate(event.endTime, { timeStyle: 'short' }) : ''} IST</p></td><td className="whitespace-nowrap px-4 py-3.5"><span className={`rounded-full px-2 py-1 text-[10px] font-medium ${status === 'Past' ? 'border border-border bg-muted text-muted-foreground' : 'bg-foreground text-background'} ${status === 'Today' ? 'underline underline-offset-2' : ''}`}>{status === 'Past' ? 'Completed / Past' : status}</span></td><td className="whitespace-nowrap px-4 py-3.5"><div className="flex justify-end gap-1.5"><button onClick={() => openEdit(event)} className="h-8 rounded-md border border-border px-2.5 text-xs font-medium hover:bg-muted">Edit</button><button onClick={() => remove(event.id)} className="h-8 rounded-md border border-border px-2.5 text-xs font-medium hover:bg-muted">Delete</button></div></td></tr>; })}</tbody></table></div>}
     </>}
+    <ConfirmDialog open={Boolean(deleteTarget)} title="Delete event?" description={`“${deleteTarget?.title || 'This event'}” will be removed from the shared calendar.`} confirmLabel="Delete event" isPending={deleting} onCancel={() => setDeleteTarget(null)} onConfirm={confirmRemove}/>
   </div>;
 }

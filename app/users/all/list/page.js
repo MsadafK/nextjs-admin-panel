@@ -6,6 +6,7 @@ import { Check, Lock, Pencil, Search, Trash2, UserRound, X } from 'lucide-react'
 import { useUsers } from '@/hooks/useUsers';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { useToast } from '@/app/contexts/ToastContext';
+import ConfirmDialog from '@/app/components/ConfirmDialog';
 import UserPageHeader from '@/app/components/Users/UserPageHeader';
 import UserKpiSummary from '@/app/components/Users/UserKpiSummary';
 
@@ -22,6 +23,8 @@ export default function UserListPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deletingUser, setDeletingUser] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const filteredUsers = useMemo(() => users.filter((user) => {
@@ -43,10 +46,16 @@ export default function UserListPage() {
     }
     catch (updateError) { pushToast({ title: 'Status update failed', subtitle: updateError.message || 'Could not update this user status.' }); }
   };
-  const deleteUser = async (user) => {
-    if (!window.confirm(`Delete user “${user.name}”?`)) return;
-    try { await removeUser(user.id); }
-    catch (deleteError) { pushToast({ title: 'User deletion failed', subtitle: deleteError.message || 'Could not delete this user.' }); }
+  const deleteUser = (user) => setDeleteTarget(user);
+  const confirmDeleteUser = async () => {
+    if (!isAdmin || !deleteTarget) return;
+    setDeletingUser(true);
+    try {
+      await removeUser(deleteTarget.id);
+      pushToast({ title: 'User deleted', subtitle: deleteTarget.name });
+      setDeleteTarget(null);
+    } catch (deleteError) { pushToast({ title: 'User deletion failed', subtitle: deleteError.message || 'Could not delete this user.' }); }
+    finally { setDeletingUser(false); }
   };
   const saveUser = async (event) => {
     event.preventDefault();
@@ -94,5 +103,6 @@ export default function UserListPage() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2"><label className="space-y-1.5 text-xs font-medium text-foreground">Full Name<input required value={selectedUser.name || ''} onChange={(event) => setSelectedUser({ ...selectedUser, name: event.target.value })} className={controlClass}/></label><label className="space-y-1.5 text-xs font-medium text-foreground">Email Address<input type="email" required value={selectedUser.email || ''} onChange={(event) => setSelectedUser({ ...selectedUser, email: event.target.value })} className={controlClass}/></label><label className="space-y-1.5 text-xs font-medium text-foreground">Role<select disabled={!isAdmin} title={!isAdmin ? 'Requires Admin privileges' : undefined} value={(selectedUser.role || 'user').toLowerCase()} onChange={(event) => setSelectedUser({ ...selectedUser, role: event.target.value })} className={`${controlClass} disabled:cursor-not-allowed disabled:opacity-50`}>{!isAdmin && <option value={(selectedUser.role || 'user').toLowerCase()}>{selectedUser.role}</option>}<option value="admin">Admin</option><option value="manager">Manager</option><option value="user">User</option></select>{!isAdmin && <Lock size={12} className="ml-1 inline text-muted-foreground"/>}</label><label className="space-y-1.5 text-xs font-medium text-foreground">Department<select value={selectedUser.department || 'General'} onChange={(event) => setSelectedUser({ ...selectedUser, department: event.target.value })} className={controlClass}><option>Engineering</option><option>Management</option><option>Marketing</option><option>Support</option><option>General</option></select></label><label className="space-y-1.5 text-xs font-medium text-foreground">Status<select disabled={!isAdmin} title={!isAdmin ? 'Requires Admin privileges' : undefined} value={(selectedUser.status || 'active').toLowerCase()} onChange={(event) => setSelectedUser({ ...selectedUser, status: event.target.value })} className={`${controlClass} disabled:cursor-not-allowed disabled:opacity-50`}>{!isAdmin && <option value={(selectedUser.status || 'active').toLowerCase()}>{selectedUser.status}</option>}<option value="active">Active</option><option value="suspended">Suspended</option></select>{!isAdmin && <Lock size={12} className="ml-1 inline text-muted-foreground"/>}</label></div>
       <div className="mt-5 flex flex-wrap justify-end gap-2 border-t border-border pt-4"><button type="button" onClick={() => setSelectedUser(null)} className="h-9 rounded-md border border-border px-4 text-xs font-medium text-foreground hover:bg-muted">Cancel</button><button type="submit" disabled={submitting} className="inline-flex h-9 items-center gap-2 rounded-md bg-foreground px-5 text-xs font-medium text-background disabled:opacity-60"><Check size={14}/>{submitting ? 'Saving…' : 'Save User'}</button></div>
     </form></div>}
+    <ConfirmDialog open={Boolean(deleteTarget)} title="Delete user?" description={`This will remove “${deleteTarget?.name || 'this user'}” from the workspace directory.`} confirmLabel="Delete user" isPending={deletingUser} onCancel={() => setDeleteTarget(null)} onConfirm={confirmDeleteUser}/>
   </div>;
 }

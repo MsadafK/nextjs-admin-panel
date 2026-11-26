@@ -7,6 +7,7 @@ import ProductPageHeader, { exportProductsCsv } from '@/app/components/Products/
 import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
 import ProductTable from '@/app/components/Products/ProductTable';
 import { useToast } from '@/app/contexts/ToastContext';
+import ConfirmDialog from '@/app/components/ConfirmDialog';
 
 const controlClass = 'h-9 w-full rounded-md border border-border bg-background px-3 text-xs text-foreground outline-none focus:border-foreground';
 
@@ -19,6 +20,8 @@ export default function ProductCatalogPage() {
   const [sort, setSort] = useState('value-desc');
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   useEffect(() => {
     const requestedId = new URLSearchParams(window.location.search).get('edit');
     if (!requestedId || !products.length) return;
@@ -38,10 +41,13 @@ export default function ProductCatalogPage() {
     return list.sort((a, b) => sort === 'price-desc' ? b.price - a.price : sort === 'stock-asc' ? a.stock - b.stock : sort === 'name-asc' ? a.name.localeCompare(b.name) : b.price * b.stock - a.price * a.stock);
   }, [products, search, category, stockStatus, sort]);
 
-  const deleteProduct = async (product) => {
-    if (!window.confirm(`Delete “${product.name}” from the catalog?`)) return;
-    try { await removeProduct(product.id); }
+  const deleteProduct = (product) => setDeleteTarget(product);
+  const confirmDeleteProduct = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await removeProduct(deleteTarget.id); setDeleteTarget(null); pushToast({ title: 'Product deleted', subtitle: deleteTarget.name }); }
     catch (deleteError) { pushToast({ title: 'Product deletion failed', subtitle: deleteError.message || 'Could not delete this product.' }); }
+    finally { setDeleting(false); }
   };
   const saveEdit = async (event) => {
     event.preventDefault(); if (!editing) return;
@@ -59,5 +65,6 @@ export default function ProductCatalogPage() {
     <ProductTable products={productsByFilter} loading={loading} onAdjustStock={adjustStock} onEdit={setEditing} onDelete={deleteProduct}/>
 
     {editing && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" onMouseDown={(event) => { if (event.target === event.currentTarget) setEditing(null); }}><form onSubmit={saveEdit} className="max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-xl border border-border bg-background p-5 shadow-2xl sm:p-6"><div className="mb-5 flex items-center justify-between border-b border-border pb-4"><div><h2 className="text-lg font-semibold text-foreground">Edit Product</h2><p className="mt-1 text-xs text-muted-foreground">Save updates to public.products.</p></div><button type="button" onClick={() => setEditing(null)} aria-label="Close edit product" className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted"><X size={15}/></button></div><div className="grid grid-cols-1 gap-4 md:grid-cols-2"><label className="space-y-1.5 text-xs font-medium text-foreground">Product Name<input required value={editing.name || ''} onChange={(event) => setEditing({ ...editing, name: event.target.value })} className={controlClass}/></label><label className="space-y-1.5 text-xs font-medium text-foreground">SKU<input required value={editing.sku || ''} onChange={(event) => setEditing({ ...editing, sku: event.target.value })} className={controlClass}/></label><label className="space-y-1.5 text-xs font-medium text-foreground">Category<select value={editing.category_id || ''} onChange={(event) => setEditing({ ...editing, category_id: event.target.value })} className={controlClass}><option value="">Uncategorized</option>{dbCategories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label className="space-y-1.5 text-xs font-medium text-foreground">Price (₹)<input type="number" min="0" step="0.01" required value={editing.price ?? ''} onChange={(event) => setEditing({ ...editing, price: event.target.value })} className={controlClass}/></label><label className="space-y-1.5 text-xs font-medium text-foreground">Stock Quantity<input type="number" min="0" required value={editing.stock ?? ''} onChange={(event) => setEditing({ ...editing, stock: event.target.value })} className={controlClass}/></label><label className="space-y-1.5 text-xs font-medium text-foreground">Status<select value={editing.status || 'active'} onChange={(event) => setEditing({ ...editing, status: event.target.value })} className={controlClass}><option value="active">Active</option><option value="draft">Draft</option></select></label><label className="space-y-1.5 text-xs font-medium text-foreground md:col-span-2">Description<textarea rows={3} value={editing.description || ''} onChange={(event) => setEditing({ ...editing, description: event.target.value })} className="w-full rounded-md border border-border bg-background px-3 py-2 text-xs text-foreground"/></label></div><div className="mt-5 flex justify-end gap-2 border-t border-border pt-4"><button type="button" onClick={() => setEditing(null)} className="h-9 rounded-md border border-border px-4 text-xs font-medium text-foreground hover:bg-muted">Cancel</button><button disabled={saving} className="inline-flex h-9 items-center gap-2 rounded-md bg-foreground px-5 text-xs font-medium text-background"><Check size={14}/>{saving ? 'Saving…' : 'Save Product'}</button></div></form></div>}
+    <ConfirmDialog open={Boolean(deleteTarget)} title="Delete product?" description={`“${deleteTarget?.name || 'This product'}” will be removed from the live catalog.`} confirmLabel="Delete product" isPending={deleting} onCancel={() => setDeleteTarget(null)} onConfirm={confirmDeleteProduct}/>
   </div>;
 }

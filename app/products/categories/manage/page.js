@@ -8,6 +8,7 @@ import { useAuth } from '@/app/contexts/AuthContext';
 import { useToast } from '@/app/contexts/ToastContext';
 import ProductPageHeader from '@/app/components/Products/ProductPageHeader';
 import ProductKpiSummary from '@/app/components/Products/ProductKpiSummary';
+import ConfirmDialog from '@/app/components/ConfirmDialog';
 
 export default function ManageCategoriesPage() {
   const { isAdmin, isManager } = useAuth();
@@ -28,6 +29,8 @@ export default function ManageCategoriesPage() {
   const [modalMode, setModalMode] = useState(null);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const filteredCategories = (categoriesWithStats || []).filter(
     (cat) =>
@@ -72,17 +75,19 @@ export default function ManageCategoriesPage() {
     }
   };
 
-  const handleDelete = async (id, name) => {
-    if (
-      !window.confirm(
-        `Are you sure you want to delete category "${name}"? Products inside might become uncategorized.`
-      )
-    )
-      return;
+  const handleDelete = (id, name) => setDeleteTarget({ id, name });
+
+  const confirmDeleteCategory = async () => {
+    if (!deleteTarget || !isAdmin) return;
+    setDeleting(true);
     try {
-      await removeCategory(id);
+      await removeCategory(deleteTarget.id);
+      pushToast({ title: 'Category deleted', subtitle: deleteTarget.name });
+      setDeleteTarget(null);
     } catch (err) {
       pushToast({ title: 'Category deletion failed', subtitle: err.message || 'Unable to delete this category.' });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -283,6 +288,7 @@ export default function ManageCategoriesPage() {
           </div>
         </div>
       )}
+      <ConfirmDialog open={Boolean(deleteTarget)} title="Delete category?" description={`Are you sure you want to delete “${deleteTarget?.name || 'this category'}”? Products inside might become uncategorized.`} confirmLabel="Delete category" isPending={deleting} onCancel={() => setDeleteTarget(null)} onConfirm={confirmDeleteCategory}/>
     </div>
   );
 }
