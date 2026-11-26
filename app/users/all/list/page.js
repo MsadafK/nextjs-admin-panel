@@ -41,19 +41,19 @@ export default function UserListPage() {
       await editUser(user.id, { ...user, status: nextStatus });
       pushToast({ title: nextStatus === 'suspended' ? 'User suspended' : 'User activated', subtitle: user.name, onUndo: async () => { await editUser(user.id, { ...user, status: previousStatus }); } });
     }
-    catch (updateError) { window.alert(`Failed to update status: ${updateError.message}`); }
+    catch (updateError) { pushToast({ title: 'Status update failed', subtitle: updateError.message || 'Could not update this user status.' }); }
   };
   const deleteUser = async (user) => {
     if (!window.confirm(`Delete user “${user.name}”?`)) return;
     try { await removeUser(user.id); }
-    catch (deleteError) { window.alert(`Failed to delete user: ${deleteError.message}`); }
+    catch (deleteError) { pushToast({ title: 'User deletion failed', subtitle: deleteError.message || 'Could not delete this user.' }); }
   };
   const saveUser = async (event) => {
     event.preventDefault();
     if (!selectedUser) return;
     setSubmitting(true);
     try { await editUser(selectedUser.id, selectedUser); setSelectedUser(null); }
-    catch (updateError) { window.alert(`Failed to update user: ${updateError.message}`); }
+    catch (updateError) { pushToast({ title: 'User update failed', subtitle: updateError.message || 'Could not save user changes.' }); }
     finally { setSubmitting(false); }
   };
 
