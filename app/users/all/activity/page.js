@@ -55,7 +55,6 @@ export default function UserActivityPage() {
       const data = await userService.getActivityData();
       setActivities(data.activities);
     } catch (err) {
-      console.error('Error loading user activity:', err);
       setError(err.message || 'Failed to load activity feed');
     } finally {
       setLoading(false);

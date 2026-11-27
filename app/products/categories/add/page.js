@@ -80,7 +80,6 @@ export default function AddCategoryPage() {
       setFormData({ name: '', slug: '', description: '', status: 'active' });
       setAutoSlug(true);
     } catch (err) {
-      console.error('Error creating category:', err);
       setError(err.message || 'Failed to create category in Supabase.');
     } finally {
       setSubmitting(false);

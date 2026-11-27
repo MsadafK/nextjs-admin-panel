@@ -81,10 +81,12 @@ export function AuthProvider({ children }) {
   const establishSession = useCallback(async (user, auditAction = 'User Login') => {
     const normalizedUser = persistUser(user);
     try { await authService.logAuditEvent(normalizedUser, auditAction); }
-    catch (error) { console.warn(`Session started, but the ${auditAction} audit entry could not be written:`, error.message); }
+    catch {
+      pushToast({ title: 'Session started; audit log unavailable', subtitle: `The ${auditAction.toLowerCase()} activity could not be recorded.` });
+    }
     setAuthReady(true);
     return normalizedUser;
-  }, [persistUser]);
+  }, [persistUser, pushToast]);
 
   const signInWithEmail = useCallback(async (email, password) => {
     const user = await authService.signInWithEmail(email, password);
