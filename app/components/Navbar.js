@@ -208,12 +208,20 @@ export default function Navbar({ onMenuClick, sidebarPosition = 'left', sidebarD
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault(); openCommand();
       } else if (event.key === 'Escape') {
-        closeCommand(); setShowInbox(false); setShowNotifications(false); setShowLanguage(false); setShowProfile(false);
+        if (commandOpen) {
+          closeCommand();
+          return;
+        }
+        if (showInbox) inboxRef.current?.querySelector('button[aria-expanded="true"]')?.focus();
+        else if (showNotifications) notificationsRef.current?.querySelector('button[aria-expanded="true"]')?.focus();
+        else if (showLanguage) languageRef.current?.querySelector('button[aria-expanded="true"]')?.focus();
+        else if (showProfile) profileRef.current?.querySelector('button[aria-expanded="true"]')?.focus();
+        setShowInbox(false); setShowNotifications(false); setShowLanguage(false); setShowProfile(false);
       }
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [openCommand, closeCommand]);
+  }, [openCommand, closeCommand, commandOpen, showInbox, showNotifications, showLanguage, showProfile]);
 
   useEffect(() => {
     if (!commandOpen) return undefined;
