@@ -84,11 +84,11 @@ export default function InviteUsersPage() {
       {/* KPI Cards */}
       <UserKpiSummary users={users} loading={loading}/>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Invite Form */}
         <form
           onSubmit={handleSendInvitations}
-          className="lg:col-span-2 card p-6 shadow-card border border-border space-y-5"
+          className="xl:col-span-2 card p-6 shadow-card border border-border space-y-5"
         >
           <div className="flex items-center justify-between border-b border-border pb-3">
             <h2 className="text-base font-semibold text-foreground">Email Addresses</h2>

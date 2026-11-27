@@ -117,9 +117,9 @@ export default function BulkImportUsersPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Instructions */}
-        <div className="lg:col-span-2 card p-6 shadow-card border border-border space-y-5">
+        <div className="xl:col-span-2 card p-6 shadow-card border border-border space-y-5">
           <h2 className="text-base font-semibold text-foreground">How to Import Users</h2>
           <div className="space-y-4">
             {[

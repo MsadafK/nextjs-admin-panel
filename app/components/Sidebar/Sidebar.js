@@ -50,7 +50,7 @@ export default function Sidebar({
   const translate = useCallback((value) => (t ? t(value) : value.replace(/_/g, ' ')), [t]);
   const refreshCounts = useCallback(async () => {
     try { setUnreadCount(await notificationService.getUnreadCount()); }
-    catch (error) { console.error('Could not load unread message count:', error); }
+    catch (error) { setUnreadCount(0); console.error('Could not load unread message count:', error); }
   }, []);
 
   useEffect(() => {
